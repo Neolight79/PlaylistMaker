@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:theme="@style/Theme.PlaylistMaker.Settings"
+    android:theme="@style/Theme.PlaylistMaker.Settings_Night"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -19,17 +19,17 @@
             android:layout_height="match_parent"
             android:layout_gravity="end"
             android:src="@drawable/back_glif"
-            app:tint="@color/dark"
+            app:tint="@color/white"
             android:scaleX="1.2"
             android:scaleY="1.2"
-            android:backgroundTint="@color/white"/>
+            android:backgroundTint="@color/dark"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:gravity="start|center"
             android:text="@string/settings"
-            android:textColor="@color/dark"
+            android:textColor="@color/white"
             android:paddingStart="20dp"
             android:paddingEnd="20dp"
             android:textSize="@dimen/main_text_size"/>
@@ -45,7 +45,7 @@
             android:layout_marginStart="11dp"
             android:gravity="start|center"
             android:text="@string/menu_dark_theme"
-            android:textColor="@color/black"
+            android:textColor="@color/white"
             android:textSize="@dimen/main_text_size" />
 
         <Switch
@@ -55,9 +55,9 @@
             android:layout_marginEnd="10dp"
             android:scaleX="1.2"
             android:scaleY="1.2"
-            android:checked="false"
-            android:thumbTint="@color/light_thumb"
-            android:trackTint="@color/light_track"/>
+            android:checked="true"
+            android:thumbTint="@color/light_bg"
+            android:trackTint="@color/dark_track"/>
     </FrameLayout>
 
     <FrameLayout
@@ -70,18 +70,18 @@
             android:layout_marginStart="11dp"
             android:gravity="start|center"
             android:text="@string/menu_share_app"
-            android:textColor="@color/black"
+            android:textColor="@color/white"
             android:textSize="@dimen/main_text_size" />
 
         <ImageButton
             android:layout_width="48dp"
             android:layout_height="match_parent"
             android:layout_gravity="end"
-            app:tint="@color/light_thumb"
+            app:tint="@color/white"
             android:src="@drawable/share_glif"
             android:scaleX="1.5"
             android:scaleY="1.5"
-            android:backgroundTint="@color/white"
+            android:backgroundTint="@color/dark"
             android:layout_marginEnd="11dp"/>
     </FrameLayout>
 
@@ -95,18 +95,18 @@
             android:layout_marginStart="11dp"
             android:gravity="start|center"
             android:text="@string/menu_support"
-            android:textColor="@color/black"
+            android:textColor="@color/white"
             android:textSize="@dimen/main_text_size"/>
 
         <ImageButton
             android:layout_width="48dp"
             android:layout_height="match_parent"
             android:layout_gravity="end"
-            app:tint="@color/light_thumb"
+            app:tint="@color/white"
             android:src="@drawable/support_glif"
             android:scaleX="1.5"
             android:scaleY="1.5"
-            android:backgroundTint="@color/white"
+            android:backgroundTint="@color/dark"
             android:layout_marginEnd="11dp"/>
     </FrameLayout>
 
@@ -120,18 +120,18 @@
             android:layout_marginStart="11dp"
             android:gravity="start|center"
             android:text="@string/menu_user_agreement"
-            android:textColor="@color/black"
+            android:textColor="@color/white"
             android:textSize="@dimen/main_text_size" />
 
         <ImageButton
             android:layout_width="48dp"
             android:layout_height="match_parent"
             android:layout_gravity="end"
-            app:tint="@color/light_thumb"
+            app:tint="@color/white"
             android:src="@drawable/right_arrow_glif"
             android:scaleX="1.5"
             android:scaleY="1.5"
-            android:backgroundTint="@color/white"
+            android:backgroundTint="@color/dark"
             android:layout_marginEnd="11dp"/>
     </FrameLayout>
 

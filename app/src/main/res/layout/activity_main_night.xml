@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/light_bg"
-    android:layout_margin="@dimen/main_padding">
+    android:padding="@dimen/main_padding"
+    android:background="@color/dark">
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -17,6 +16,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="start"
+            android:fontFamily="@font/ys_medium"
             android:text="@string/title"
             android:textColor="@color/white"
             android:textSize="@dimen/main_text_size"/>
