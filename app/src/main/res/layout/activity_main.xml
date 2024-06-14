@@ -1,19 +1,73 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    android:background="@color/light_bg"
+    android:orientation="vertical"
+    android:padding="16dp">
 
-    <TextView
-        android:layout_width="wrap_content"
+    <FrameLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_marginBottom="16dp">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:text="@string/title"
+            android:textColor="#ffffff"
+            android:textSize="25sp"
+            android:textStyle="bold"/>
+    </FrameLayout>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="10dp"
+        android:layout_weight="1"
+        android:backgroundTint="#ffffff"
+        android:text="@string/search"
+        android:textAllCaps="false"
+        android:textSize="22sp"
+        android:textColor="#1A1B22"
+        app:cornerRadius="16dp"
+        app:icon="@drawable/search_light"
+        app:iconGravity="textStart"
+        app:iconPadding="10dp"
+        app:iconTint="@color/black"/>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="10dp"
+        android:layout_weight="1"
+        android:backgroundTint="#ffffff"
+        android:text="@string/mediateka"
+        android:textAllCaps="false"
+        android:textSize="22sp"
+        android:textColor="#1A1B22"
+        app:icon="@drawable/mediateka_light"
+        app:cornerRadius="16dp"
+        app:iconGravity="textStart"
+        app:iconPadding="10dp"
+        app:iconTint="@color/black"/>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="10dp"
+        android:layout_weight="1"
+        android:backgroundTint="#ffffff"
+        android:text="@string/settings"
+        android:textAllCaps="false"
+        android:textSize="22sp"
+        android:textColor="#1A1B22"
+        app:icon="@drawable/settings_light"
+        app:cornerRadius="16dp"
+        app:iconGravity="textStart"
+        app:iconPadding="10dp"
+        app:iconTint="@color/black"/>
+
+</LinearLayout>
