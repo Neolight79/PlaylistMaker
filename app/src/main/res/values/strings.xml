@@ -8,5 +8,6 @@
     <string name="menu_share_app">Share application</string>
     <string name="menu_support">Support</string>
     <string name="menu_user_agreement">User agreement</string>
+    <string name="back">Back to main screen</string>
 
 </resources>

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main"
     android:theme="@style/Theme.PlaylistMaker.Settings"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -9,15 +10,17 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="56dp"
+        android:layout_height="70dp"
         android:orientation="horizontal"
         android:paddingBottom="20dp"
         android:padding="11dp">
 
         <ImageButton
-            android:layout_width="24dp"
+            android:id="@+id/back"
+            android:layout_width="43dp"
             android:layout_height="match_parent"
             android:layout_gravity="end"
+            android:contentDescription="@string/back"
             android:src="@drawable/back_glif"
             app:tint="@color/dark"
             android:scaleX="1.2"
@@ -77,6 +80,7 @@
             android:layout_width="48dp"
             android:layout_height="match_parent"
             android:layout_gravity="end"
+            android:contentDescription="@string/menu_share_app"
             app:tint="@color/light_thumb"
             android:src="@drawable/share_glif"
             android:scaleX="1.5"
@@ -102,6 +106,7 @@
             android:layout_width="48dp"
             android:layout_height="match_parent"
             android:layout_gravity="end"
+            android:contentDescription="@string/menu_support"
             app:tint="@color/light_thumb"
             android:src="@drawable/support_glif"
             android:scaleX="1.5"
@@ -127,6 +132,7 @@
             android:layout_width="48dp"
             android:layout_height="match_parent"
             android:layout_gravity="end"
+            android:contentDescription="@string/menu_user_agreement"
             app:tint="@color/light_thumb"
             android:src="@drawable/right_arrow_glif"
             android:scaleX="1.5"

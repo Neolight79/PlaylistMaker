@@ -1,10 +1,8 @@
 package com.example.playlistmaker
 
+import android.content.Intent
 import android.os.Bundle
-import android.view.View
 import android.widget.Button
-import android.widget.ImageView
-import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -16,25 +14,49 @@ class MainActivity : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.activity_main)
 
-        // Обработка нажатия кнопки Поиск через способ 1 - реализацию абстрактного класса
+        // Обработка нажатия на кнопку Поиск
         val searchButton = findViewById<Button>(R.id.search)
-        val searchButtonClickListener: View.OnClickListener = object : View.OnClickListener {
-            override fun onClick(v: View?) {
-                Toast.makeText(this@MainActivity, "Запустили поиск!", Toast.LENGTH_SHORT).show()
-            }
-        }
-        searchButton.setOnClickListener(searchButtonClickListener)
 
-        // Обработка нажатия кнопки Медиатека через способ 2 - лямбда
+//        // Обработка нажатия кнопки Поиск через способ 1 - реализацию абстрактного класса
+//        val searchButtonClickListener: View.OnClickListener = object : View.OnClickListener {
+//            override fun onClick(v: View?) {
+//                Toast.makeText(this@MainActivity, "Запустили поиск!", Toast.LENGTH_SHORT).show()
+//            }
+//        }
+//        searchButton.setOnClickListener(searchButtonClickListener)
+
+        // Выполняем Intent в явном виде для активации страницы активити для Поиска
+        searchButton.setOnClickListener {
+            val searchIntent = Intent(this, SearchActivity::class.java)
+            startActivity(searchIntent)
+        }
+
+        // Обработка нажатия на кнопку Медиатека
         val mediaButton = findViewById<Button>(R.id.media)
+
+//        // Обработка нажатия кнопки Медиатека через способ 2 - лямбда
+//        mediaButton.setOnClickListener {
+//            Toast.makeText(this@MainActivity, "Запустили медиатеку!", Toast.LENGTH_SHORT).show()
+//        }
+
+        // Выполняем Intent в явном виде для активации страницы активити для Медиатеки
         mediaButton.setOnClickListener {
-            Toast.makeText(this@MainActivity, "Запустили медиатеку!", Toast.LENGTH_SHORT).show()
+            val mediaIntent = Intent(this, MediaActivity::class.java)
+            startActivity(mediaIntent)
         }
 
-        // Обработка нажатия кнопки Настройки через способ 2 - лямбда
+        // Обработка нажатия на кнопку Медиатека
         val settingsButton = findViewById<Button>(R.id.settings)
+
+//        // Обработка нажатия кнопки Настройки через способ 2 - лямбда
+//        settingsButton.setOnClickListener {
+//            Toast.makeText(this@MainActivity, "Запустили настройки!", Toast.LENGTH_SHORT).show()
+//        }
+
+        // Выполняем Intent в явном виде для активации страницы активити Настроек
         settingsButton.setOnClickListener {
-            Toast.makeText(this@MainActivity, "Запустили настройки!", Toast.LENGTH_SHORT).show()
+            val settingsIntent = Intent(this, SettingsActivity::class.java)
+            startActivity(settingsIntent)
         }
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->

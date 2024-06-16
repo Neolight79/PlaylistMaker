@@ -7,4 +7,5 @@
     <string name="menu_share_app">Поделиться приложением</string>
     <string name="menu_support">Написать в поддержку</string>
     <string name="menu_user_agreement">Пользовательское соглашение</string>
+    <string name="back">Вернуться на начальный экран приложения</string>
 </resources>
