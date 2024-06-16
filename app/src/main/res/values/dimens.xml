@@ -4,5 +4,6 @@
     <dimen name="main_padding">16dp</dimen>
     <dimen name="zero_size">0dp</dimen>
     <dimen name="main_text_size">22sp</dimen>
-    <dimen name="menu_height">61dp</dimen>
+    <dimen name="settings_text_size">16sp</dimen>
+    <dimen name="menu_height">60dp</dimen>
 </resources>

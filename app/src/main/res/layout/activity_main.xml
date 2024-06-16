@@ -9,22 +9,18 @@
     android:background="@color/light_bg"
     android:layout_margin="@dimen/main_padding">
 
-    <FrameLayout
-        android:layout_width="match_parent"
+    <TextView
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/main_padding">
+        android:layout_marginBottom="@dimen/main_padding"
+        android:layout_gravity="start"
+        android:text="@string/title"
+        android:textColor="@color/white"
+        android:textSize="@dimen/main_text_size"/>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="start"
-            android:text="@string/title"
-            android:textColor="@color/white"
-            android:textSize="@dimen/main_text_size"/>
-    </FrameLayout>
 
     <Button
-        android:id="@+id/search"
+        android:id="@+id/buttonSearch"
         android:theme="@style/Base.Theme.PlaylistMaker.Button"
         android:layout_width="match_parent"
         android:layout_height="@dimen/zero_size"
@@ -38,7 +34,7 @@
         app:iconTint="@color/dark"/>
 
     <Button
-        android:id="@+id/media"
+        android:id="@+id/buttonMedia"
         android:theme="@style/Base.Theme.PlaylistMaker.Button"
         android:layout_width="match_parent"
         android:layout_height="@dimen/zero_size"
@@ -52,7 +48,7 @@
         app:iconTint="@color/dark"/>
 
     <Button
-        android:id="@+id/settings"
+        android:id="@+id/buttonSettings"
         android:theme="@style/Base.Theme.PlaylistMaker.Button"
         android:layout_width="match_parent"
         android:layout_height="@dimen/zero_size"

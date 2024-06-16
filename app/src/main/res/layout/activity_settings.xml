@@ -12,19 +12,19 @@
         android:layout_width="match_parent"
         android:layout_height="70dp"
         android:orientation="horizontal"
-        android:paddingBottom="20dp"
+        android:layout_marginBottom="20dp"
         android:padding="11dp">
 
-        <ImageButton
+        <ImageView
             android:id="@+id/back"
-            android:layout_width="43dp"
+            android:layout_width="40dp"
             android:layout_height="match_parent"
             android:layout_gravity="end"
             android:contentDescription="@string/back"
             android:src="@drawable/back_glif"
             app:tint="@color/dark"
-            android:scaleX="1.2"
-            android:scaleY="1.2"
+            android:scaleX="0.4"
+            android:scaleY="0.4"
             android:backgroundTint="@color/white"/>
 
         <TextView
@@ -35,7 +35,8 @@
             android:textColor="@color/dark"
             android:paddingStart="20dp"
             android:paddingEnd="20dp"
-            android:textSize="@dimen/main_text_size"/>
+            android:textSize="@dimen/main_text_size"
+            android:textFontWeight="500"/>
     </LinearLayout>
 
     <FrameLayout
@@ -48,16 +49,15 @@
             android:layout_marginStart="11dp"
             android:gravity="start|center"
             android:text="@string/menu_dark_theme"
+            android:textFontWeight="400"
             android:textColor="@color/black"
-            android:textSize="@dimen/main_text_size" />
+            android:textSize="@dimen/settings_text_size" />
 
         <Switch
             android:layout_width="48dp"
             android:layout_height="match_parent"
             android:layout_gravity="end|center"
             android:layout_marginEnd="10dp"
-            android:scaleX="1.2"
-            android:scaleY="1.2"
             android:checked="false"
             android:thumbTint="@color/light_thumb"
             android:trackTint="@color/light_track"/>
@@ -74,17 +74,18 @@
             android:gravity="start|center"
             android:text="@string/menu_share_app"
             android:textColor="@color/black"
-            android:textSize="@dimen/main_text_size" />
+            android:textSize="@dimen/settings_text_size"
+            android:textFontWeight="400"/>
 
-        <ImageButton
+        <ImageView
             android:layout_width="48dp"
             android:layout_height="match_parent"
             android:layout_gravity="end"
             android:contentDescription="@string/menu_share_app"
             app:tint="@color/light_thumb"
             android:src="@drawable/share_glif"
-            android:scaleX="1.5"
-            android:scaleY="1.5"
+            android:scaleX="0.5"
+            android:scaleY="0.5"
             android:backgroundTint="@color/white"
             android:layout_marginEnd="11dp"/>
     </FrameLayout>
@@ -100,17 +101,18 @@
             android:gravity="start|center"
             android:text="@string/menu_support"
             android:textColor="@color/black"
-            android:textSize="@dimen/main_text_size"/>
+            android:textSize="@dimen/settings_text_size"
+            android:textFontWeight="400"/>
 
-        <ImageButton
+        <ImageView
             android:layout_width="48dp"
             android:layout_height="match_parent"
             android:layout_gravity="end"
             android:contentDescription="@string/menu_support"
             app:tint="@color/light_thumb"
             android:src="@drawable/support_glif"
-            android:scaleX="1.5"
-            android:scaleY="1.5"
+            android:scaleX="0.5"
+            android:scaleY="0.5"
             android:backgroundTint="@color/white"
             android:layout_marginEnd="11dp"/>
     </FrameLayout>
@@ -126,17 +128,18 @@
             android:gravity="start|center"
             android:text="@string/menu_user_agreement"
             android:textColor="@color/black"
-            android:textSize="@dimen/main_text_size" />
+            android:textSize="@dimen/settings_text_size"
+            android:textFontWeight="400"/>
 
-        <ImageButton
+        <ImageView
             android:layout_width="48dp"
             android:layout_height="match_parent"
             android:layout_gravity="end"
             android:contentDescription="@string/menu_user_agreement"
             app:tint="@color/light_thumb"
             android:src="@drawable/right_arrow_glif"
-            android:scaleX="1.5"
-            android:scaleY="1.5"
+            android:scaleX="0.5"
+            android:scaleY="0.5"
             android:backgroundTint="@color/white"
             android:layout_marginEnd="11dp"/>
     </FrameLayout>

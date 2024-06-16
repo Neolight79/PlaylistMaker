@@ -15,7 +15,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         // Обработка нажатия на кнопку Поиск
-        val searchButton = findViewById<Button>(R.id.search)
+        val searchButton = findViewById<Button>(R.id.buttonSearch)
 
 //        // Обработка нажатия кнопки Поиск через способ 1 - реализацию абстрактного класса
 //        val searchButtonClickListener: View.OnClickListener = object : View.OnClickListener {
@@ -32,7 +32,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         // Обработка нажатия на кнопку Медиатека
-        val mediaButton = findViewById<Button>(R.id.media)
+        val mediaButton = findViewById<Button>(R.id.buttonMedia)
 
 //        // Обработка нажатия кнопки Медиатека через способ 2 - лямбда
 //        mediaButton.setOnClickListener {
@@ -46,7 +46,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         // Обработка нажатия на кнопку Медиатека
-        val settingsButton = findViewById<Button>(R.id.settings)
+        val settingsButton = findViewById<Button>(R.id.buttonSettings)
 
 //        // Обработка нажатия кнопки Настройки через способ 2 - лямбда
 //        settingsButton.setOnClickListener {

@@ -1,9 +1,8 @@
 package com.example.playlistmaker
 
 import android.annotation.SuppressLint
-import android.content.Intent
 import android.os.Bundle
-import android.widget.ImageButton
+import android.widget.ImageView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -16,10 +15,9 @@ class SettingsActivity : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.activity_settings)
 
-        val backButton = findViewById<ImageButton>(R.id.back)
+        val backButton = findViewById<ImageView>(R.id.back)
         backButton.setOnClickListener {
-            val mainIntent = Intent(this, MainActivity::class.java)
-            startActivity(mainIntent)
+            finish()
         }
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
