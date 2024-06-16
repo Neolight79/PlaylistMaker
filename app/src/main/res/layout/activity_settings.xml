@@ -30,7 +30,7 @@
             android:textColor="@color/black"
             android:textSize="@dimen/settings_text_size" />
 
-        <Switch
+        <androidx.appcompat.widget.SwitchCompat
             android:layout_width="48dp"
             android:layout_height="match_parent"
             android:layout_gravity="end|center"
