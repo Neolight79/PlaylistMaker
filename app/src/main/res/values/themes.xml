@@ -1,9 +1,22 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
     <style name="Base.Theme.PlaylistMaker" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="android:fontFamily">@font/ys_medium</item>
+        <item name="android:background">@color/light_bg</item>
     </style>
 
-    <style name="Theme.PlaylistMaker" parent="Base.Theme.PlaylistMaker" />
+    <style name="Base.Theme.PlaylistMaker.Button" parent="Base.Theme.PlaylistMaker">
+        <item name="android:letterSpacing">0</item>
+        <item name="android:backgroundTint">@color/white</item>
+        <item name="android:textSize">22sp</item>
+        <item name="iconGravity">textStart</item>
+        <item name="iconPadding">10dp</item>
+    </style>
+
+    <style name="Theme.PlaylistMaker.Settings" parent="Base.Theme.PlaylistMaker">
+        <item name="android:background">@color/white</item>
+    </style>
+
+    <style name="Theme.PlaylistMaker.Settings_Night" parent="Base.Theme.PlaylistMaker">
+        <item name="android:background">@color/dark</item>
+    </style>
 </resources>

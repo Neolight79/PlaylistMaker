@@ -2,4 +2,9 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="light_bg">#3772E7</color>
+    <color name="dark">#1A1B22</color>
+    <color name="dark_track">#9FBBF3</color>
+    <color name="light_thumb">#AEAFB4</color>
+    <color name="light_track">#E6E8EB</color>
 </resources>

@@ -1,19 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    android:orientation="vertical"
+    android:background="@color/light_bg"
+    android:layout_margin="@dimen/main_padding">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_marginBottom="@dimen/main_padding"
+        android:layout_gravity="start"
+        android:text="@string/title"
+        android:textColor="@color/white"
+        android:textSize="@dimen/main_text_size"/>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+
+    <Button
+        android:id="@+id/buttonSearch"
+        android:theme="@style/Base.Theme.PlaylistMaker.Button"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/zero_size"
+        android:layout_marginTop="10dp"
+        android:layout_weight="1"
+        android:text="@string/search"
+        android:textColor="@color/dark"
+        app:cornerRadius="@dimen/button_corner_radius"
+        app:icon="@drawable/search_glif"
+        android:foreground="?attr/selectableItemBackground"
+        app:iconTint="@color/dark"/>
+
+    <Button
+        android:id="@+id/buttonMedia"
+        android:theme="@style/Base.Theme.PlaylistMaker.Button"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/zero_size"
+        android:layout_marginTop="10dp"
+        android:layout_weight="1"
+        android:text="@string/mediateka"
+        android:textColor="@color/dark"
+        app:cornerRadius="@dimen/button_corner_radius"
+        app:icon="@drawable/media_glif"
+        android:foreground="?attr/selectableItemBackground"
+        app:iconTint="@color/dark"/>
+
+    <Button
+        android:id="@+id/buttonSettings"
+        android:theme="@style/Base.Theme.PlaylistMaker.Button"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/zero_size"
+        android:layout_marginTop="10dp"
+        android:layout_weight="1"
+        android:text="@string/settings"
+        android:textColor="@color/dark"
+        app:cornerRadius="@dimen/button_corner_radius"
+        app:icon="@drawable/settings_glif"
+        android:foreground="?attr/selectableItemBackground"
+        app:iconTint="@color/dark"/>
+
+</LinearLayout>
