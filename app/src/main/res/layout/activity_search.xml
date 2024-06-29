@@ -10,12 +10,8 @@
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/search"/>
+        android:layout_height="wrap_content"
+        app:title="@string/search">
     </androidx.appcompat.widget.Toolbar>
 
     <FrameLayout
@@ -29,7 +25,10 @@
             android:id="@+id/inputEditText"
             android:layout_width="match_parent"
             android:layout_height="36dp"
-            android:hint="@string/search"/>
+            android:hint="@string/search"
+            android:drawableStart="@drawable/search_glif"
+            android:drawableTint="@color/gray"
+            android:drawablePadding="@dimen/half_main_padding"/>
 
         <ImageView
             style="@style/ImageViewSearch"
@@ -41,15 +40,7 @@
             android:src="@drawable/close_glif"
             android:visibility="gone"/>
 
-        <ImageView
-            style="@style/ImageViewSearch"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_gravity="center_vertical"
-            android:src="@drawable/search_glif"
-            android:scaleX="0.7"
-            android:scaleY="0.7"/>
+
     </FrameLayout>
 
 </LinearLayout>

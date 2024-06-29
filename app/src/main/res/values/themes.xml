@@ -5,6 +5,8 @@
         <item name="android:textSize">@dimen/main_text_size</item>
         <item name="android:fontWeight">500</item>
         <item name="android:textColor">@color/black</item>
+        <item name="colorAccent">@color/blue_background</item>
+        <item name="titleTextColor">@color/dark</item>
     </style>
 
     <style name="MainScreenTheme" parent="Base.Theme.PlaylistMaker">

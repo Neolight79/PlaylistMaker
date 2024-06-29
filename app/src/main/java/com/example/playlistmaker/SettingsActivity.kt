@@ -23,11 +23,11 @@ class SettingsActivity : AppCompatActivity() {
         supportActionBar?.apply {
             setDisplayHomeAsUpEnabled(true)
             setDisplayShowHomeEnabled(true)
-            setDisplayShowTitleEnabled(false)
+            setDisplayShowTitleEnabled(true)
         }
 
         // Обработка нажатия на кнопку ПоделитьсяПриложением
-        val settingsShareApp = findViewById<ImageView>(R.id.settingsShareApp)
+        val settingsShareApp = findViewById<com.google.android.material.textview.MaterialTextView>(R.id.settingsShareApp)
         settingsShareApp.setOnClickListener {
             val shareAppIntent = Intent().apply {
                 action = Intent.ACTION_SEND
@@ -38,7 +38,7 @@ class SettingsActivity : AppCompatActivity() {
         }
 
         // Обработка нажатия на кнопку НаписатьВПоддержку
-        val settingsMailToSupport = findViewById<ImageView>(R.id.settingsMailToSupport)
+        val settingsMailToSupport = findViewById<com.google.android.material.textview.MaterialTextView>(R.id.settingsMailToSupport)
         settingsMailToSupport.setOnClickListener {
             val mailToSupportIntent = Intent().apply {
                 action = Intent.ACTION_SENDTO
@@ -51,7 +51,7 @@ class SettingsActivity : AppCompatActivity() {
         }
 
         // Обработка нажатия на кнопку Пользовательское соглашение
-        val settingsUserAgreement = findViewById<ImageView>(R.id.settingsUserAgreement)
+        val settingsUserAgreement = findViewById<com.google.android.material.textview.MaterialTextView>(R.id.settingsUserAgreement)
         settingsUserAgreement.setOnClickListener {
             val userAgreement = Intent().apply {
                 action = Intent.ACTION_VIEW

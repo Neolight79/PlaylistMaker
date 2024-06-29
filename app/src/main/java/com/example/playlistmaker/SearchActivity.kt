@@ -16,6 +16,9 @@ import androidx.core.view.WindowInsetsCompat
 
 class SearchActivity : AppCompatActivity() {
     @SuppressLint("MissingInflatedId")
+
+    private var searchString: String = SEARCH_DEF
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -27,7 +30,7 @@ class SearchActivity : AppCompatActivity() {
         supportActionBar?.apply {
             setDisplayHomeAsUpEnabled(true)
             setDisplayShowHomeEnabled(true)
-            setDisplayShowTitleEnabled(false)
+            setDisplayShowTitleEnabled(true)
         }
 
         // Получаем объекты элементов активити
@@ -71,8 +74,6 @@ class SearchActivity : AppCompatActivity() {
             insets
         }
     }
-
-    private var searchString: String = SEARCH_DEF
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)

@@ -5,88 +5,44 @@
     android:theme="@style/Base.Theme.PlaylistMaker"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="5dp">
+    android:orientation="vertical">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        app:title="@string/settings"></androidx.appcompat.widget.Toolbar>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/settings"/>
-    </androidx.appcompat.widget.Toolbar>
-
-    <FrameLayout
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        style="@style/SettingsButtons"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/menu_height">
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:text="@string/menu_dark_theme"
+        android:checked="false" />
 
-        <TextView
-            style="@style/SettingsButtons"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:text="@string/menu_dark_theme"/>
-
-        <androidx.appcompat.widget.SwitchCompat
-            style="@style/SettingsButtons"
-            android:layout_width="48dp"
-            android:layout_height="match_parent"
-            android:layout_gravity="end|center"
-            android:layout_marginEnd="10dp"
-            android:checked="false"/>
-    </FrameLayout>
-
-    <FrameLayout
+    <com.google.android.material.textview.MaterialTextView
+        style="@style/SettingsButtons"
+        android:id="@+id/settingsShareApp"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/menu_height">
+        android:layout_height="wrap_content"
+        android:drawableEnd="@drawable/share_glif"
+        android:text="@string/menu_share_app" />
 
-        <TextView
-            style="@style/SettingsButtons"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:text="@string/menu_share_app"/>
-
-        <ImageView
-            android:id="@+id/settingsShareApp"
-            style="@style/SettingsImageView"
-            android:contentDescription="@string/menu_share_app"
-            android:src="@drawable/share_glif"/>
-    </FrameLayout>
-
-    <FrameLayout
+    <com.google.android.material.textview.MaterialTextView
+        style="@style/SettingsButtons"
+        android:id="@+id/settingsMailToSupport"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/menu_height">
+        android:layout_height="wrap_content"
+        android:drawableEnd="@drawable/support_glif"
+        android:text="@string/menu_support" />
 
-        <TextView
-            style="@style/SettingsButtons"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:text="@string/menu_support"/>
-
-        <ImageView
-            style="@style/SettingsImageView"
-            android:id="@+id/settingsMailToSupport"
-            android:contentDescription="@string/menu_support"
-            android:src="@drawable/support_glif"/>
-    </FrameLayout>
-
-    <FrameLayout
+    <com.google.android.material.textview.MaterialTextView
+        style="@style/SettingsButtons"
+        android:id="@+id/settingsUserAgreement"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/menu_height">
-
-        <TextView
-            style="@style/SettingsButtons"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:text="@string/menu_user_agreement"/>
-
-        <ImageView
-            style="@style/SettingsImageView"
-            android:id="@+id/settingsUserAgreement"
-            android:contentDescription="@string/menu_user_agreement"
-            android:src="@drawable/right_arrow_glif"/>
-    </FrameLayout>
+        android:layout_height="wrap_content"
+        android:drawableEnd="@drawable/right_arrow_glif"
+        android:text="@string/menu_user_agreement" />
 
 </LinearLayout>
