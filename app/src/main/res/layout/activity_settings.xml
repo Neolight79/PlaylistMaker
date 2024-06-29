@@ -11,7 +11,8 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:title="@string/settings"></androidx.appcompat.widget.Toolbar>
+        app:title="@string/settings">
+    </androidx.appcompat.widget.Toolbar>
 
     <com.google.android.material.switchmaterial.SwitchMaterial
         style="@style/SettingsButtons"
