@@ -1,16 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/main"
+    android:theme="@style/Base.Theme.PlaylistMaker"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".SearchActivity">
-    <TextView
+    android:orientation="vertical">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:gravity="center"
-        android:text="@string/search"
-        android:textSize="@dimen/main_text_size"
-        android:textColor="@color/white"/>
-</FrameLayout>
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/search"/>
+    </androidx.appcompat.widget.Toolbar>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:paddingHorizontal="@dimen/main_padding"
+        android:paddingVertical="@dimen/half_main_padding">
+
+        <EditText
+            style="@style/EditTextSearch"
+            android:id="@+id/inputEditText"
+            android:layout_width="match_parent"
+            android:layout_height="36dp"
+            android:hint="@string/search"/>
+
+        <ImageView
+            style="@style/ImageViewSearch"
+            android:id="@+id/clearIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:layout_gravity="end|center"
+            android:src="@drawable/close_glif"
+            android:visibility="gone"/>
+
+        <ImageView
+            style="@style/ImageViewSearch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/search_glif"
+            android:scaleX="0.7"
+            android:scaleY="0.7"/>
+    </FrameLayout>
+
+</LinearLayout>
