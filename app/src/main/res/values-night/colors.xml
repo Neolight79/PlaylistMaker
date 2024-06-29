@@ -4,7 +4,6 @@
     <color name="white">#FFFFFFFF</color>
     <color name="blue_background">#3772E7</color>
     <color name="dark">#1A1B22</color>
-    <color name="thumb">#AEAFB4</color>
-    <color name="track">#E6E8EB</color>
-    <color name="gray">#818C99</color>
+    <color name="thumb">#3772E7</color>
+    <color name="track">#9FBBF3</color>
 </resources>

@@ -9,5 +9,10 @@
     <string name="menu_support">Support</string>
     <string name="menu_user_agreement">User agreement</string>
     <string name="back">Back to main screen</string>
+    <string name="share_app_url" translatable="false">https://practicum.yandex.ru/android-developer/</string>
+    <string name="support_email" translatable="false">sergey.kuleshov@ru.rhenus.com</string>
+    <string name="support_subj">Message to developers of the Playlist Maker application</string>
+    <string name="support_text">Thanks to the developers for the cool application!</string>
+    <string name="user_agreement_url" translatable="false">https://yandex.ru/legal/practicum_offer/</string>
 
 </resources>

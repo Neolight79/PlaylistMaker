@@ -6,7 +6,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/light_bg"
     android:layout_margin="@dimen/main_padding">
 
     <TextView
@@ -14,51 +13,34 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/main_padding"
         android:layout_gravity="start"
-        android:text="@string/title"
-        android:textColor="@color/white"
-        android:textSize="@dimen/main_text_size"/>
+        android:text="@string/title"/>
 
 
     <Button
         android:id="@+id/buttonSearch"
-        android:theme="@style/Base.Theme.PlaylistMaker.Button"
+        style="@style/MainScreenButtons"
         android:layout_width="match_parent"
         android:layout_height="@dimen/zero_size"
-        android:layout_marginTop="10dp"
         android:layout_weight="1"
         android:text="@string/search"
-        android:textColor="@color/dark"
-        app:cornerRadius="@dimen/button_corner_radius"
-        app:icon="@drawable/search_glif"
-        android:foreground="?attr/selectableItemBackground"
-        app:iconTint="@color/dark"/>
+        app:icon="@drawable/search_glif"/>
 
     <Button
         android:id="@+id/buttonMedia"
-        android:theme="@style/Base.Theme.PlaylistMaker.Button"
+        style="@style/MainScreenButtons"
         android:layout_width="match_parent"
         android:layout_height="@dimen/zero_size"
-        android:layout_marginTop="10dp"
         android:layout_weight="1"
         android:text="@string/mediateka"
-        android:textColor="@color/dark"
-        app:cornerRadius="@dimen/button_corner_radius"
-        app:icon="@drawable/media_glif"
-        android:foreground="?attr/selectableItemBackground"
-        app:iconTint="@color/dark"/>
+        app:icon="@drawable/media_glif"/>
 
     <Button
         android:id="@+id/buttonSettings"
-        android:theme="@style/Base.Theme.PlaylistMaker.Button"
+        style="@style/MainScreenButtons"
         android:layout_width="match_parent"
         android:layout_height="@dimen/zero_size"
-        android:layout_marginTop="10dp"
         android:layout_weight="1"
         android:text="@string/settings"
-        android:textColor="@color/dark"
-        app:cornerRadius="@dimen/button_corner_radius"
-        app:icon="@drawable/settings_glif"
-        android:foreground="?attr/selectableItemBackground"
-        app:iconTint="@color/dark"/>
+        app:icon="@drawable/settings_glif"/>
 
 </LinearLayout>
