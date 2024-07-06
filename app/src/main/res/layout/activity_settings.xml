@@ -2,123 +2,48 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/main"
-    android:theme="@style/Theme.PlaylistMaker.Settings"
+    android:theme="@style/Base.Theme.PlaylistMaker"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="5dp">
+    android:orientation="vertical">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/white"
-        app:title="@string/settings"
-        android:theme="@style/Theme.PlaylistMaker.Settings"/>
+        app:title="@string/settings">
+    </androidx.appcompat.widget.Toolbar>
 
-    <FrameLayout
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        style="@style/SettingsButtons"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/menu_height">
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:text="@string/menu_dark_theme"
+        android:checked="false" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_marginStart="11dp"
-            android:gravity="start|center"
-            android:text="@string/menu_dark_theme"
-            android:textFontWeight="400"
-            android:textColor="@color/black"
-            android:textSize="@dimen/settings_text_size" />
-
-        <androidx.appcompat.widget.SwitchCompat
-            android:layout_width="48dp"
-            android:layout_height="match_parent"
-            android:layout_gravity="end|center"
-            android:layout_marginEnd="10dp"
-            android:checked="false"
-            android:thumbTint="@color/light_thumb"
-            android:trackTint="@color/light_track"/>
-    </FrameLayout>
-
-    <FrameLayout
+    <com.google.android.material.textview.MaterialTextView
+        style="@style/SettingsButtons"
+        android:id="@+id/settingsShareApp"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/menu_height">
+        android:layout_height="wrap_content"
+        android:drawableEnd="@drawable/share_glif"
+        android:text="@string/menu_share_app" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_marginStart="11dp"
-            android:gravity="start|center"
-            android:text="@string/menu_share_app"
-            android:textColor="@color/black"
-            android:textSize="@dimen/settings_text_size"
-            android:textFontWeight="400"/>
-
-        <ImageView
-            android:layout_width="48dp"
-            android:layout_height="match_parent"
-            android:layout_gravity="end"
-            android:contentDescription="@string/menu_share_app"
-            app:tint="@color/light_thumb"
-            android:src="@drawable/share_glif"
-            android:scaleX="0.5"
-            android:scaleY="0.5"
-            android:backgroundTint="@color/white"
-            android:layout_marginEnd="11dp"/>
-    </FrameLayout>
-
-    <FrameLayout
+    <com.google.android.material.textview.MaterialTextView
+        style="@style/SettingsButtons"
+        android:id="@+id/settingsMailToSupport"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/menu_height">
+        android:layout_height="wrap_content"
+        android:drawableEnd="@drawable/support_glif"
+        android:text="@string/menu_support" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_marginStart="11dp"
-            android:gravity="start|center"
-            android:text="@string/menu_support"
-            android:textColor="@color/black"
-            android:textSize="@dimen/settings_text_size"
-            android:textFontWeight="400"/>
-
-        <ImageView
-            android:layout_width="48dp"
-            android:layout_height="match_parent"
-            android:layout_gravity="end"
-            android:contentDescription="@string/menu_support"
-            app:tint="@color/light_thumb"
-            android:src="@drawable/support_glif"
-            android:scaleX="0.5"
-            android:scaleY="0.5"
-            android:backgroundTint="@color/white"
-            android:layout_marginEnd="11dp"/>
-    </FrameLayout>
-
-    <FrameLayout
+    <com.google.android.material.textview.MaterialTextView
+        style="@style/SettingsButtons"
+        android:id="@+id/settingsUserAgreement"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/menu_height">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_marginStart="11dp"
-            android:gravity="start|center"
-            android:text="@string/menu_user_agreement"
-            android:textColor="@color/black"
-            android:textSize="@dimen/settings_text_size"
-            android:textFontWeight="400"/>
-
-        <ImageView
-            android:layout_width="48dp"
-            android:layout_height="match_parent"
-            android:layout_gravity="end"
-            android:contentDescription="@string/menu_user_agreement"
-            app:tint="@color/light_thumb"
-            android:src="@drawable/right_arrow_glif"
-            android:scaleX="0.5"
-            android:scaleY="0.5"
-            android:backgroundTint="@color/white"
-            android:layout_marginEnd="11dp"/>
-    </FrameLayout>
+        android:layout_height="wrap_content"
+        android:drawableEnd="@drawable/right_arrow_glif"
+        android:text="@string/menu_user_agreement" />
 
 </LinearLayout>
