@@ -13,6 +13,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.recyclerview.widget.RecyclerView
 
 class SearchActivity : AppCompatActivity() {
     @SuppressLint("MissingInflatedId")
@@ -67,6 +68,12 @@ class SearchActivity : AppCompatActivity() {
             }
         }
         inputEditText.addTextChangedListener(simpleTextWatcher)
+
+        // Готовим RecyclerView
+        val searchListAdapter = SearchListAdapter(getMockTracks())
+
+        val rvSearchList = findViewById<RecyclerView>(R.id.searchRecyclerView)
+        rvSearchList.adapter = searchListAdapter
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
