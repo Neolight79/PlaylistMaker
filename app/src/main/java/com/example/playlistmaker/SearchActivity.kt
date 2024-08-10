@@ -32,8 +32,6 @@ class SearchActivity : AppCompatActivity() {
 
     // Инициализируем переменные для API
     private val itunesBaseUrl = "https://itunes.apple.com"
-    private val entity = "song"
-    private val country = "RU"
     private val retrofit = Retrofit.Builder()
         .baseUrl(itunesBaseUrl)
         .addConverterFactory(GsonConverterFactory.create())
@@ -42,7 +40,7 @@ class SearchActivity : AppCompatActivity() {
 
     // Инициализируем переменные для RecyclerView
     private val searchListAdapter = SearchListAdapter()
-    private val trackList = ArrayList<Track>()
+    private val trackList = mutableListOf<Track>()
     //private val trackList = getMockTracks()   // Заполнение списка моковыми данными
 
     // Инициализируем объекты для элементов активити
@@ -86,6 +84,7 @@ class SearchActivity : AppCompatActivity() {
         // Устанавливаем обработчик на кнопку очистки строки поиска
         clearButton.setOnClickListener {
             inputEditText.setText("")
+            hideMessage()
             trackList.clear()
             searchListAdapter.notifyDataSetChanged()
         }
@@ -147,22 +146,22 @@ class SearchActivity : AppCompatActivity() {
 
     // Обработчик запуска обращения по API для получения результатов поиска
     private fun search() {
-        itunesService.getTracks(entity, country, inputEditText.text.toString())
+        itunesService.getTracks(inputEditText.text.toString())
             .enqueue(object : Callback<ItunesResponse> {
                 override fun onResponse(call: Call<ItunesResponse>,
                                         response: Response<ItunesResponse>
                 ) {
                     when (response.code()) {
                         200 -> {
-                            if (response.body()?.results?.isNotEmpty() == true) {
+                            val foundTracks: MutableList<Track>? = response.body()?.results
+                            if (foundTracks.isNullOrEmpty()) {
+                                showMessageNothingFound()
+                            } else {
                                 trackList.clear()
-                                trackList.addAll(response.body()?.results!!)
+                                trackList.addAll(foundTracks)
                                 searchListAdapter.notifyDataSetChanged()
                                 hideMessage()
-                            } else {
-                                showMessageNothingFound()
                             }
-
                         }
                         else -> showErrorMessage(getString(R.string.errorCommon), response.code().toString())
                     }

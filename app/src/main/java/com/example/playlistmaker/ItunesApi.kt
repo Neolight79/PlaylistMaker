@@ -6,10 +6,8 @@ import retrofit2.http.Query
 
 interface ItunesApi {
 
-    @GET("/search")
+    @GET("/search?entity=song&country=RU")
     fun getTracks(
-        @Query("entity") entity: String,
-        @Query("country") country: String,
         @Query("term") query: String): Call<ItunesResponse>
 
 }

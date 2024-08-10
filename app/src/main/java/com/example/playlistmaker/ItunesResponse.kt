@@ -4,5 +4,5 @@ import com.google.gson.annotations.SerializedName
 
 class ItunesResponse(
     val resultCount: Int,
-    val results: ArrayList<Track>) {
+    val results: MutableList<Track>) {
 }

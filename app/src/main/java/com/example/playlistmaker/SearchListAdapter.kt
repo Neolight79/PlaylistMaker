@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.RecyclerView
 
 class SearchListAdapter() : RecyclerView.Adapter<SearchListViewHolder> () {
 
-    var foundTracks = ArrayList<Track>()
+    var foundTracks = mutableListOf<Track>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SearchListViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.activity_search_item, parent, false)

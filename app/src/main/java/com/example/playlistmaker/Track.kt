@@ -8,8 +8,8 @@ data class Track(
 )
 
 // Assembly of mock-data
-fun getMockTracks(): ArrayList<Track> {
-    return arrayListOf(
+fun getMockTracks(): MutableList<Track> {
+    return mutableListOf(
         Track(
             "Smells Like Teen Spirit",
             "Nirvana",
