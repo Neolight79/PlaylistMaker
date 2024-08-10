@@ -6,6 +6,8 @@
     <dimen name="zero_size">0dp</dimen>
     <dimen name="main_text_size">22sp</dimen>
     <dimen name="settings_text_size">16sp</dimen>
+    <dimen name="error_text_size">19sp</dimen>
+    <dimen name="refresh_button_text_size">14sp</dimen>
     <dimen name="search_item_small_text_size">11sp</dimen>
     <dimen name="menu_height">60dp</dimen>
     <dimen name="menu_h_padding">16dp</dimen>
