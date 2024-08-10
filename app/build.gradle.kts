@@ -9,7 +9,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.playlistmaker"
-        minSdk = 29
+        minSdk = 26
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -47,4 +47,8 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
     // Подключаем библиотеку Glide
     implementation("com.github.bumptech.glide:glide:4.16.0")
+    // Подключаем Gson и Retrofit
+    implementation("com.google.code.gson:gson:2.11.0")
+    implementation("com.squareup.retrofit2:retrofit:2.11.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.11.0")
 }

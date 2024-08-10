@@ -14,5 +14,9 @@
     <string name="support_subj">Message to developers of the Playlist Maker application</string>
     <string name="support_text">Thanks to the developers for the cool application!</string>
     <string name="user_agreement_url" translatable="false">https://yandex.ru/legal/practicum_offer/</string>
+    <string name="refresh">Refresh</string>
+    <string name="nothing_found">Nothing found</string>
+    <string name="no_connection">Network error\n\nConnection unsuccessful. Check connection.</string>
+    <string name="errorCommon">Something went wrong!</string>
 
 </resources>

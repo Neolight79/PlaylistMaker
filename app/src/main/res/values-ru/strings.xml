@@ -10,4 +10,8 @@
     <string name="back">Вернуться на начальный экран приложения</string>
     <string name="support_subj">Сообщение разработчикам и разработчицам приложения Playlist Maker</string>
     <string name="support_text">Спасибо разработчикам и разработчицам за крутое приложение!</string>
+    <string name="refresh">Обновить</string>
+    <string name="nothing_found">Ничего не нашлось</string>
+    <string name="no_connection">Проблемы со связью\n\nЗагрузка не удалась. Проверьте подключение к интернету</string>
+    <string name="errorCommon">Что-то пошло не так!</string>
 </resources>

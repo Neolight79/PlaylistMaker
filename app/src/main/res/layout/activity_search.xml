@@ -30,7 +30,9 @@
             android:hint="@string/search"
             android:drawableStart="@drawable/search_glif"
             android:drawableTint="@color/gray"
-            android:drawablePadding="@dimen/half_main_padding"/>
+            android:drawablePadding="@dimen/half_main_padding"
+            android:imeOptions="actionDone"
+            android:singleLine="true"/>
 
         <ImageView
             style="@style/ImageViewSearch"
@@ -43,6 +45,37 @@
             android:visibility="gone"/>
 
     </FrameLayout>
+
+    <LinearLayout
+        android:id="@+id/placeholderView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center|top"
+        android:visibility="gone">
+
+        <ImageView
+            android:id="@+id/placeholderImage"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_marginTop="86dp"
+            tools:src="@drawable/no_connection"/>
+
+        <TextView
+            style="@style/MessageText"
+            android:id="@+id/placeholderMessage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:text="@string/no_connection"/>
+
+        <Button
+            style="@style/PlaceholderButton"
+            android:id="@+id/placeholderButton"
+            android:layout_width="91dp"
+            android:layout_height="36dp"
+            android:text="@string/refresh"/>
+
+    </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/searchRecyclerView"
