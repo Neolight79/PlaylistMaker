@@ -41,7 +41,6 @@ class SearchActivity : AppCompatActivity() {
     // Инициализируем переменные для RecyclerView списка найденных треков
     private val searchListAdapter = SearchListAdapter(false)
     private val trackList = mutableListOf<Track>()
-    //private val trackList = getMockTracks()   // Заполнение списка моковыми данными
 
     // Инициализируем переменные для RecyclerView списка истории поиска
     private val historyListAdapter = SearchListAdapter(true)
