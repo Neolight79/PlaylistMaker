@@ -8,20 +8,24 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
-import com.bumptech.glide.request.RequestOptions
 import java.text.SimpleDateFormat
 import java.util.Locale
 
 class SearchListViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
 
-    private val trackName: TextView = itemView.findViewById(R.id.trackName)
-    private val artistName: TextView = itemView.findViewById(R.id.artistName)
-    private val trackTime: TextView = itemView.findViewById(R.id.trackTime)
-    private val trackArtwork: ImageView = itemView.findViewById(R.id.trackArtwork)
+    private lateinit var trackName: TextView
+    private lateinit var artistName: TextView
+    private lateinit var trackTime: TextView
+    private lateinit var trackArtwork: ImageView
 
     private val dateFormat by lazy { SimpleDateFormat("mm:ss", Locale.getDefault()) }
 
     fun bind(item: Track) {
+
+        trackName = itemView.findViewById(R.id.trackName)
+        artistName = itemView.findViewById(R.id.artistName)
+        trackTime = itemView.findViewById(R.id.trackTime)
+        trackArtwork = itemView.findViewById(R.id.trackArtwork)
 
         trackName.text = item.trackName
         artistName.text = item.artistName
@@ -33,4 +37,5 @@ class SearchListViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
             .placeholder(R.drawable.placeholder)
             .into(trackArtwork)
     }
+
 }

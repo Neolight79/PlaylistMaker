@@ -16,6 +16,7 @@
 
     <com.google.android.material.switchmaterial.SwitchMaterial
         style="@style/SettingsButtons"
+        android:id="@+id/themeSwitcher"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
