@@ -114,7 +114,7 @@ class SearchActivity : AppCompatActivity() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 if (s.isNullOrEmpty()) {
                     clearButton.visibility = View.GONE
-                    if (searchHistory.trackList.isNotEmpty()) searchHistoryView.visibility = View.VISIBLE
+                    if (searchHistory.isNotEmpty()) searchHistoryView.visibility = View.VISIBLE
                     val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
                     inputMethodManager?.hideSoftInputFromWindow(inputEditText.windowToken, 0)
                 } else {
@@ -140,7 +140,7 @@ class SearchActivity : AppCompatActivity() {
 
         // Добавляем обработчик для смены фокуса на поле ввода
         inputEditText.setOnFocusChangeListener { _, hasFocus ->
-            searchHistoryView.visibility = if (hasFocus && inputEditText.text.isEmpty() && searchHistory.trackList.isNotEmpty()) View.VISIBLE else View.GONE
+            searchHistoryView.visibility = if (hasFocus && inputEditText.text.isEmpty() && searchHistory.isNotEmpty()) View.VISIBLE else View.GONE
         }
 
         // Готовим RecyclerView
@@ -190,7 +190,7 @@ class SearchActivity : AppCompatActivity() {
                 ) {
                     when (response.code()) {
                         200 -> {
-                            val foundTracks: MutableList<Track>? = response.body()?.results
+                            val foundTracks: MutableList<Track>? = response.body()?.results?.toMutableList()
                             if (foundTracks.isNullOrEmpty()) {
                                 showMessageNothingFound()
                             } else {

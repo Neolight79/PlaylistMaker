@@ -8,24 +8,29 @@ const val SEARCH_HISTORY_KEY = "search_history"
 
 class SearchHistory(private val sharedPrefs: SharedPreferences) {
 
-    var trackList: MutableList<Track>
+    var trackList = mutableListOf<Track>()
+    private val gson = Gson()
 
     init {
         val tracksJson: String? = sharedPrefs.getString(SEARCH_HISTORY_KEY, "")
-        trackList = if (tracksJson.isNullOrEmpty()) {
-            mutableListOf()
+        trackList.addAll(if (tracksJson.isNullOrEmpty()) {
+            listOf()
         } else {
             createTrackListFromJson(tracksJson)
-        }
+        })
     }
 
-    private fun createTrackListFromJson(json: String): MutableList<Track> {
-        class Token : TypeToken<MutableList<Track>>()
-        return Gson().fromJson(json, Token().type)
+    fun isNotEmpty(): Boolean {
+        return trackList.isNotEmpty()
     }
 
-    private fun createJsonFromTrackList(tracks: MutableList<Track>): String {
-        return Gson().toJson(tracks)
+    private fun createTrackListFromJson(json: String): List<Track> {
+        class Token : TypeToken<List<Track>>()
+        return gson.fromJson(json, Token().type)
+    }
+
+    private fun createJsonFromTrackList(tracks: List<Track>): String {
+        return gson.toJson(tracks)
     }
 
     fun addTrack(track: Track) {
@@ -55,7 +60,7 @@ class SearchHistory(private val sharedPrefs: SharedPreferences) {
     }
 
     private fun saveTrackList() {
-        sharedPrefs.edit().putString(SEARCH_HISTORY_KEY, createJsonFromTrackList(trackList))
+        sharedPrefs.edit().putString(SEARCH_HISTORY_KEY, createJsonFromTrackList(trackList.toList()))
             .apply()
     }
 
