@@ -15,4 +15,7 @@
     <dimen name="search_list_height">52dp</dimen>
     <dimen name="search_menu_height">61dp</dimen>
     <dimen name="search_menu_h_padding">12dp</dimen>
+    <dimen name="history_title_top_margin">26dp</dimen>
+    <dimen name="history_button_top_margin">24dp</dimen>
+    <dimen name="history_footer_height">84dp</dimen>
 </resources>
