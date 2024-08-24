@@ -32,7 +32,7 @@ class MainActivity : AppCompatActivity() {
             startActivity(mediaIntent)
         }
 
-        // Обработка нажатия на кнопку Медиатека
+        // Обработка нажатия на кнопку Настройки
         val settingsButton = findViewById<Button>(R.id.buttonSettings)
 
         // Выполняем Intent в явном виде для активации страницы активити Настроек

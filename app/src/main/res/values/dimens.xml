@@ -9,6 +9,7 @@
     <dimen name="error_text_size">19sp</dimen>
     <dimen name="refresh_button_text_size">14sp</dimen>
     <dimen name="search_item_small_text_size">11sp</dimen>
+    <dimen name="details_text_size">13sp</dimen>
     <dimen name="menu_height">60dp</dimen>
     <dimen name="menu_h_padding">16dp</dimen>
     <dimen name="menu_v_padding">20dp</dimen>
@@ -17,5 +18,8 @@
     <dimen name="search_menu_h_padding">12dp</dimen>
     <dimen name="history_title_top_margin">26dp</dimen>
     <dimen name="history_button_top_margin">24dp</dimen>
+    <dimen name="media_margin">16dp</dimen>
     <dimen name="history_footer_height">84dp</dimen>
+    <dimen name="side_buttons_diameter">51dp</dimen>
+    <dimen name="play_buttons_diameter">84dp</dimen>
 </resources>

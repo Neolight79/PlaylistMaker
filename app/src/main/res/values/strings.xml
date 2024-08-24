@@ -20,5 +20,15 @@
     <string name="errorCommon">Something went wrong!</string>
     <string name="search_history">History</string>
     <string name="clear_history">Clear history</string>
+    <string name="album">Album</string>
+    <string name="desc_artwork">Album artwork</string>
+    <string name="desc_playbutton">Playbutton</string>
+    <string name="desc_add_to_playlist">Add to playlist</string>
+    <string name="desc_add_to_favorite">Add to favorite</string>
+    <string name="duration">Duration</string>
+    <string name="year">Year</string>
+    <string name="genre">Genre</string>
+    <string name="country">Country</string>
+    <string name="zero_duration" translatable="false">0:00</string>
 
 </resources>

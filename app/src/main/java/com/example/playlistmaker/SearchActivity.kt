@@ -2,6 +2,7 @@ package com.example.playlistmaker
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -18,6 +19,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.RecyclerView
+import com.google.gson.Gson
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -44,6 +46,7 @@ class SearchActivity : AppCompatActivity() {
 
     // Инициализируем переменные для RecyclerView списка истории поиска
     private val historyListAdapter = SearchListAdapter(true)
+    private val searchHistoryTrackList = mutableListOf<Track>()
 
     // Инициализируем объекты для элементов активити
     private lateinit var inputEditText: EditText
@@ -84,7 +87,7 @@ class SearchActivity : AppCompatActivity() {
         searchHistoryView = findViewById(R.id.searchHistoryView)
 
         // Загружаем историю поиска
-        searchHistory = SearchHistory((applicationContext as App).sharedPrefs)
+        searchHistory = SearchHistory((applicationContext as App).sharedPrefs, searchHistoryTrackList)
 
         //Восстанавливаем содержимое строки поиска
         if (savedInstanceState != null) {
@@ -148,11 +151,22 @@ class SearchActivity : AppCompatActivity() {
         rvSearchList = findViewById(R.id.searchRecyclerView)
         rvSearchList.adapter = searchListAdapter
 
-        // Подключаем обработчик нажатия на элемент списка RecyclerView
+        // Подключаем обработчик нажатия на элемент списка RecyclerView для списка найденных треков
         searchListAdapter.onItemClick = { track ->
             searchHistory.addTrack(track)
-            historyListAdapter.notifyItemInserted(0)
-            historyListAdapter.notifyItemRemoved(10)
+            historyListAdapter.notifyDataSetChanged()
+            val playerIntent = Intent(this, PlayerActivity::class.java)
+            val json = Gson().toJson(track)
+            playerIntent.putExtra("TRACK", json)
+            startActivity(playerIntent)
+        }
+
+        // Подключаем обработчик нажатия на элемент списка RecyclerView для списка истории
+        historyListAdapter.onItemClick = { track ->
+            val playerIntent = Intent(this, PlayerActivity::class.java)
+            val json = Gson().toJson(track)
+            playerIntent.putExtra("TRACK", json)
+            startActivity(playerIntent)
         }
 
         // Подключаем обработчик нажатия на кнопку очистки истории
@@ -163,7 +177,7 @@ class SearchActivity : AppCompatActivity() {
         }
 
         // Готовим RecyclerView для истории поиска
-        historyListAdapter.foundTracks = searchHistory.trackList
+        historyListAdapter.foundTracks = searchHistoryTrackList
         rvHistoryList = findViewById(R.id.historyRecyclerView)
         rvHistoryList.adapter = historyListAdapter
 

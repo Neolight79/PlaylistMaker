@@ -25,7 +25,7 @@ class App : Application() {
         if (darkTheme != darkThemeEnabled)
             sharedPrefs.edit().putBoolean(NIGHT_MODE_STATE, darkThemeEnabled).apply()
 
-        // В любом случае выставляем значение в соответствии с папаметром
+        // В любом случае выставляем значение в соответствии с параметром
         darkTheme = darkThemeEnabled
         AppCompatDelegate.setDefaultNightMode(
             if (darkThemeEnabled) {
