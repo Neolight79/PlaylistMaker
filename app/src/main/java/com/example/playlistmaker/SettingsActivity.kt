@@ -8,18 +8,21 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import com.google.android.material.switchmaterial.SwitchMaterial
+import com.example.playlistmaker.databinding.ActivitySettingsBinding
 
 class SettingsActivity : AppCompatActivity() {
+
+    private lateinit var binding: ActivitySettingsBinding
+
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContentView(R.layout.activity_settings)
+        binding = ActivitySettingsBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         // Активируем тулбар для реализации возврата в главную активность по системной кнопке
-        val toolbar = findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbar)
-        setSupportActionBar(toolbar)
+        setSupportActionBar(binding.toolbar)
         supportActionBar?.apply {
             setDisplayHomeAsUpEnabled(true)
             setDisplayShowHomeEnabled(true)
@@ -27,17 +30,14 @@ class SettingsActivity : AppCompatActivity() {
         }
 
         // Инициализируем переключатель темы в соответствии с текущей и активируем обработчик
-        val themeSwitcher = findViewById<SwitchMaterial>(R.id.themeSwitcher)
+        binding.themeSwitcher.setChecked((applicationContext as App).darkTheme)
 
-        themeSwitcher.setChecked((applicationContext as App).darkTheme)
-
-        themeSwitcher.setOnCheckedChangeListener { _, checked ->
+        binding.themeSwitcher.setOnCheckedChangeListener { _, checked ->
             (applicationContext as App).switchTheme(checked)
         }
 
         // Обработка нажатия на кнопку ПоделитьсяПриложением
-        val settingsShareApp = findViewById<com.google.android.material.textview.MaterialTextView>(R.id.settingsShareApp)
-        settingsShareApp.setOnClickListener {
+        binding.settingsShareApp.setOnClickListener {
             val shareAppIntent = Intent().apply {
                 action = Intent.ACTION_SEND
                 putExtra(Intent.EXTRA_TEXT, getString(R.string.share_app_url))
@@ -47,8 +47,7 @@ class SettingsActivity : AppCompatActivity() {
         }
 
         // Обработка нажатия на кнопку НаписатьВПоддержку
-        val settingsMailToSupport = findViewById<com.google.android.material.textview.MaterialTextView>(R.id.settingsMailToSupport)
-        settingsMailToSupport.setOnClickListener {
+        binding.settingsMailToSupport.setOnClickListener {
             val mailToSupportIntent = Intent().apply {
                 action = Intent.ACTION_SENDTO
                 data = Uri.parse("mailto:")
@@ -60,8 +59,7 @@ class SettingsActivity : AppCompatActivity() {
         }
 
         // Обработка нажатия на кнопку Пользовательское соглашение
-        val settingsUserAgreement = findViewById<com.google.android.material.textview.MaterialTextView>(R.id.settingsUserAgreement)
-        settingsUserAgreement.setOnClickListener {
+        binding.settingsUserAgreement.setOnClickListener {
             val userAgreement = Intent().apply {
                 action = Intent.ACTION_VIEW
                 data = Uri.parse(getString(R.string.user_agreement_url))

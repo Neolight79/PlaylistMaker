@@ -2,22 +2,19 @@ package com.example.playlistmaker
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.recyclerview.widget.RecyclerView
+import com.example.playlistmaker.databinding.ActivitySearchBinding
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -26,6 +23,8 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 class SearchActivity : AppCompatActivity() {
     @SuppressLint("MissingInflatedId")
+
+    private lateinit var binding: ActivitySearchBinding
 
     // Инициализируем переменную для хранения запроса поиска
     private var searchString: String = SEARCH_DEF
@@ -44,26 +43,17 @@ class SearchActivity : AppCompatActivity() {
 
     // Инициализируем переменные для RecyclerView списка истории поиска
     private val historyListAdapter = SearchListAdapter(true)
+    private val searchHistoryTrackList = mutableListOf<Track>()
 
-    // Инициализируем объекты для элементов активити
-    private lateinit var inputEditText: EditText
-    private lateinit var rvSearchList: RecyclerView
-    private lateinit var clearButton: ImageView
-    // Инициализируем элементы для экрана вывода сообщений с ошибками
-    private lateinit var placeholderView: View
-    private lateinit var placeholderImage: ImageView
-    private lateinit var placeholderMessage: TextView
-    private lateinit var placeholderButton: Button
     // Инициализируем элементы для экрана вывода истории поиска
     private lateinit var searchHistory: SearchHistory
-    private lateinit var searchHistoryView: View
-    private lateinit var rvHistoryList: RecyclerView
 
     @SuppressLint("NotifyDataSetChanged")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContentView(R.layout.activity_search)
+        binding = ActivitySearchBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         // Активируем тулбар для реализации возврата в главную активность по системной кнопке
         val toolbar = findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbar)
@@ -74,34 +64,25 @@ class SearchActivity : AppCompatActivity() {
             setDisplayShowTitleEnabled(true)
         }
 
-        // Получаем объекты элементов активити
-        inputEditText = findViewById(R.id.inputEditText)
-        clearButton = findViewById(R.id.clearIcon)
-        placeholderView = findViewById(R.id.placeholderView)
-        placeholderImage = findViewById(R.id.placeholderImage)
-        placeholderMessage = findViewById(R.id.placeholderMessage)
-        placeholderButton = findViewById(R.id.placeholderButton)
-        searchHistoryView = findViewById(R.id.searchHistoryView)
-
         // Загружаем историю поиска
-        searchHistory = SearchHistory((applicationContext as App).sharedPrefs)
+        searchHistory = SearchHistory((applicationContext as App).sharedPrefs, searchHistoryTrackList)
 
         //Восстанавливаем содержимое строки поиска
         if (savedInstanceState != null) {
             searchString = savedInstanceState.getString(SEARCH_STRING, SEARCH_DEF)
-            inputEditText.setText(searchString)
+            binding.inputEditText.setText(searchString)
         }
 
         // Устанавливаем обработчик на кнопку очистки строки поиска
-        clearButton.setOnClickListener {
-            inputEditText.text.clear()
+        binding.clearIcon.setOnClickListener {
+            binding.inputEditText.text.clear()
             hideMessage()
             trackList.clear()
             searchListAdapter.notifyDataSetChanged()
         }
 
         // Устанавливаем обработчик на кнопку обновления после ошибки
-        placeholderButton.setOnClickListener {
+        binding.placeholderButton.setOnClickListener {
             search()
         }
 
@@ -113,14 +94,14 @@ class SearchActivity : AppCompatActivity() {
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 if (s.isNullOrEmpty()) {
-                    clearButton.visibility = View.GONE
-                    if (searchHistory.isNotEmpty()) searchHistoryView.visibility = View.VISIBLE
+                    binding.clearIcon.visibility = View.GONE
+                    if (searchHistory.isNotEmpty()) binding.searchHistoryView.visibility = View.VISIBLE
                     val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
-                    inputMethodManager?.hideSoftInputFromWindow(inputEditText.windowToken, 0)
+                    inputMethodManager?.hideSoftInputFromWindow(binding.inputEditText.windowToken, 0)
                 } else {
-                    clearButton.visibility = View.VISIBLE
+                    binding.clearIcon.visibility = View.VISIBLE
                     searchString = s.toString()
-                    searchHistoryView.visibility = View.GONE
+                    binding.searchHistoryView.visibility = View.GONE
                 }
             }
 
@@ -128,10 +109,10 @@ class SearchActivity : AppCompatActivity() {
                 // Код обработчика после изменения текста
             }
         }
-        inputEditText.addTextChangedListener(simpleTextWatcher)
+        binding.inputEditText.addTextChangedListener(simpleTextWatcher)
 
         // Временно добавляем для запуска поиска по нажатию Done
-        inputEditText.setOnEditorActionListener { _, actionId, _ ->
+        binding.inputEditText.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 search()
             }
@@ -139,33 +120,41 @@ class SearchActivity : AppCompatActivity() {
         }
 
         // Добавляем обработчик для смены фокуса на поле ввода
-        inputEditText.setOnFocusChangeListener { _, hasFocus ->
-            searchHistoryView.visibility = if (hasFocus && inputEditText.text.isEmpty() && searchHistory.isNotEmpty()) View.VISIBLE else View.GONE
+        binding.inputEditText.setOnFocusChangeListener { _, hasFocus ->
+            binding.searchHistoryView.visibility = if (hasFocus && binding.inputEditText.text.isEmpty() && searchHistory.isNotEmpty()) View.VISIBLE else View.GONE
         }
 
         // Готовим RecyclerView
         searchListAdapter.foundTracks = trackList
-        rvSearchList = findViewById(R.id.searchRecyclerView)
-        rvSearchList.adapter = searchListAdapter
+        //rvSearchList = findViewById(R.id.searchRecyclerView)
+        binding.searchRecyclerView.adapter = searchListAdapter
 
-        // Подключаем обработчик нажатия на элемент списка RecyclerView
+        // Подключаем обработчик нажатия на элемент списка RecyclerView для списка найденных треков
         searchListAdapter.onItemClick = { track ->
             searchHistory.addTrack(track)
-            historyListAdapter.notifyItemInserted(0)
-            historyListAdapter.notifyItemRemoved(10)
+            historyListAdapter.notifyDataSetChanged()
+            val playerIntent = Intent(this, PlayerActivity::class.java)
+            playerIntent.putExtra("TRACK", track)
+            startActivity(playerIntent)
+        }
+
+        // Подключаем обработчик нажатия на элемент списка RecyclerView для списка истории
+        historyListAdapter.onItemClick = { track ->
+            val playerIntent = Intent(this, PlayerActivity::class.java)
+            playerIntent.putExtra("TRACK", track)
+            startActivity(playerIntent)
         }
 
         // Подключаем обработчик нажатия на кнопку очистки истории
         historyListAdapter.onClearHistoryClick = {
             searchHistory.clearHistory()
             historyListAdapter.notifyDataSetChanged()
-            searchHistoryView.visibility = View.GONE
+            binding.searchHistoryView.visibility = View.GONE
         }
 
         // Готовим RecyclerView для истории поиска
-        historyListAdapter.foundTracks = searchHistory.trackList
-        rvHistoryList = findViewById(R.id.historyRecyclerView)
-        rvHistoryList.adapter = historyListAdapter
+        historyListAdapter.foundTracks = searchHistoryTrackList
+        binding.historyRecyclerView.adapter = historyListAdapter
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -182,7 +171,7 @@ class SearchActivity : AppCompatActivity() {
 
     // Обработчик запуска обращения по API для получения результатов поиска
     private fun search() {
-        itunesService.getTracks(inputEditText.text.toString())
+        itunesService.getTracks(binding.inputEditText.text.toString())
             .enqueue(object : Callback<ItunesResponse> {
                 @SuppressLint("NotifyDataSetChanged")
                 override fun onResponse(call: Call<ItunesResponse>,
@@ -213,22 +202,22 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun hideMessage() {
-        if (placeholderView.visibility != View.GONE)
-            placeholderView.visibility = View.GONE
+        if (binding.placeholderView.visibility != View.GONE)
+            binding.placeholderView.visibility = View.GONE
     }
 
     private fun showMessageNothingFound() {
-        placeholderButton.visibility = View.GONE
-        placeholderImage.setImageResource(R.drawable.nothing_found)
-        placeholderMessage.text = getString(R.string.nothing_found)
-        placeholderView.visibility = View.VISIBLE
+        binding.placeholderButton.visibility = View.GONE
+        binding.placeholderImage.setImageResource(R.drawable.nothing_found)
+        binding.placeholderView.visibility = View.VISIBLE
+        binding.placeholderMessage.text = getString(R.string.nothing_found)
     }
 
     private fun showErrorMessage(errorText: String, errorDetails: String) {
-        placeholderButton.visibility = View.VISIBLE
-        placeholderImage.setImageResource(R.drawable.no_connection)
-        placeholderMessage.text = errorText
-        placeholderView.visibility = View.VISIBLE
+        binding.placeholderButton.visibility = View.VISIBLE
+        binding.placeholderImage.setImageResource(R.drawable.no_connection)
+        binding.placeholderMessage.text = errorText
+        binding.placeholderView.visibility = View.VISIBLE
 
         if (errorText.isNotEmpty())
             Toast.makeText(applicationContext, errorDetails, Toast.LENGTH_LONG).show()

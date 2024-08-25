@@ -6,18 +6,21 @@ import com.google.gson.reflect.TypeToken
 
 const val SEARCH_HISTORY_KEY = "search_history"
 
-class SearchHistory(private val sharedPrefs: SharedPreferences) {
+class SearchHistory(private val sharedPrefs: SharedPreferences, private val trackList: MutableList<Track>) {
 
-    var trackList = mutableListOf<Track>()
     private val gson = Gson()
 
     init {
-        val tracksJson: String? = sharedPrefs.getString(SEARCH_HISTORY_KEY, "")
-        trackList.addAll(if (tracksJson.isNullOrEmpty()) {
-            listOf()
-        } else {
-            createTrackListFromJson(tracksJson)
-        })
+        if (trackList.isEmpty()) {
+            val tracksJson: String? = sharedPrefs.getString(SEARCH_HISTORY_KEY, "")
+            trackList.addAll(
+                if (tracksJson.isNullOrEmpty()) {
+                    listOf()
+                } else {
+                    createTrackListFromJson(tracksJson)
+                }
+            )
+        }
     }
 
     fun isNotEmpty(): Boolean {

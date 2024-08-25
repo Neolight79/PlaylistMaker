@@ -16,4 +16,13 @@
     <string name="errorCommon">Что-то пошло не так!</string>
     <string name="search_history">Вы искали</string>
     <string name="clear_history">Очистить историю</string>
+    <string name="album">Альбом</string>
+    <string name="desc_artwork">Обложка альбома</string>
+    <string name="desc_playbutton">Воспроизведение</string>
+    <string name="desc_add_to_playlist">Добавить в плейлист</string>
+    <string name="desc_add_to_favorite">Добавить в избранное</string>
+    <string name="duration">Длительность</string>
+    <string name="year">Год</string>
+    <string name="genre">Жанр</string>
+    <string name="country">Страна</string>
 </resources>
