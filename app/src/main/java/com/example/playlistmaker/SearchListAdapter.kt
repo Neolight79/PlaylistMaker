@@ -5,7 +5,6 @@ import android.view.ViewGroup
 import android.widget.Button
 import androidx.recyclerview.widget.RecyclerView
 
-
 class SearchListAdapter(private val showFooter: Boolean) : RecyclerView.Adapter<SearchListViewHolder> () {
 
     var foundTracks = mutableListOf<Track>()
