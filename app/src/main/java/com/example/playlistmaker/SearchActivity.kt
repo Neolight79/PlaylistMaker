@@ -4,6 +4,8 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
@@ -25,6 +27,9 @@ class SearchActivity : AppCompatActivity() {
     @SuppressLint("MissingInflatedId")
 
     private lateinit var binding: ActivitySearchBinding
+
+    // Защита от DEBOUNCE для нажатий на элементы списков
+    private var isClickAllowed = true
 
     // Инициализируем переменную для хранения запроса поиска
     private var searchString: String = SEARCH_DEF
@@ -48,6 +53,12 @@ class SearchActivity : AppCompatActivity() {
     // Инициализируем элементы для экрана вывода истории поиска
     private lateinit var searchHistory: SearchHistory
 
+    // Инициализируем интерфейс для запуска поиска в новом потоке
+    private val searchRunnable = Runnable { search() }
+
+    // Инициализируем ручку для доступа к главному потоку
+    private var mainThreadHandler: Handler? = null
+
     @SuppressLint("NotifyDataSetChanged")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,10 +75,13 @@ class SearchActivity : AppCompatActivity() {
             setDisplayShowTitleEnabled(true)
         }
 
+        // Создаём handler для доступа из дополнительных потоков к главному
+        mainThreadHandler = Handler(Looper.getMainLooper())
+
         // Загружаем историю поиска
         searchHistory = SearchHistory((applicationContext as App).sharedPrefs, searchHistoryTrackList)
 
-        //Восстанавливаем содержимое строки поиска
+        // Восстанавливаем содержимое строки поиска
         if (savedInstanceState != null) {
             searchString = savedInstanceState.getString(SEARCH_STRING, SEARCH_DEF)
             binding.inputEditText.setText(searchString)
@@ -102,6 +116,7 @@ class SearchActivity : AppCompatActivity() {
                     binding.clearIcon.visibility = View.VISIBLE
                     searchString = s.toString()
                     binding.searchHistoryView.visibility = View.GONE
+                    searchDebounce()
                 }
             }
 
@@ -126,23 +141,26 @@ class SearchActivity : AppCompatActivity() {
 
         // Готовим RecyclerView
         searchListAdapter.foundTracks = trackList
-        //rvSearchList = findViewById(R.id.searchRecyclerView)
         binding.searchRecyclerView.adapter = searchListAdapter
 
         // Подключаем обработчик нажатия на элемент списка RecyclerView для списка найденных треков
         searchListAdapter.onItemClick = { track ->
-            searchHistory.addTrack(track)
-            historyListAdapter.notifyDataSetChanged()
-            val playerIntent = Intent(this, PlayerActivity::class.java)
-            playerIntent.putExtra("TRACK", track)
-            startActivity(playerIntent)
+            if (clickDebounce()) {
+                searchHistory.addTrack(track)
+                historyListAdapter.notifyDataSetChanged()
+                val playerIntent = Intent(this, PlayerActivity::class.java)
+                playerIntent.putExtra("TRACK", track)
+                startActivity(playerIntent)
+            }
         }
 
         // Подключаем обработчик нажатия на элемент списка RecyclerView для списка истории
         historyListAdapter.onItemClick = { track ->
-            val playerIntent = Intent(this, PlayerActivity::class.java)
-            playerIntent.putExtra("TRACK", track)
-            startActivity(playerIntent)
+            if (clickDebounce()) {
+                val playerIntent = Intent(this, PlayerActivity::class.java)
+                playerIntent.putExtra("TRACK", track)
+                startActivity(playerIntent)
+            }
         }
 
         // Подключаем обработчик нажатия на кнопку очистки истории
@@ -171,12 +189,19 @@ class SearchActivity : AppCompatActivity() {
 
     // Обработчик запуска обращения по API для получения результатов поиска
     private fun search() {
+
+        // Показываем ProgressBar
+        binding.progressBar.visibility = View.VISIBLE
+
+        // Запускаем запрос поиска треков
         itunesService.getTracks(binding.inputEditText.text.toString())
             .enqueue(object : Callback<ItunesResponse> {
                 @SuppressLint("NotifyDataSetChanged")
                 override fun onResponse(call: Call<ItunesResponse>,
                                         response: Response<ItunesResponse>
                 ) {
+                    // Убираем ProgressBar
+                    binding.progressBar.visibility = View.GONE
                     when (response.code()) {
                         200 -> {
                             val foundTracks: MutableList<Track>? = response.body()?.results?.toMutableList()
@@ -224,8 +249,24 @@ class SearchActivity : AppCompatActivity() {
 
     }
 
+    private fun searchDebounce() {
+        mainThreadHandler?.removeCallbacks(searchRunnable)
+        mainThreadHandler?.postDelayed(searchRunnable, SEARCH_DEBOUNCE_DELAY)
+    }
+
+    private fun clickDebounce() : Boolean {
+        val current = isClickAllowed
+        if (isClickAllowed) {
+            isClickAllowed = false
+            mainThreadHandler?.postDelayed({ isClickAllowed = true }, CLICK_DEBOUNCE_DELAY)
+        }
+        return current
+    }
+
     companion object {
         const val SEARCH_STRING = "SEARCH_STRING"
         const val SEARCH_DEF = ""
+        const val SEARCH_DEBOUNCE_DELAY = 2000L
+        const val CLICK_DEBOUNCE_DELAY = 1000L
     }
 }
