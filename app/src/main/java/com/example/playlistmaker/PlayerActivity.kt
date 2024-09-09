@@ -126,9 +126,7 @@ class PlayerActivity : AppCompatActivity() {
         playerState = STATE_PLAYING
 
         // Запускаем механизм обновления данных счётчика проигрывателя
-        // Выводим текущее время проигрывания
-        refreshPlayingTime()
-        // Запускаем новый поток, который будет обновлять время
+        // Запускаем поток, который будет обновлять время
         mainThreadHandler?.postDelayed(
             object : Runnable {
                 override fun run() {

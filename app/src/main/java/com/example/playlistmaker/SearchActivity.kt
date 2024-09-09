@@ -66,7 +66,7 @@ class SearchActivity : AppCompatActivity() {
         binding = ActivitySearchBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Активируем тулбар для реализации возврата в главную активность по системной кнопке
+        // Активируем toolbar для реализации возврата в главную активность по системной кнопке
         val toolbar = findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
         supportActionBar?.apply {
@@ -89,6 +89,7 @@ class SearchActivity : AppCompatActivity() {
 
         // Устанавливаем обработчик на кнопку очистки строки поиска
         binding.clearIcon.setOnClickListener {
+            mainThreadHandler?.removeCallbacks(searchRunnable)
             binding.inputEditText.text.clear()
             hideMessage()
             trackList.clear()
@@ -97,6 +98,7 @@ class SearchActivity : AppCompatActivity() {
 
         // Устанавливаем обработчик на кнопку обновления после ошибки
         binding.placeholderButton.setOnClickListener {
+            mainThreadHandler?.removeCallbacks(searchRunnable)
             search()
         }
 
@@ -108,6 +110,7 @@ class SearchActivity : AppCompatActivity() {
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 if (s.isNullOrEmpty()) {
+                    mainThreadHandler?.removeCallbacks(searchRunnable)
                     binding.clearIcon.visibility = View.GONE
                     if (searchHistory.isNotEmpty()) binding.searchHistoryView.visibility = View.VISIBLE
                     val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
@@ -126,9 +129,10 @@ class SearchActivity : AppCompatActivity() {
         }
         binding.inputEditText.addTextChangedListener(simpleTextWatcher)
 
-        // Временно добавляем для запуска поиска по нажатию Done
+        // Помимо поиска по DEBOUNCE можно запустить не дожидаясь двух секунд принудительно
         binding.inputEditText.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
+                mainThreadHandler?.removeCallbacks(searchRunnable)
                 search()
             }
             false
@@ -145,22 +149,12 @@ class SearchActivity : AppCompatActivity() {
 
         // Подключаем обработчик нажатия на элемент списка RecyclerView для списка найденных треков
         searchListAdapter.onItemClick = { track ->
-            if (clickDebounce()) {
-                searchHistory.addTrack(track)
-                historyListAdapter.notifyDataSetChanged()
-                val playerIntent = Intent(this, PlayerActivity::class.java)
-                playerIntent.putExtra("TRACK", track)
-                startActivity(playerIntent)
-            }
+            if (clickDebounce()) startPlayer(track)
         }
 
         // Подключаем обработчик нажатия на элемент списка RecyclerView для списка истории
         historyListAdapter.onItemClick = { track ->
-            if (clickDebounce()) {
-                val playerIntent = Intent(this, PlayerActivity::class.java)
-                playerIntent.putExtra("TRACK", track)
-                startActivity(playerIntent)
-            }
+            if (clickDebounce()) startPlayer(track)
         }
 
         // Подключаем обработчик нажатия на кнопку очистки истории
@@ -189,6 +183,9 @@ class SearchActivity : AppCompatActivity() {
 
     // Обработчик запуска обращения по API для получения результатов поиска
     private fun search() {
+
+        // Чтобы случайно не произошёл запуск нового поиска по DEBOUNCE, очищаем соответствующий handler
+
 
         // Показываем ProgressBar
         binding.progressBar.visibility = View.VISIBLE
@@ -261,6 +258,15 @@ class SearchActivity : AppCompatActivity() {
             mainThreadHandler?.postDelayed({ isClickAllowed = true }, CLICK_DEBOUNCE_DELAY)
         }
         return current
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    private fun startPlayer(track: Track) {
+        searchHistory.addTrack(track)
+        historyListAdapter.notifyDataSetChanged()
+        val playerIntent = Intent(this, PlayerActivity::class.java)
+        playerIntent.putExtra("TRACK", track)
+        startActivity(playerIntent)
     }
 
     companion object {
