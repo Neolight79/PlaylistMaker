@@ -1,24 +1,26 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.domain.impl
 
 import android.content.SharedPreferences
+import com.example.playlistmaker.Creator
 import com.example.playlistmaker.domain.LocalPrefsClient
+import com.example.playlistmaker.domain.SearchHistory
 import com.example.playlistmaker.domain.models.Track
 
-class SearchHistory(private val sharedPrefs: SharedPreferences, private val trackList: MutableList<Track>) {
-
-    private val prefsClient: LocalPrefsClient by lazy {
-        Creator.provideSharedPreferences(sharedPrefs)
-    }
+class SearchHistoryImpl(private val prefsClient: LocalPrefsClient, private val trackList: MutableList<Track>): SearchHistory {
 
     init {
         if (trackList.isEmpty()) trackList.addAll(prefsClient.getSearchHistory())
     }
 
-    fun isNotEmpty(): Boolean {
+    private fun saveTrackList() {
+        prefsClient.saveSearchHistory(trackList.toList())
+    }
+
+    override fun isNotEmpty(): Boolean {
         return trackList.isNotEmpty()
     }
 
-    fun addTrack(track: Track) {
+    override fun addTrack(track: Track) {
 
         // Сначала удаляем трек из массива, если он там уже есть
         trackList.remove(track)
@@ -34,7 +36,7 @@ class SearchHistory(private val sharedPrefs: SharedPreferences, private val trac
         saveTrackList()
     }
 
-    fun clearHistory() {
+    override fun clearHistory() {
 
         // Очищаем список
         trackList.clear()
@@ -43,9 +45,5 @@ class SearchHistory(private val sharedPrefs: SharedPreferences, private val trac
         saveTrackList()
 
     }
-
-    private fun saveTrackList() {
-        prefsClient.saveSearchHistory(trackList.toList())
-   }
 
 }

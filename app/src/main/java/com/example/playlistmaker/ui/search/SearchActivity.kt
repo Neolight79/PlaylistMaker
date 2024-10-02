@@ -11,7 +11,6 @@ import android.text.TextWatcher
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
-import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -19,18 +18,12 @@ import androidx.core.view.WindowInsetsCompat
 import com.example.playlistmaker.App
 import com.example.playlistmaker.Creator
 import com.example.playlistmaker.R
-import com.example.playlistmaker.SearchHistory
-import com.example.playlistmaker.data.dto.ItunesResponse
-import com.example.playlistmaker.data.network.ItunesApi
+import com.example.playlistmaker.domain.impl.SearchHistoryImpl
 import com.example.playlistmaker.databinding.ActivitySearchBinding
+import com.example.playlistmaker.domain.SearchHistory
 import com.example.playlistmaker.domain.api.TracksInteractor
 import com.example.playlistmaker.domain.models.Track
 import com.example.playlistmaker.ui.player.PlayerActivity
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 
 class SearchActivity : AppCompatActivity() {
 
@@ -83,7 +76,7 @@ class SearchActivity : AppCompatActivity() {
         mainThreadHandler = Handler(Looper.getMainLooper())
 
         // Загружаем историю поиска
-        searchHistory = SearchHistory((applicationContext as App).sharedPrefs, searchHistoryTrackList)
+        searchHistory = Creator.provideSearchHistory(searchHistoryTrackList)
 
         // Восстанавливаем содержимое строки поиска
         if (savedInstanceState != null) {
@@ -221,7 +214,7 @@ class SearchActivity : AppCompatActivity() {
         binding.placeholderView.visibility = View.VISIBLE
         binding.placeholderMessage.text = getString(R.string.nothing_found)
     }
-
+// Обработка ошибок отложена до 16го спринта, поэтому пока деактивируем данный функционал
 //    private fun showErrorMessage(errorText: String, errorDetails: String) {
 //        binding.placeholderButton.visibility = View.VISIBLE
 //        binding.placeholderImage.setImageResource(R.drawable.no_connection)
