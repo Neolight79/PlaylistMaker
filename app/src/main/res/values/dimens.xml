@@ -22,4 +22,6 @@
     <dimen name="history_footer_height">84dp</dimen>
     <dimen name="side_buttons_diameter">51dp</dimen>
     <dimen name="play_buttons_diameter">84dp</dimen>
+    <dimen name="progressbar_diameter">44dp</dimen>
+    <dimen name="progressbar_top_margin">84dp</dimen>
 </resources>
