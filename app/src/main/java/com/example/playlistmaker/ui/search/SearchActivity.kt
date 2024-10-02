@@ -1,4 +1,4 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.ui.search
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -16,7 +16,16 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.example.playlistmaker.App
+import com.example.playlistmaker.Creator
+import com.example.playlistmaker.R
+import com.example.playlistmaker.SearchHistory
+import com.example.playlistmaker.data.dto.ItunesResponse
+import com.example.playlistmaker.data.network.ItunesApi
 import com.example.playlistmaker.databinding.ActivitySearchBinding
+import com.example.playlistmaker.domain.api.TracksInteractor
+import com.example.playlistmaker.domain.models.Track
+import com.example.playlistmaker.ui.player.PlayerActivity
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -24,7 +33,10 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 class SearchActivity : AppCompatActivity() {
-    @SuppressLint("MissingInflatedId")
+
+    private val searchInteractor: TracksInteractor by lazy {
+        Creator.provideTracksInteractor()
+    }
 
     private lateinit var binding: ActivitySearchBinding
 
@@ -33,14 +45,6 @@ class SearchActivity : AppCompatActivity() {
 
     // Инициализируем переменную для хранения запроса поиска
     private var searchString: String = SEARCH_DEF
-
-    // Инициализируем переменные для API
-    private val itunesBaseUrl = "https://itunes.apple.com"
-    private val retrofit = Retrofit.Builder()
-        .baseUrl(itunesBaseUrl)
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
-    private val itunesService = retrofit.create(ItunesApi::class.java)
 
     // Инициализируем переменные для RecyclerView списка найденных треков
     private val searchListAdapter = SearchListAdapter(false)
@@ -181,46 +185,29 @@ class SearchActivity : AppCompatActivity() {
         outState.putString(SEARCH_STRING, searchString)
     }
 
-    // Обработчик запуска обращения по API для получения результатов поиска
+    // Обработчик запуска поиска треков через интерактор
     private fun search() {
-
-        // Чтобы случайно не произошёл запуск нового поиска по DEBOUNCE, очищаем соответствующий handler
-
 
         // Показываем ProgressBar
         binding.progressBar.visibility = View.VISIBLE
 
-        // Запускаем запрос поиска треков
-        itunesService.getTracks(binding.inputEditText.text.toString())
-            .enqueue(object : Callback<ItunesResponse> {
-                @SuppressLint("NotifyDataSetChanged")
-                override fun onResponse(call: Call<ItunesResponse>,
-                                        response: Response<ItunesResponse>
-                ) {
-                    // Убираем ProgressBar
+        // Запускаем поиск треков
+        searchInteractor.searchTracks(binding.inputEditText.text.toString(), object : TracksInteractor.TracksConsumer {
+            @SuppressLint("NotifyDataSetChanged")
+            override fun consume(foundTracks: List<Track>) {
+                runOnUiThread {
                     binding.progressBar.visibility = View.GONE
-                    when (response.code()) {
-                        200 -> {
-                            val foundTracks: MutableList<Track>? = response.body()?.results?.toMutableList()
-                            if (foundTracks.isNullOrEmpty()) {
-                                showMessageNothingFound()
-                            } else {
-                                trackList.clear()
-                                trackList.addAll(foundTracks)
-                                searchListAdapter.notifyDataSetChanged()
-                                hideMessage()
-                            }
-                        }
-                        else -> showErrorMessage(getString(R.string.errorCommon), response.code().toString())
+                    trackList.clear()
+                    if (foundTracks.isNotEmpty()) {
+                        trackList.addAll(foundTracks)
+                        searchListAdapter.notifyDataSetChanged()
+                        hideMessage()
+                    } else {
+                        showMessageNothingFound()
                     }
-
                 }
-
-                override fun onFailure(call: Call<ItunesResponse>, t: Throwable) {
-                    showErrorMessage(getString(R.string.no_connection), t.message.toString())
-                }
-
-            })
+            }
+        })
     }
 
     private fun hideMessage() {
@@ -235,16 +222,16 @@ class SearchActivity : AppCompatActivity() {
         binding.placeholderMessage.text = getString(R.string.nothing_found)
     }
 
-    private fun showErrorMessage(errorText: String, errorDetails: String) {
-        binding.placeholderButton.visibility = View.VISIBLE
-        binding.placeholderImage.setImageResource(R.drawable.no_connection)
-        binding.placeholderMessage.text = errorText
-        binding.placeholderView.visibility = View.VISIBLE
-
-        if (errorText.isNotEmpty())
-            Toast.makeText(applicationContext, errorDetails, Toast.LENGTH_LONG).show()
-
-    }
+//    private fun showErrorMessage(errorText: String, errorDetails: String) {
+//        binding.placeholderButton.visibility = View.VISIBLE
+//        binding.placeholderImage.setImageResource(R.drawable.no_connection)
+//        binding.placeholderMessage.text = errorText
+//        binding.placeholderView.visibility = View.VISIBLE
+//
+//        if (errorText.isNotEmpty())
+//            Toast.makeText(applicationContext, errorDetails, Toast.LENGTH_LONG).show()
+//
+//    }
 
     private fun searchDebounce() {
         mainThreadHandler?.removeCallbacks(searchRunnable)

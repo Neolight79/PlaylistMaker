@@ -1,10 +1,6 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.data.dto
 
-import java.io.Serializable
-import java.text.SimpleDateFormat
-import java.util.Locale
-
-data class Track(
+data class TrackDto(
     val trackId: Int,           // Идентификатор трека
     val trackName: String,      // Название композиции
     val artistName: String,     // Имя исполнителя
@@ -15,7 +11,4 @@ data class Track(
     val trackTimeMillis: Int,   // Продолжительность трека в миллисекундах
     val artworkUrl100: String,   // Ссылка на изображение обложки
     val previewUrl: String      // Ссылка на 30ти секундный фрагмент
-): Serializable {
-    val artworkUrl512 get() = artworkUrl100.replaceAfterLast('/', "512x512bb.jpg")
-    val trackTimeString get() = SimpleDateFormat("mm:ss", Locale.getDefault()).format(trackTimeMillis)
-}
+)

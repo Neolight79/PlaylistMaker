@@ -1,39 +1,21 @@
 package com.example.playlistmaker
 
 import android.content.SharedPreferences
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
-
-const val SEARCH_HISTORY_KEY = "search_history"
+import com.example.playlistmaker.domain.LocalPrefsClient
+import com.example.playlistmaker.domain.models.Track
 
 class SearchHistory(private val sharedPrefs: SharedPreferences, private val trackList: MutableList<Track>) {
 
-    private val gson = Gson()
+    private val prefsClient: LocalPrefsClient by lazy {
+        Creator.provideSharedPreferences(sharedPrefs)
+    }
 
     init {
-        if (trackList.isEmpty()) {
-            val tracksJson: String? = sharedPrefs.getString(SEARCH_HISTORY_KEY, "")
-            trackList.addAll(
-                if (tracksJson.isNullOrEmpty()) {
-                    listOf()
-                } else {
-                    createTrackListFromJson(tracksJson)
-                }
-            )
-        }
+        if (trackList.isEmpty()) trackList.addAll(prefsClient.getSearchHistory())
     }
 
     fun isNotEmpty(): Boolean {
         return trackList.isNotEmpty()
-    }
-
-    private fun createTrackListFromJson(json: String): List<Track> {
-        class Token : TypeToken<List<Track>>()
-        return gson.fromJson(json, Token().type)
-    }
-
-    private fun createJsonFromTrackList(tracks: List<Track>): String {
-        return gson.toJson(tracks)
     }
 
     fun addTrack(track: Track) {
@@ -63,8 +45,7 @@ class SearchHistory(private val sharedPrefs: SharedPreferences, private val trac
     }
 
     private fun saveTrackList() {
-        sharedPrefs.edit().putString(SEARCH_HISTORY_KEY, createJsonFromTrackList(trackList.toList()))
-            .apply()
-    }
+        prefsClient.saveSearchHistory(trackList.toList())
+   }
 
 }
