@@ -8,17 +8,15 @@ import android.os.Handler
 import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
-import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import com.example.playlistmaker.App
+import androidx.core.view.isVisible
 import com.example.playlistmaker.Creator
 import com.example.playlistmaker.R
-import com.example.playlistmaker.domain.impl.SearchHistoryImpl
 import com.example.playlistmaker.databinding.ActivitySearchBinding
 import com.example.playlistmaker.domain.SearchHistory
 import com.example.playlistmaker.domain.api.TracksInteractor
@@ -64,8 +62,7 @@ class SearchActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         // Активируем toolbar для реализации возврата в главную активность по системной кнопке
-        val toolbar = findViewById<androidx.appcompat.widget.Toolbar>(R.id.toolbar)
-        setSupportActionBar(toolbar)
+        setSupportActionBar(binding.toolbar)
         supportActionBar?.apply {
             setDisplayHomeAsUpEnabled(true)
             setDisplayShowHomeEnabled(true)
@@ -108,14 +105,14 @@ class SearchActivity : AppCompatActivity() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 if (s.isNullOrEmpty()) {
                     mainThreadHandler?.removeCallbacks(searchRunnable)
-                    binding.clearIcon.visibility = View.GONE
-                    if (searchHistory.isNotEmpty()) binding.searchHistoryView.visibility = View.VISIBLE
+                    binding.clearIcon.isVisible = false
+                    if (searchHistory.isNotEmpty()) binding.searchHistoryView.isVisible = true
                     val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
                     inputMethodManager?.hideSoftInputFromWindow(binding.inputEditText.windowToken, 0)
                 } else {
-                    binding.clearIcon.visibility = View.VISIBLE
+                    binding.clearIcon.isVisible = true
                     searchString = s.toString()
-                    binding.searchHistoryView.visibility = View.GONE
+                    binding.searchHistoryView.isVisible = false
                     searchDebounce()
                 }
             }
@@ -137,7 +134,7 @@ class SearchActivity : AppCompatActivity() {
 
         // Добавляем обработчик для смены фокуса на поле ввода
         binding.inputEditText.setOnFocusChangeListener { _, hasFocus ->
-            binding.searchHistoryView.visibility = if (hasFocus && binding.inputEditText.text.isEmpty() && searchHistory.isNotEmpty()) View.VISIBLE else View.GONE
+            binding.searchHistoryView.isVisible = hasFocus && binding.inputEditText.text.isEmpty() && searchHistory.isNotEmpty()
         }
 
         // Готовим RecyclerView
@@ -158,7 +155,7 @@ class SearchActivity : AppCompatActivity() {
         historyListAdapter.onClearHistoryClick = {
             searchHistory.clearHistory()
             historyListAdapter.notifyDataSetChanged()
-            binding.searchHistoryView.visibility = View.GONE
+            binding.searchHistoryView.isVisible = false
         }
 
         // Готовим RecyclerView для истории поиска
@@ -182,14 +179,14 @@ class SearchActivity : AppCompatActivity() {
     private fun search() {
 
         // Показываем ProgressBar
-        binding.progressBar.visibility = View.VISIBLE
+        binding.progressBar.isVisible = true
 
         // Запускаем поиск треков
         searchInteractor.searchTracks(binding.inputEditText.text.toString(), object : TracksInteractor.TracksConsumer {
             @SuppressLint("NotifyDataSetChanged")
             override fun consume(foundTracks: List<Track>) {
                 runOnUiThread {
-                    binding.progressBar.visibility = View.GONE
+                    binding.progressBar.isVisible = false
                     trackList.clear()
                     if (foundTracks.isNotEmpty()) {
                         trackList.addAll(foundTracks)
@@ -204,27 +201,16 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun hideMessage() {
-        if (binding.placeholderView.visibility != View.GONE)
-            binding.placeholderView.visibility = View.GONE
+        if (!binding.placeholderView.isVisible)
+            binding.placeholderView.isVisible = false
     }
 
     private fun showMessageNothingFound() {
-        binding.placeholderButton.visibility = View.GONE
+        binding.placeholderButton.isVisible = false
         binding.placeholderImage.setImageResource(R.drawable.nothing_found)
-        binding.placeholderView.visibility = View.VISIBLE
+        binding.placeholderView.isVisible = true
         binding.placeholderMessage.text = getString(R.string.nothing_found)
     }
-// Обработка ошибок отложена до 16го спринта, поэтому пока деактивируем данный функционал
-//    private fun showErrorMessage(errorText: String, errorDetails: String) {
-//        binding.placeholderButton.visibility = View.VISIBLE
-//        binding.placeholderImage.setImageResource(R.drawable.no_connection)
-//        binding.placeholderMessage.text = errorText
-//        binding.placeholderView.visibility = View.VISIBLE
-//
-//        if (errorText.isNotEmpty())
-//            Toast.makeText(applicationContext, errorDetails, Toast.LENGTH_LONG).show()
-//
-//    }
 
     private fun searchDebounce() {
         mainThreadHandler?.removeCallbacks(searchRunnable)

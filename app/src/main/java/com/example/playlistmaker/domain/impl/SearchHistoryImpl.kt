@@ -1,7 +1,5 @@
 package com.example.playlistmaker.domain.impl
 
-import android.content.SharedPreferences
-import com.example.playlistmaker.Creator
 import com.example.playlistmaker.domain.LocalPrefsClient
 import com.example.playlistmaker.domain.SearchHistory
 import com.example.playlistmaker.domain.models.Track

@@ -9,7 +9,7 @@ const val PLAYLIST_MAKER_PREFERENCES = "playlist_maker_preferences"
 
 class App : Application() {
 
-    lateinit var sharedPrefs: SharedPreferences
+    private lateinit var sharedPrefs: SharedPreferences
     var darkTheme = false
         private set
 
