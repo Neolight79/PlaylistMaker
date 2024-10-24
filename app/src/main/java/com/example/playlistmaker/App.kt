@@ -3,7 +3,8 @@ package com.example.playlistmaker
 import android.app.Application
 import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatDelegate
-import com.example.playlistmaker.domain.LocalPrefsClient
+import com.example.playlistmaker.creator.Creator
+import com.example.playlistmaker.util.domain.LocalPrefsClient
 
 const val PLAYLIST_MAKER_PREFERENCES = "playlist_maker_preferences"
 

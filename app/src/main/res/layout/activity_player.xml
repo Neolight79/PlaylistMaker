@@ -6,7 +6,7 @@
     style="@style/MediaScreenTheme"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.main.MainActivity">
+    tools:context=".main.ui.MainActivity">
 
     <!-- Кнопка назад на системном тулбаре -->
     <androidx.appcompat.widget.Toolbar
@@ -16,6 +16,17 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@id/topBorder">
     </androidx.appcompat.widget.Toolbar>
+
+    <!-- Progress bar -->
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="@dimen/progressbar_diameter"
+        android:layout_height="@dimen/progressbar_diameter"
+        app:layout_constraintStart_toStartOf="@id/leftBorder"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/rightBorder"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:visibility="gone"/>
 
     <!-- Макетная сетка -->
     <androidx.constraintlayout.widget.Guideline
@@ -80,7 +91,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="start"
-        tools:text="Yesterday (Remastered 2009)"
+        tools:text="[Yesterday (Remastered 2009)]"
         app:layout_constraintStart_toStartOf="@id/leftBorder"
         app:layout_constraintTop_toBottomOf="@id/centerBorder"
         app:layout_constraintEnd_toEndOf="@id/rightBorder"
@@ -93,7 +104,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/half_main_padding"
         android:gravity="start"
-        tools:text="The Beatles"
+        tools:text="[The Beatles]"
         app:layout_constraintStart_toStartOf="@id/leftBorder"
         app:layout_constraintTop_toBottomOf="@id/trackName"
         app:layout_constraintEnd_toEndOf="@id/rightBorder"
@@ -209,7 +220,7 @@
         style="@style/DetailsTextData"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        tools:text="5:35"
+        tools:text="[5:35]"
         app:layout_constraintTop_toBottomOf="@+id/detailsTopBorder"
         app:layout_constraintEnd_toEndOf="@id/rightBorder"
         app:layout_constraintBottom_toTopOf="@+id/albumDetailsData"
@@ -220,7 +231,7 @@
         style="@style/DetailsTextData"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        tools:text="Yesterday (Remastered 2009)"
+        tools:text="[Yesterday (Remastered 2009)]"
         app:layout_constraintTop_toBottomOf="@+id/durationDetailsData"
         app:layout_constraintEnd_toEndOf="@id/rightBorder"
         app:layout_constraintBottom_toTopOf="@+id/yearDetailsData"/>
@@ -230,7 +241,7 @@
         style="@style/DetailsTextData"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        tools:text="1965"
+        tools:text="[1965]"
         app:layout_constraintTop_toBottomOf="@+id/albumDetailsData"
         app:layout_constraintEnd_toEndOf="@id/rightBorder"
         app:layout_constraintBottom_toTopOf="@+id/genreDetailsData"/>
@@ -240,7 +251,7 @@
         style="@style/DetailsTextData"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        tools:text="Rock"
+        tools:text="[Rock]"
         app:layout_constraintTop_toBottomOf="@+id/yearDetailsData"
         app:layout_constraintEnd_toEndOf="@id/rightBorder"
         app:layout_constraintBottom_toTopOf="@+id/countryDetailsData"
@@ -251,7 +262,7 @@
         style="@style/DetailsTextData"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        tools:text="Великобритания"
+        tools:text="[Великобритания]"
         app:layout_constraintTop_toBottomOf="@+id/genreDetailsData"
         app:layout_constraintEnd_toEndOf="@id/rightBorder"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -285,5 +296,60 @@
         android:layout_height="wrap_content"
         android:visibility="visible"
         app:constraint_referenced_ids="countryDetailsTitle, countryDetailsData" />
+
+    <!-- Группы для управления видимостью записей с деталями -->
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/titleBlockGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="visible"
+        app:constraint_referenced_ids="artwork, trackName, artistName" />
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/playerBlockGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="visible"
+        app:constraint_referenced_ids="plusButton, playButton, favoritButton, playTime" />
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/detailsBlockGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="visible"
+        app:constraint_referenced_ids="durationDetailsTitle, durationDetailsData, albumGroup, yearGroup, genreGroup, countryGroup" />
+
+    <LinearLayout
+        android:id="@+id/placeholderView"
+        android:theme="@style/Base.Theme.PlaylistMaker"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center|top"
+        android:visibility="gone">
+
+        <ImageView
+            android:id="@+id/placeholderImage"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_marginTop="86dp"
+            android:contentDescription="@string/errorCommon"
+            tools:src="@drawable/no_connection"/>
+
+        <TextView
+            style="@style/MessageText"
+            android:id="@+id/placeholderMessage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:text="[@string/no_connection]"/>
+
+        <Button
+            style="@style/PlaceholderButton"
+            android:id="@+id/placeholderButton"
+            android:layout_width="91dp"
+            android:layout_height="36dp"
+            android:text="@string/refresh"/>
+
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

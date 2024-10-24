@@ -25,7 +25,7 @@
         android:layout_marginTop="6dp"
         android:ellipsize="end"
         android:maxLines="1"
-        tools:text="Yesterday (Remastered 2009)"/>
+        tools:text="[Yesterday (Remastered 2009)]"/>
 
     <ImageView
         style="@style/SearchItemsSmall"
@@ -51,7 +51,7 @@
             android:layout_weight="1"
             android:ellipsize="end"
             android:maxLines="1"
-            tools:text="The Beatles"/>
+            tools:text="[The Beatles]"/>
 
         <ImageView
             android:layout_height="13dp"
@@ -64,7 +64,7 @@
             style="@style/SearchItemsSmall"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
-            tools:text="2:55"/>
+            tools:text="[2:55]"/>
 
     </LinearLayout>
 
