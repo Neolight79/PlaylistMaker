@@ -23,11 +23,13 @@ class SearchViewModel(application: Application): AndroidViewModel(application) {
     companion object {
 
         private val SEARCH_REQUEST_TOKEN = Any()
-        const val SEARCH_DEBOUNCE_DELAY = 2000L
+        const val SEARCH_DEBOUNCE_DELAY_MILLIS = 2000L
 
-        fun getViewModelFactory(): ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                SearchViewModel(this[APPLICATION_KEY] as Application)
+        fun getViewModelFactory(): ViewModelProvider.Factory {
+            return viewModelFactory {
+                initializer {
+                    SearchViewModel(this[APPLICATION_KEY] as Application)
+                }
             }
         }
     }
@@ -37,7 +39,9 @@ class SearchViewModel(application: Application): AndroidViewModel(application) {
     private var latestSearchText: String? = null
 
     private val stateLiveData = MutableLiveData<SearchState>()
-    fun observeState(): LiveData<SearchState> = stateLiveData
+    fun observeState(): LiveData<SearchState> {
+        return stateLiveData
+    }
 
     private val searchInteractor = Creator.provideTracksInteractor(getApplication())
 
@@ -59,7 +63,7 @@ class SearchViewModel(application: Application): AndroidViewModel(application) {
 
         val searchRunnable = Runnable { search(changedText) }
 
-        val postTime = SystemClock.uptimeMillis() + SEARCH_DEBOUNCE_DELAY
+        val postTime = SystemClock.uptimeMillis() + SEARCH_DEBOUNCE_DELAY_MILLIS
         mainThreadHandler.postAtTime(
             searchRunnable,
             SEARCH_REQUEST_TOKEN,

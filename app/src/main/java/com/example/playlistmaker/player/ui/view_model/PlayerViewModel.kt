@@ -33,12 +33,14 @@ class PlayerViewModel(
         private const val REFRESH_TIMER_DELAY_MILLIS = 500L
 
         // Инициализация ViewModel
-        fun getViewModelFactory(trackId: Int): ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                PlayerViewModel(
-                    trackId,
-                    (this[APPLICATION_KEY] as Application)
-                )
+        fun getViewModelFactory(trackId: Int): ViewModelProvider.Factory {
+            return viewModelFactory {
+                initializer {
+                    PlayerViewModel(
+                        trackId,
+                        (this[APPLICATION_KEY] as Application)
+                    )
+                }
             }
         }
     }
@@ -108,10 +110,14 @@ class PlayerViewModel(
     }
 
     // Функция возвращающая объект LiveData состояния экрана проигрывателя
-    fun getScreenStateLiveData(): LiveData<PlayerState> = screenStateLiveData
+    fun getScreenStateLiveData(): LiveData<PlayerState> {
+        return screenStateLiveData
+    }
 
     // Функция возвращающая объект LiveData состояния экрана проигрывателя
-    fun getPlayStatusLiveData(): LiveData<PlayStatus> = playStatusLiveData
+    fun getPlayStatusLiveData(): LiveData<PlayStatus> {
+        return playStatusLiveData
+    }
 
     // Функция подготовки проигрывателя к работе
     private fun preparePlayer(trackPreviewUrl: String) {

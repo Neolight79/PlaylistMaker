@@ -91,7 +91,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="start"
-        tools:text="Yesterday (Remastered 2009)"
+        tools:text="[Yesterday (Remastered 2009)]"
         app:layout_constraintStart_toStartOf="@id/leftBorder"
         app:layout_constraintTop_toBottomOf="@id/centerBorder"
         app:layout_constraintEnd_toEndOf="@id/rightBorder"
@@ -104,7 +104,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/half_main_padding"
         android:gravity="start"
-        tools:text="The Beatles"
+        tools:text="[The Beatles]"
         app:layout_constraintStart_toStartOf="@id/leftBorder"
         app:layout_constraintTop_toBottomOf="@id/trackName"
         app:layout_constraintEnd_toEndOf="@id/rightBorder"
@@ -220,7 +220,7 @@
         style="@style/DetailsTextData"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        tools:text="5:35"
+        tools:text="[5:35]"
         app:layout_constraintTop_toBottomOf="@+id/detailsTopBorder"
         app:layout_constraintEnd_toEndOf="@id/rightBorder"
         app:layout_constraintBottom_toTopOf="@+id/albumDetailsData"
@@ -231,7 +231,7 @@
         style="@style/DetailsTextData"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        tools:text="Yesterday (Remastered 2009)"
+        tools:text="[Yesterday (Remastered 2009)]"
         app:layout_constraintTop_toBottomOf="@+id/durationDetailsData"
         app:layout_constraintEnd_toEndOf="@id/rightBorder"
         app:layout_constraintBottom_toTopOf="@+id/yearDetailsData"/>
@@ -241,7 +241,7 @@
         style="@style/DetailsTextData"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        tools:text="1965"
+        tools:text="[1965]"
         app:layout_constraintTop_toBottomOf="@+id/albumDetailsData"
         app:layout_constraintEnd_toEndOf="@id/rightBorder"
         app:layout_constraintBottom_toTopOf="@+id/genreDetailsData"/>
@@ -251,7 +251,7 @@
         style="@style/DetailsTextData"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        tools:text="Rock"
+        tools:text="[Rock]"
         app:layout_constraintTop_toBottomOf="@+id/yearDetailsData"
         app:layout_constraintEnd_toEndOf="@id/rightBorder"
         app:layout_constraintBottom_toTopOf="@+id/countryDetailsData"
@@ -262,7 +262,7 @@
         style="@style/DetailsTextData"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        tools:text="Великобритания"
+        tools:text="[Великобритания]"
         app:layout_constraintTop_toBottomOf="@+id/genreDetailsData"
         app:layout_constraintEnd_toEndOf="@id/rightBorder"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -341,7 +341,7 @@
             android:id="@+id/placeholderMessage"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            tools:text="@string/no_connection"/>
+            tools:text="[@string/no_connection]"/>
 
         <Button
             style="@style/PlaceholderButton"

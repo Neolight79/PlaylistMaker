@@ -17,19 +17,26 @@ class SettingsViewModel(application: Application): AndroidViewModel(application)
     // Описание сущностей уровня класса
     companion object {
 
-        fun getViewModelFactory(): ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                SettingsViewModel(this[APPLICATION_KEY] as Application)
+        fun getViewModelFactory(): ViewModelProvider.Factory {
+            return viewModelFactory {
+                    initializer {
+                        SettingsViewModel(this[APPLICATION_KEY] as Application)
+                }
             }
         }
+
     }
 
     // LiveData для состояния переключателя темы
     private val stateLiveData = MutableLiveData<ThemeSettings>()
-    fun observeState(): LiveData<ThemeSettings> = stateLiveData
+    fun observeState(): LiveData<ThemeSettings> {
+        return stateLiveData
+    }
     // LiveData для вызова внешних интентов
     private val stateIntent = SingleLiveEvent<Intent>()
-    fun getStateIntent(): LiveData<Intent> = stateIntent
+    fun getStateIntent(): LiveData<Intent> {
+        return stateIntent
+    }
 
     private val sharingInteractor = Creator.provideSharingInteractor(getApplication())
     private val settingsInteractor = Creator.provideSettingsInteractor(getApplication())

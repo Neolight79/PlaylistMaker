@@ -67,7 +67,7 @@
             android:id="@+id/placeholderMessage"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            tools:text="@string/no_connection"/>
+            tools:text="[@string/no_connection]"/>
 
         <Button
             style="@style/PlaceholderButton"
