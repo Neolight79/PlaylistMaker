@@ -18,6 +18,7 @@ import java.util.Locale
 class PlayerViewModel(
     private val trackId: Int,
     private val tracksInteractor: TracksInteractor,
+    private val mediaPlayer: MediaPlayer,
     application: Application): AndroidViewModel(application) {
 
     companion object {
@@ -34,9 +35,6 @@ class PlayerViewModel(
 
     // Переменная для LiveData статуса проигрывания трека
     private var playStatusLiveData = MutableLiveData<PlayStatus>()
-
-    // Переменная объекта проигрывателя
-    private var mediaPlayer = MediaPlayer()
 
     // Переменная хранения текущего состояния проигрывателя
     private var playState = STATE_DEFAULT

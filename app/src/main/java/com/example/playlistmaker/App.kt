@@ -3,18 +3,12 @@ package com.example.playlistmaker
 import android.app.Application
 import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatDelegate
-import com.example.playlistmaker.player.di.playerViewModelModule
-import com.example.playlistmaker.search.di.searchDataModule
-import com.example.playlistmaker.search.di.searchDomainModule
-import com.example.playlistmaker.search.di.searchViewModelModule
-import com.example.playlistmaker.settings.di.settingsDataModule
-import com.example.playlistmaker.settings.di.settingsDomainModule
-import com.example.playlistmaker.settings.di.settingsViewModelModule
-import com.example.playlistmaker.sharing.di.sharingDataModule
-import com.example.playlistmaker.sharing.di.sharingDomainModule
-import com.example.playlistmaker.util.di.utilDataModule
+import com.example.playlistmaker.player.di.playerModule
+import com.example.playlistmaker.search.di.searchModule
+import com.example.playlistmaker.settings.di.settingsModule
+import com.example.playlistmaker.sharing.di.sharingModule
 import com.example.playlistmaker.util.domain.LocalPrefsClient
-import com.example.playlistmaker.util.di.utilDomainModule
+import com.example.playlistmaker.util.di.utilModule
 import org.koin.android.ext.android.inject
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
@@ -33,12 +27,7 @@ class App : Application() {
         super.onCreate()
         startKoin {
             androidContext(this@App)
-            modules(playerViewModelModule,
-                searchDataModule, searchDomainModule, searchViewModelModule,
-                settingsDataModule, settingsDomainModule, settingsViewModelModule,
-                sharingDataModule, sharingDomainModule,
-                utilDataModule, utilDomainModule
-            )
+            modules(playerModule, searchModule, settingsModule, sharingModule, utilModule)
         }
         sharedPrefs = getSharedPreferences(PLAYLIST_MAKER_PREFERENCES, MODE_PRIVATE)
         darkTheme = prefsClient.isDarkTheme()

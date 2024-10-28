@@ -17,7 +17,7 @@ import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-val searchDataModule = module {
+val searchModule = module {
 
     single<ItunesApi> {
         Retrofit.Builder()
@@ -31,15 +31,11 @@ val searchDataModule = module {
         RetrofitNetworkClient(get(), androidContext())
     }
 
-}
-
-val searchDomainModule = module {
-
     single<TracksRepository> {
         TracksRepositoryImpl(get())
     }
 
-    single<TracksInteractor> {
+    factory<TracksInteractor> {
         TracksInteractorImpl(get())
     }
 
@@ -47,10 +43,8 @@ val searchDomainModule = module {
         SearchHistoryImpl(get(), mutableListOf())
     }
 
-}
-
-val searchViewModelModule = module {
     viewModel {
         SearchViewModel(get(), get(), androidApplication())
     }
+
 }

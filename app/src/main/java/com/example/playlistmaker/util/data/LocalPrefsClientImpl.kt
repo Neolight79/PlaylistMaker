@@ -9,9 +9,8 @@ import com.google.gson.reflect.TypeToken
 const val NIGHT_MODE_STATE = "night_mode"
 const val SEARCH_HISTORY_KEY = "search_history"
 
-class LocalPrefsClientImpl(private val sharedPreferences: SharedPreferences): LocalPrefsClient {
-
-    private val gson = Gson()
+class LocalPrefsClientImpl(private val sharedPreferences: SharedPreferences,
+                           private val gson: Gson): LocalPrefsClient {
 
     override fun getSearchHistory(): List<Track> {
         val tracksJson: String? = sharedPreferences.getString(SEARCH_HISTORY_KEY, "")

@@ -6,17 +6,13 @@ import com.example.playlistmaker.sharing.domain.SharingInteractor
 import com.example.playlistmaker.sharing.domain.impl.SharingInteractorImpl
 import org.koin.dsl.module
 
-val sharingDataModule = module {
+val sharingModule = module {
 
     single<ExternalNavigator> {
         ExternalNavigatorImpl()
     }
 
-}
-
-val sharingDomainModule = module {
-
-    single<SharingInteractor> {
+    factory<SharingInteractor> {
         SharingInteractorImpl(get(), get())
     }
 

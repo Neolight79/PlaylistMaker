@@ -129,7 +129,6 @@ class SearchViewModel(private val searchInteractor: TracksInteractor,
 
     fun addTrack(track: Track) {
         searchHistory.addTrack(track)
-        renderHistory()
     }
 
 }

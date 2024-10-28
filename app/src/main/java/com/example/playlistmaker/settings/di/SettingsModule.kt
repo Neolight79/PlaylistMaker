@@ -10,23 +10,16 @@ import org.koin.android.ext.koin.androidContext
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
-val settingsDataModule = module {
+val settingsModule = module {
 
     single<SettingsRepository> {
         SettingsRepositoryImpl(androidContext())
     }
 
-}
-
-val settingsDomainModule = module {
-
-    single<SettingsInteractor> {
+    factory<SettingsInteractor> {
         SettingsInteractorImpl(get())
     }
 
-}
-
-val settingsViewModelModule = module {
     viewModel {
         SettingsViewModel(get(), get(), androidApplication())
     }

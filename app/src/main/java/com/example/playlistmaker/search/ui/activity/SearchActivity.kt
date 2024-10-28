@@ -192,7 +192,7 @@ class SearchActivity : AppCompatActivity() {
     @SuppressLint("NotifyDataSetChanged")
     private fun showTracksHistory(trackList: List<Track>) {
         binding.searchRecyclerView.isVisible = false
-        binding.searchHistoryView.isVisible = true
+        binding.searchHistoryView.isVisible = trackList.isNotEmpty()
         binding.placeholderView.isVisible = false
         binding.progressBar.isVisible = false
 
