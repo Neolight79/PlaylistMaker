@@ -3,7 +3,6 @@ package com.example.playlistmaker.player.ui.activity
 import android.os.Bundle
 import android.util.TypedValue
 import android.view.View
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import com.bumptech.glide.Glide
@@ -14,6 +13,8 @@ import com.example.playlistmaker.databinding.ActivityPlayerBinding
 import com.example.playlistmaker.player.ui.view_model.PlayerViewModel
 import com.example.playlistmaker.player.domain.models.PlayStatus
 import com.example.playlistmaker.player.domain.models.PlayerState
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
 
 class PlayerActivity : AppCompatActivity() {
 
@@ -23,8 +24,7 @@ class PlayerActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityPlayerBinding
 
-    private val viewModel by viewModels<PlayerViewModel> { PlayerViewModel.getViewModelFactory(intent.getIntExtra(
-        TRACK_ID, 0)) }
+    private val viewModel by viewModel<PlayerViewModel> { parametersOf(intent.getIntExtra(TRACK_ID, 0)) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

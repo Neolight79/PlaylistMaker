@@ -7,31 +7,20 @@ import android.os.SystemClock
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.playlistmaker.R
-import com.example.playlistmaker.creator.Creator
+import com.example.playlistmaker.search.domain.SearchHistory
 import com.example.playlistmaker.search.domain.api.TracksInteractor
 import com.example.playlistmaker.search.domain.models.SearchState
 import com.example.playlistmaker.search.domain.models.Track
 
-class SearchViewModel(application: Application): AndroidViewModel(application) {
+class SearchViewModel(private val searchInteractor: TracksInteractor,
+                      private val searchHistory: SearchHistory,
+                      application: Application): AndroidViewModel(application) {
 
     // Описание сущностей уровня класса
     companion object {
-
         private val SEARCH_REQUEST_TOKEN = Any()
         const val SEARCH_DEBOUNCE_DELAY_MILLIS = 2000L
-
-        fun getViewModelFactory(): ViewModelProvider.Factory {
-            return viewModelFactory {
-                initializer {
-                    SearchViewModel(this[APPLICATION_KEY] as Application)
-                }
-            }
-        }
     }
 
     // Описание переменных
@@ -42,11 +31,6 @@ class SearchViewModel(application: Application): AndroidViewModel(application) {
     fun observeState(): LiveData<SearchState> {
         return stateLiveData
     }
-
-    private val searchInteractor = Creator.provideTracksInteractor(getApplication())
-
-    private val searchHistoryTrackList = mutableListOf<Track>()
-    private val searchHistory = Creator.provideSearchHistory(searchHistoryTrackList)
 
     // Описание методов
     override fun onCleared() {
@@ -130,7 +114,8 @@ class SearchViewModel(application: Application): AndroidViewModel(application) {
     }
 
     private fun renderHistory() {
-        renderState(SearchState.TracksHistory(searchHistoryTrackList.toList()))
+        val searchHistoryTrackList = searchHistory.getHistory()
+        renderState(SearchState.TracksHistory(searchHistoryTrackList))
     }
 
     fun loadHistory() {

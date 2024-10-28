@@ -45,4 +45,8 @@ class SearchHistoryImpl(private val prefsClient: LocalPrefsClient, private val t
 
     }
 
+    override fun getHistory(): List<Track> {
+        return trackList.toList()
+    }
+
 }

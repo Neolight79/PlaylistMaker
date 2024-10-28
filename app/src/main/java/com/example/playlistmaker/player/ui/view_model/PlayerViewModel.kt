@@ -7,12 +7,7 @@ import android.os.Looper
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.playlistmaker.R
-import com.example.playlistmaker.creator.Creator
 import com.example.playlistmaker.player.domain.models.PlayerState
 import com.example.playlistmaker.search.domain.api.TracksInteractor
 import com.example.playlistmaker.search.domain.models.Track
@@ -22,6 +17,7 @@ import java.util.Locale
 
 class PlayerViewModel(
     private val trackId: Int,
+    private val tracksInteractor: TracksInteractor,
     application: Application): AndroidViewModel(application) {
 
     companion object {
@@ -31,18 +27,6 @@ class PlayerViewModel(
         private const val STATE_PLAYING = 2
         private const val STATE_PAUSED = 3
         private const val REFRESH_TIMER_DELAY_MILLIS = 500L
-
-        // Инициализация ViewModel
-        fun getViewModelFactory(trackId: Int): ViewModelProvider.Factory {
-            return viewModelFactory {
-                initializer {
-                    PlayerViewModel(
-                        trackId,
-                        (this[APPLICATION_KEY] as Application)
-                    )
-                }
-            }
-        }
     }
 
     // Переменная для LiveData статусов экрана проигрывателя
@@ -51,14 +35,11 @@ class PlayerViewModel(
     // Переменная для LiveData статуса проигрывания трека
     private var playStatusLiveData = MutableLiveData<PlayStatus>()
 
-    // Переменная для интерактора получения данных трека
-    private val tracksInteractor = Creator.provideTracksInteractor(getApplication())
-
     // Переменная объекта проигрывателя
     private var mediaPlayer = MediaPlayer()
 
     // Переменная хранения текущего состояния проигрывателя
-    private var playerState = STATE_DEFAULT
+    private var playState = STATE_DEFAULT
 
     // Инициализируем ручку для доступа к главному потоку
     private var mainThreadHandler: Handler? = null
@@ -124,11 +105,11 @@ class PlayerViewModel(
         mediaPlayer.setDataSource(trackPreviewUrl)
         mediaPlayer.prepareAsync()
         mediaPlayer.setOnPreparedListener {
-            playerState = STATE_PREPARED
+            playState = STATE_PREPARED
             refreshPlayingState()
         }
         mediaPlayer.setOnCompletionListener {
-            playerState = STATE_PREPARED
+            playState = STATE_PREPARED
             refreshPlayingState()
         }
     }
@@ -137,7 +118,7 @@ class PlayerViewModel(
     private fun play() {
 
         mediaPlayer.start()
-        playerState = STATE_PLAYING
+        playState = STATE_PLAYING
 
         // Отправляем на View статус начала проигрывания трека
         refreshPlayingState()
@@ -151,7 +132,7 @@ class PlayerViewModel(
                     refreshPlayingState()
 
                     // И снова планируем то же действие
-                    if (playerState == STATE_PLAYING)
+                    if (playState == STATE_PLAYING)
                         mainThreadHandler?.postDelayed(
                             this,
                             REFRESH_TIMER_DELAY_MILLIS
@@ -167,13 +148,13 @@ class PlayerViewModel(
     private fun pause() {
         mainThreadHandler?.removeCallbacksAndMessages(null)
         mediaPlayer.pause()
-        playerState = STATE_PAUSED
+        playState = STATE_PAUSED
         refreshPlayingState()
     }
 
     // Функция переключения режима проигрывателя
     fun playbackControl() {
-        when(playerState) {
+        when(playState) {
             STATE_PLAYING -> pause()
             STATE_PREPARED, STATE_PAUSED -> play()
         }
@@ -195,7 +176,7 @@ class PlayerViewModel(
     }
 
     private fun refreshPlayingState() {
-        when(playerState) {
+        when(playState) {
             STATE_PLAYING ->
                 playStatusLiveData.value = getCurrentPlayStatus().copy(currentPosition = SimpleDateFormat("mm:ss", Locale.getDefault()).format(mediaPlayer.currentPosition), isPlaying = true)
             STATE_PAUSED ->
