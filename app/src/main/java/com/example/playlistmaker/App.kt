@@ -3,8 +3,15 @@ package com.example.playlistmaker
 import android.app.Application
 import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatDelegate
-import com.example.playlistmaker.creator.Creator
+import com.example.playlistmaker.player.di.playerModule
+import com.example.playlistmaker.search.di.searchModule
+import com.example.playlistmaker.settings.di.settingsModule
+import com.example.playlistmaker.sharing.di.sharingModule
 import com.example.playlistmaker.util.domain.LocalPrefsClient
+import com.example.playlistmaker.util.di.utilModule
+import org.koin.android.ext.android.inject
+import org.koin.android.ext.koin.androidContext
+import org.koin.core.context.startKoin
 
 const val PLAYLIST_MAKER_PREFERENCES = "playlist_maker_preferences"
 
@@ -14,12 +21,14 @@ class App : Application() {
     var darkTheme = false
         private set
 
-    private val prefsClient: LocalPrefsClient by lazy {
-        Creator.provideSharedPreferences(sharedPrefs)
-    }
+    private val prefsClient: LocalPrefsClient by inject()
 
     override fun onCreate() {
         super.onCreate()
+        startKoin {
+            androidContext(this@App)
+            modules(playerModule, searchModule, settingsModule, sharingModule, utilModule)
+        }
         sharedPrefs = getSharedPreferences(PLAYLIST_MAKER_PREFERENCES, MODE_PRIVATE)
         darkTheme = prefsClient.isDarkTheme()
         switchTheme(darkTheme)

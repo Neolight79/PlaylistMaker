@@ -5,27 +5,13 @@ import android.content.Intent
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
-import com.example.playlistmaker.creator.Creator
+import com.example.playlistmaker.settings.domain.SettingsInteractor
 import com.example.playlistmaker.settings.domain.model.ThemeSettings
+import com.example.playlistmaker.sharing.domain.SharingInteractor
 
-class SettingsViewModel(application: Application): AndroidViewModel(application) {
-
-    // Описание сущностей уровня класса
-    companion object {
-
-        fun getViewModelFactory(): ViewModelProvider.Factory {
-            return viewModelFactory {
-                    initializer {
-                        SettingsViewModel(this[APPLICATION_KEY] as Application)
-                }
-            }
-        }
-
-    }
+class SettingsViewModel(private val sharingInteractor: SharingInteractor,
+                        private val settingsInteractor: SettingsInteractor,
+                        application: Application): AndroidViewModel(application) {
 
     // LiveData для состояния переключателя темы
     private val stateLiveData = MutableLiveData<ThemeSettings>()
@@ -37,9 +23,6 @@ class SettingsViewModel(application: Application): AndroidViewModel(application)
     fun getStateIntent(): LiveData<Intent> {
         return stateIntent
     }
-
-    private val sharingInteractor = Creator.provideSharingInteractor(getApplication())
-    private val settingsInteractor = Creator.provideSettingsInteractor(getApplication())
 
     init {
 

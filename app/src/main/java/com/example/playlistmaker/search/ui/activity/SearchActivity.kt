@@ -13,13 +13,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
-import androidx.lifecycle.ViewModelProvider
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.ActivitySearchBinding
 import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.player.ui.activity.PlayerActivity
 import com.example.playlistmaker.search.ui.view_model.SearchViewModel
 import com.example.playlistmaker.search.domain.models.SearchState
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SearchActivity : AppCompatActivity() {
 
@@ -27,11 +27,10 @@ class SearchActivity : AppCompatActivity() {
         const val CLICK_DEBOUNCE_DELAY = 1000L
     }
 
+    private val viewModel by viewModel<SearchViewModel>()
+
     // Переменная для ViewBinding
     private lateinit var binding: ActivitySearchBinding
-
-    // Переменная для ViewModel
-    private lateinit var viewModel: SearchViewModel
 
     // Переменная блокировки нажатия на кнопки (Debounce)
     private var isClickAllowed = true
@@ -78,7 +77,6 @@ class SearchActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         // Инициализируем ViewModel и подписываемся на изменения состояний
-        viewModel = ViewModelProvider(this, SearchViewModel.getViewModelFactory())[SearchViewModel::class.java]
         viewModel.observeState().observe(this) {
             render(it)
         }
@@ -194,7 +192,7 @@ class SearchActivity : AppCompatActivity() {
     @SuppressLint("NotifyDataSetChanged")
     private fun showTracksHistory(trackList: List<Track>) {
         binding.searchRecyclerView.isVisible = false
-        binding.searchHistoryView.isVisible = true
+        binding.searchHistoryView.isVisible = trackList.isNotEmpty()
         binding.placeholderView.isVisible = false
         binding.progressBar.isVisible = false
 

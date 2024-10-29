@@ -6,4 +6,5 @@ interface SearchHistory {
     fun isNotEmpty(): Boolean
     fun addTrack(track: Track)
     fun clearHistory()
+    fun getHistory(): List<Track>
 }
