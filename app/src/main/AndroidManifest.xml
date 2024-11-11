@@ -21,8 +21,9 @@
             android:parentActivityName=".search.ui.activity.SearchActivity"
             android:exported="false" />
         <activity
-            android:name=".media.ui.MediaActivity"
-            android:theme="@style/MainScreenTheme"
+            android:name=".media.ui.activity.MediaActivity"
+            android:launchMode="singleTop"
+            android:parentActivityName=".main.ui.MainActivity"
             android:exported="false" />
         <activity
             android:name=".settings.ui.activity.SettingsActivity"
