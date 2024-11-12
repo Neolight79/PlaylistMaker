@@ -3,6 +3,7 @@ package com.example.playlistmaker
 import android.app.Application
 import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatDelegate
+import com.example.playlistmaker.media.di.mediaModule
 import com.example.playlistmaker.player.di.playerModule
 import com.example.playlistmaker.search.di.searchModule
 import com.example.playlistmaker.settings.di.settingsModule
@@ -27,7 +28,7 @@ class App : Application() {
         super.onCreate()
         startKoin {
             androidContext(this@App)
-            modules(playerModule, searchModule, settingsModule, sharingModule, utilModule)
+            modules(mediaModule, playerModule, searchModule, settingsModule, sharingModule, utilModule)
         }
         sharedPrefs = getSharedPreferences(PLAYLIST_MAKER_PREFERENCES, MODE_PRIVATE)
         darkTheme = prefsClient.isDarkTheme()
