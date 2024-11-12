@@ -231,7 +231,7 @@
         style="@style/DetailsTextData"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        tools:text="[Yesterday (Remastered 2009)][Yesterday (Remastered 2009)]"
+        tools:text="[Yesterday (Remastered 2009)]"
         android:ellipsize="end"
         android:maxLines="1"
         android:paddingStart="@dimen/main_padding"
@@ -240,7 +240,8 @@
         app:layout_constraintEnd_toEndOf="@id/rightBorder"
         app:layout_constraintStart_toEndOf="@id/albumDetailsTitle"
         app:layout_constraintBottom_toTopOf="@+id/yearDetailsData"
-        tools:ignore="RtlSymmetry" />
+        tools:ignore="RtlSymmetry"
+        app:layout_constraintHorizontal_bias="1"/>
 
     <TextView
         android:id="@+id/yearDetailsData"
