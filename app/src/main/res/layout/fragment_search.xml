@@ -6,14 +6,15 @@
     android:theme="@style/Base.Theme.PlaylistMaker"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="@color/main_background">
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
+    <TextView
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:title="@string/search">
-    </androidx.appcompat.widget.Toolbar>
+        android:layout_margin="@dimen/main_padding"
+        android:layout_gravity="start"
+        android:text="@string/search"/>
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -43,7 +44,8 @@
             android:layout_margin="10dp"
             android:layout_gravity="end|center"
             android:src="@drawable/close_glif"
-            android:visibility="gone"/>
+            android:visibility="gone"
+            android:contentDescription="@string/search"/>
 
     </FrameLayout>
 
@@ -60,7 +62,8 @@
             android:layout_width="120dp"
             android:layout_height="120dp"
             android:layout_marginTop="86dp"
-            tools:src="@drawable/no_connection"/>
+            tools:src="@drawable/no_connection"
+            android:contentDescription="@string/search"/>
 
         <TextView
             style="@style/MessageText"
@@ -89,7 +92,7 @@
             android:layout_height="@dimen/progressbar_diameter"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="@dimen/progressbar_top_margin"
-            android:indeterminateTint="@color/blue_background"/>
+            android:indeterminateTint="@color/light_blue"/>
 
     </FrameLayout>
 
@@ -113,7 +116,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            tools:listitem="@layout/activity_search_item"
+            tools:listitem="@layout/list_search_item"
             tools:itemCount="3"/>
 
     </LinearLayout>
@@ -124,7 +127,7 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        tools:listitem="@layout/activity_search_item"
+        tools:listitem="@layout/list_search_item"
         tools:itemCount="10"/>
 
 </LinearLayout>

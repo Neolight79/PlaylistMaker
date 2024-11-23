@@ -27,10 +27,9 @@ class SearchViewModel(private val searchInteractor: TracksInteractor,
     private var mainThreadHandler = Handler(Looper.getMainLooper())
     private var latestSearchText: String? = null
 
+    // Описание LiveData и обсервера
     private val stateLiveData = MutableLiveData<SearchState>()
-    fun observeState(): LiveData<SearchState> {
-        return stateLiveData
-    }
+    fun observeState(): LiveData<SearchState> = stateLiveData
 
     // Описание методов
     override fun onCleared() {
@@ -67,36 +66,34 @@ class SearchViewModel(private val searchInteractor: TracksInteractor,
 
             searchInteractor.searchTracks(newSearchText, object : TracksInteractor.TracksConsumer {
                 override fun consume(foundTracks: List<Track>?, errorMessage: String?) {
-                        val trackList = mutableListOf<Track>()
-                        if (foundTracks != null) {
-                            trackList.addAll(foundTracks)
-
-                        when {
-                            errorMessage != null -> {
-                                renderState(
-                                    SearchState.Error(
-                                        message = getApplication<Application>().getString(R.string.errorCommon),
-                                    )
+                    val trackList = mutableListOf<Track>()
+                    if (foundTracks !== null) {
+                        trackList.addAll(foundTracks)
+                    }
+                    when {
+                        errorMessage != null -> {
+                            renderState(
+                                SearchState.Error(
+                                    message = getApplication<Application>().getString(R.string.errorCommon),
                                 )
-                            }
-
-                            trackList.isEmpty() -> {
-                                renderState(
-                                    SearchState.Empty(
-                                        errorMessage = getApplication<Application>().getString(R.string.nothing_found),
-                                    )
-                                )
-                            }
-
-                            else -> {
-                                renderState(
-                                    SearchState.TracksFound(
-                                        trackList = trackList.toList(),
-                                    )
-                                )
-                            }
+                            )
                         }
 
+                        trackList.isEmpty() -> {
+                            renderState(
+                                SearchState.Empty(
+                                    errorMessage = getApplication<Application>().getString(R.string.nothing_found),
+                                )
+                            )
+                        }
+
+                        else -> {
+                            renderState(
+                                SearchState.TracksFound(
+                                    trackList = trackList.toList(),
+                                )
+                            )
+                        }
                     }
                 }
             })

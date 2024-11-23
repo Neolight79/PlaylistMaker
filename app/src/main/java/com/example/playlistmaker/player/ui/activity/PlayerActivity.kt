@@ -2,8 +2,12 @@ package com.example.playlistmaker.player.ui.activity
 
 import android.os.Bundle
 import android.util.TypedValue
+import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.bundle.bundleOf
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
@@ -20,6 +24,7 @@ class PlayerActivity : AppCompatActivity() {
 
     companion object {
         private const val TRACK_ID = "TRACK_ID"
+        fun createArgs(trackId: Int): Bundle = bundleOf(TRACK_ID to trackId)
     }
 
     private lateinit var binding: ActivityPlayerBinding
@@ -32,7 +37,7 @@ class PlayerActivity : AppCompatActivity() {
         binding = ActivityPlayerBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Активируем тулбар для реализации возврата в главную активность по системной кнопке
+        // Активируем тулбар для реализации возврата в корневую активити
         setSupportActionBar(binding.toolbar)
         supportActionBar?.apply {
             setDisplayHomeAsUpEnabled(true)
@@ -49,7 +54,7 @@ class PlayerActivity : AppCompatActivity() {
         }
 
         // Подписываемся на получение состояний экрана
-        viewModel.getScreenStateLiveData().observe(this) { screenState ->
+        viewModel.observeScreenState().observe(this) { screenState ->
             when (screenState) {
                 is PlayerState.Loading -> {
                     changeContentVisibility(loading = true, errorMessage = null)
@@ -75,25 +80,51 @@ class PlayerActivity : AppCompatActivity() {
                         .placeholder(R.drawable.placeholder)
                         .into(binding.artwork)
 
-                    binding.trackName.text = screenState.trackModel.trackName
-                    binding.artistName.text = screenState.trackModel.artistName
-
-                    // Присваиваем значения деталей трека
-                    binding.durationDetailsData.text = screenState.trackModel.trackTimeString
-                    binding.albumDetailsData.text = checkNullForDetails(screenState.trackModel.collectionName, binding.albumGroup)
-                    binding.yearDetailsData.text = checkNullForDetails(screenState.trackModel.releaseDate, binding.yearGroup)
-                    binding.genreDetailsData.text = checkNullForDetails(screenState.trackModel.primaryGenreName, binding.genreGroup)
-                    binding.countryDetailsData.text = checkNullForDetails(screenState.trackModel.country, binding.countryGroup)
+                    // Присваиваем значения элементам экрана из данных состояния
+                    with(binding) {
+                        trackName.text =
+                            screenState.trackModel.trackName
+                        artistName.text =
+                            screenState.trackModel.artistName
+                        durationDetailsData.text =
+                            screenState.trackModel.trackTimeString
+                        albumDetailsData.text =
+                            checkNullForDetails(screenState.trackModel.collectionName, albumGroup)
+                        yearDetailsData.text =
+                            checkNullForDetails(screenState.trackModel.releaseDate, yearGroup)
+                        genreDetailsData.text =
+                            checkNullForDetails(screenState.trackModel.primaryGenreName, genreGroup)
+                        countryDetailsData.text =
+                            checkNullForDetails(screenState.trackModel.country, countryGroup)
+                    }
                 }
             }
         }
 
         // Подписываемся на получение состояний проигрывателя
-        viewModel.getPlayStatusLiveData().observe(this) { playerStatus ->
-            changeButtonStyle(playerStatus)
-            refreshPlayingTime(playerStatus)
+        viewModel.observePlayStatus().observe(this) { playStatus ->
+            changeButtonStyle(playStatus)
+            refreshPlayingTime(playStatus)
         }
 
+        // Настраиваем системное ограничение для элементов активити -
+        // элементы не должны залезать под системные
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+            insets
+        }
+
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            android.R.id.home -> {
+                finish()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 
     private fun refreshPlayingTime(playStatus: PlayStatus) {
@@ -108,34 +139,36 @@ class PlayerActivity : AppCompatActivity() {
     }
 
     private fun changeContentVisibility(loading: Boolean, errorMessage: String?) {
-        if (loading) {
-            // Статус "Загрузка"
-            // Показываем
-            binding.progressBar.isVisible = true
-            // Скрываем
-            binding.titleBlockGroup.isVisible = false
-            binding.playerBlockGroup.isVisible = false
-            binding.detailsBlockGroup.isVisible = false
-            binding.placeholderView.isVisible = false
-        } else if (errorMessage.isNullOrEmpty()) {
-            // Статус "Отображение контента"
-            // Показываем
-            binding.titleBlockGroup.isVisible = true
-            binding.playerBlockGroup.isVisible = true
-            binding.detailsBlockGroup.isVisible = true
-            // Скрываем
-            binding.progressBar.isVisible = false
-            binding.placeholderView.isVisible = false
-        } else {
-            // Статус "Ошибка"
-            // Показываем
-            binding.placeholderMessage.text = errorMessage
-            binding.placeholderView.isVisible = true
-            // Скрываем
-            binding.progressBar.isVisible = false
-            binding.titleBlockGroup.isVisible = false
-            binding.playerBlockGroup.isVisible = false
-            binding.detailsBlockGroup.isVisible = false
+        with(binding) {
+            if (loading) {
+                // Статус "Загрузка"
+                // Показываем
+                progressBar.isVisible = true
+                // Скрываем
+                titleBlockGroup.isVisible = false
+                playerBlockGroup.isVisible = false
+                detailsBlockGroup.isVisible = false
+                placeholderView.isVisible = false
+            } else if (errorMessage.isNullOrEmpty()) {
+                // Статус "Отображение контента"
+                // Показываем
+                titleBlockGroup.isVisible = true
+                playerBlockGroup.isVisible = true
+                detailsBlockGroup.isVisible = true
+                // Скрываем
+                progressBar.isVisible = false
+                placeholderView.isVisible = false
+            } else {
+                // Статус "Ошибка"
+                // Показываем
+                placeholderMessage.text = errorMessage
+                placeholderView.isVisible = true
+                // Скрываем
+                progressBar.isVisible = false
+                titleBlockGroup.isVisible = false
+                playerBlockGroup.isVisible = false
+                detailsBlockGroup.isVisible = false
+            }
         }
     }
 

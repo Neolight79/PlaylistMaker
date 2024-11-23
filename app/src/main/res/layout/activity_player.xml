@@ -3,10 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
-    style="@style/MediaScreenTheme"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".main.ui.MainActivity">
+    tools:context="com.example.playlistmaker.player.ui.activity.PlayerActivity">
 
     <!-- Кнопка назад на системном тулбаре -->
     <androidx.appcompat.widget.Toolbar
@@ -77,7 +76,7 @@
         android:layout_width="@dimen/zero_size"
         android:layout_height="@dimen/zero_size"
         android:contentDescription="@string/desc_artwork"
-        tools:src="@drawable/b535f173143b2a1e1fc0c069482185b6"
+        tools:src="@drawable/artwork_album"
         app:layout_constraintStart_toStartOf="@id/leftBorder"
         app:layout_constraintTop_toBottomOf="@id/topBorder"
         app:layout_constraintEnd_toEndOf="@id/rightBorder"

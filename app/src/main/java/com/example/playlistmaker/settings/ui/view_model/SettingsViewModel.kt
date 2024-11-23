@@ -15,20 +15,15 @@ class SettingsViewModel(private val sharingInteractor: SharingInteractor,
 
     // LiveData для состояния переключателя темы
     private val stateLiveData = MutableLiveData<ThemeSettings>()
-    fun observeState(): LiveData<ThemeSettings> {
-        return stateLiveData
-    }
+    fun observeState(): LiveData<ThemeSettings> = stateLiveData
+
     // LiveData для вызова внешних интентов
     private val stateIntent = SingleLiveEvent<Intent>()
-    fun getStateIntent(): LiveData<Intent> {
-        return stateIntent
-    }
+    fun observeStateIntent(): LiveData<Intent> = stateIntent
 
     init {
-
         // Получаем из интерактора текущую тему
         stateLiveData.postValue(settingsInteractor.getThemeSettings())
-
     }
 
     // Передаём на запись новое значение темы

@@ -1,4 +1,4 @@
-package com.example.playlistmaker.media.ui.activity
+package com.example.playlistmaker.media.ui.fragment
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -28,7 +28,7 @@ class FavoriteFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Подписываемся на получение объекта с данными MovieDetails
+        // Подписываемся на получение объекта с данными LiveData
         favoriteViewModel.observeState().observe(viewLifecycleOwner) {
             // TODO: Настроить подписку на изменения LiveData
         }
