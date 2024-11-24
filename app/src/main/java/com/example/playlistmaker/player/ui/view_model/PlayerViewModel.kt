@@ -5,7 +5,6 @@ import android.media.MediaPlayer
 import android.os.Handler
 import android.os.Looper
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.playlistmaker.R
 import com.example.playlistmaker.player.domain.models.PlayerState
@@ -32,9 +31,11 @@ class PlayerViewModel(
 
     // Переменная для LiveData статусов экрана проигрывателя
     private var screenStateLiveData = MutableLiveData<PlayerState>(PlayerState.Loading)
+    fun observeScreenState(): MutableLiveData<PlayerState> = screenStateLiveData
 
     // Переменная для LiveData статуса проигрывания трека
     private var playStatusLiveData = MutableLiveData<PlayStatus>()
+    fun observePlayStatus(): MutableLiveData<PlayStatus> = playStatusLiveData
 
     // Переменная хранения текущего состояния проигрывателя
     private var playState = STATE_DEFAULT
@@ -86,16 +87,6 @@ class PlayerViewModel(
                 }
             }
         )
-    }
-
-    // Функция возвращающая объект LiveData состояния экрана проигрывателя
-    fun getScreenStateLiveData(): LiveData<PlayerState> {
-        return screenStateLiveData
-    }
-
-    // Функция возвращающая объект LiveData состояния экрана проигрывателя
-    fun getPlayStatusLiveData(): LiveData<PlayStatus> {
-        return playStatusLiveData
     }
 
     // Функция подготовки проигрывателя к работе
@@ -176,11 +167,20 @@ class PlayerViewModel(
     private fun refreshPlayingState() {
         when(playState) {
             STATE_PLAYING ->
-                playStatusLiveData.value = getCurrentPlayStatus().copy(currentPosition = SimpleDateFormat("mm:ss", Locale.getDefault()).format(mediaPlayer.currentPosition), isPlaying = true)
+                playStatusLiveData.value = getCurrentPlayStatus()
+                    .copy(
+                        currentPosition = SimpleDateFormat("mm:ss", Locale.getDefault()).format(mediaPlayer.currentPosition),
+                        isPlaying = true)
             STATE_PAUSED ->
-                playStatusLiveData.value = getCurrentPlayStatus().copy(currentPosition = SimpleDateFormat("mm:ss", Locale.getDefault()).format(mediaPlayer.currentPosition), isPlaying = false)
+                playStatusLiveData.value = getCurrentPlayStatus()
+                    .copy(
+                        currentPosition = SimpleDateFormat("mm:ss", Locale.getDefault()).format(mediaPlayer.currentPosition),
+                        isPlaying = false)
             STATE_PREPARED ->
-                playStatusLiveData.value = getCurrentPlayStatus().copy(currentPosition = getApplication<Application>().resources.getString(R.string.zero_duration), isPlaying = false)
+                playStatusLiveData.value = getCurrentPlayStatus()
+                    .copy(
+                        currentPosition = getApplication<Application>().resources.getString(R.string.zero_duration),
+                        isPlaying = false)
         }
     }
 

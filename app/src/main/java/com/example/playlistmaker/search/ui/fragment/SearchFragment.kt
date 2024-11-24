@@ -1,36 +1,44 @@
-package com.example.playlistmaker.search.ui.activity
+package com.example.playlistmaker.search.ui.fragment
 
 import android.annotation.SuppressLint
-import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
-import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.example.playlistmaker.R
-import com.example.playlistmaker.databinding.ActivitySearchBinding
-import com.example.playlistmaker.search.domain.models.Track
+import com.example.playlistmaker.databinding.FragmentSearchBinding
 import com.example.playlistmaker.player.ui.activity.PlayerActivity
-import com.example.playlistmaker.search.ui.view_model.SearchViewModel
 import com.example.playlistmaker.search.domain.models.SearchState
+import com.example.playlistmaker.search.domain.models.Track
+import com.example.playlistmaker.search.ui.view_model.SearchViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class SearchActivity : AppCompatActivity() {
+class SearchFragment : Fragment() {
+
+    private var _binding: FragmentSearchBinding? = null
+    private val binding get() = _binding!!
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        _binding = FragmentSearchBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
     companion object {
         const val CLICK_DEBOUNCE_DELAY = 1000L
+        const val SEARCH_ADAPTER = false
+        const val HISTORY_ADAPTER = true
     }
 
+    // Переменная для ViewModel
     private val viewModel by viewModel<SearchViewModel>()
-
-    // Переменная для ViewBinding
-    private lateinit var binding: ActivitySearchBinding
 
     // Переменная блокировки нажатия на кнопки (Debounce)
     private var isClickAllowed = true
@@ -38,28 +46,26 @@ class SearchActivity : AppCompatActivity() {
     // Объект с методами обработки нажатий на элементы списка
     private val trackClickListener =
         object : SearchListAdapter.TrackClickListener {
-        // Подключаем обработчик нажатия на элемент списка RecyclerView для списка найденных треков
-        override fun onTrackClick(track: Track) {
-            if (clickDebounce()) {
-                viewModel.addTrack(track)
-                val playerIntent = Intent(this@SearchActivity, PlayerActivity::class.java)
-                playerIntent.putExtra("TRACK_ID", track.trackId)
-                startActivity(playerIntent)
+            // Подключаем обработчик нажатия на элемент списка RecyclerView для списка найденных треков
+            override fun onTrackClick(track: Track) {
+                if (clickDebounce()) {
+                    viewModel.addTrack(track)
+                    findNavController().navigate(R.id.action_searchFragment_to_playerActivity, PlayerActivity.createArgs(track.trackId))
+                }
+            }
+
+            // Подключаем обработчик нажатия на кнопку очистки истории
+            override fun onClearHistoryClick() {
+                viewModel.clearHistory()
+                binding.searchHistoryView.isVisible = false
             }
         }
 
-        // Подключаем обработчик нажатия на кнопку очистки истории
-        override fun onClearHistoryClick() {
-            viewModel.clearHistory()
-            binding.searchHistoryView.isVisible = false
-        }
-    }
-
     // Инициализируем переменные для RecyclerView списка найденных треков
-    private val searchListAdapter = SearchListAdapter(false, trackClickListener)
+    private val searchListAdapter = SearchListAdapter(SEARCH_ADAPTER, trackClickListener)
 
     // Инициализируем переменные для RecyclerView списка истории поиска
-    private val historyListAdapter = SearchListAdapter(true, trackClickListener)
+    private val historyListAdapter = SearchListAdapter(HISTORY_ADAPTER, trackClickListener)
 
     // Инициализируем ручку для доступа к главному потоку
     private var mainThreadHandler = Handler(Looper.getMainLooper())
@@ -68,25 +74,12 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var simpleTextWatcher: TextWatcher
 
     @SuppressLint("NotifyDataSetChanged")
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-
-        // Инициализируем ViewBinding
-        binding = ActivitySearchBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         // Инициализируем ViewModel и подписываемся на изменения состояний
-        viewModel.observeState().observe(this) {
+        viewModel.observeState().observe(viewLifecycleOwner) {
             render(it)
-        }
-
-        // Активируем toolbar для реализации возврата в главную активность по системной кнопке
-        setSupportActionBar(binding.toolbar)
-        supportActionBar?.apply {
-            setDisplayHomeAsUpEnabled(true)
-            setDisplayShowHomeEnabled(true)
-            setDisplayShowTitleEnabled(true)
         }
 
         // Устанавливаем обработчик на кнопку очистки строки поиска
@@ -133,22 +126,18 @@ class SearchActivity : AppCompatActivity() {
                 viewModel.loadHistory()
         }
 
-        // Готовим RecyclerView
+        // Готовим RecyclerView для списка найденных треков
         binding.searchRecyclerView.adapter = searchListAdapter
 
         // Готовим RecyclerView для истории поиска
         binding.historyRecyclerView.adapter = historyListAdapter
 
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
-        }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onDestroyView() {
+        super.onDestroyView()
         simpleTextWatcher.let { binding.inputEditText.removeTextChangedListener(it) }
+        _binding = null
     }
 
     private fun clickDebounce() : Boolean {
@@ -179,48 +168,64 @@ class SearchActivity : AppCompatActivity() {
 
     @SuppressLint("NotifyDataSetChanged")
     private fun showTracksFound(trackList: List<Track>) {
-        binding.searchRecyclerView.isVisible = true
-        binding.searchHistoryView.isVisible = false
-        binding.placeholderView.isVisible = false
-        binding.progressBar.isVisible = false
 
-        searchListAdapter.foundTracks.clear()
-        searchListAdapter.foundTracks.addAll(trackList)
-        searchListAdapter.notifyDataSetChanged()
+        with (binding) {
+            searchRecyclerView.isVisible = true
+            searchHistoryView.isVisible = false
+            placeholderView.isVisible = false
+            progressBar.isVisible = false
+        }
+
+        with (searchListAdapter) {
+            foundTracks.clear()
+            foundTracks.addAll(trackList)
+            notifyDataSetChanged()
+        }
+
     }
 
     @SuppressLint("NotifyDataSetChanged")
     private fun showTracksHistory(trackList: List<Track>) {
-        binding.searchRecyclerView.isVisible = false
-        binding.searchHistoryView.isVisible = trackList.isNotEmpty()
-        binding.placeholderView.isVisible = false
-        binding.progressBar.isVisible = false
 
-        historyListAdapter.foundTracks.clear()
-        historyListAdapter.foundTracks.addAll(trackList)
-        historyListAdapter.notifyDataSetChanged()
+        with (binding) {
+            searchRecyclerView.isVisible = false
+            searchHistoryView.isVisible = trackList.isNotEmpty()
+            placeholderView.isVisible = false
+            progressBar.isVisible = false
+        }
+
+        with (historyListAdapter) {
+            foundTracks.clear()
+            foundTracks.addAll(trackList)
+            notifyDataSetChanged()
+        }
+
     }
 
     private fun showError(message: String) {
-        binding.searchRecyclerView.isVisible = false
-        binding.searchHistoryView.isVisible = false
-        binding.placeholderView.isVisible = true
-        binding.progressBar.isVisible = false
+        with (binding) {
+            searchRecyclerView.isVisible = false
+            searchHistoryView.isVisible = false
+            placeholderView.isVisible = true
+            progressBar.isVisible = false
 
-        binding.placeholderImage.setImageResource(R.drawable.no_connection)
-        binding.placeholderButton.isVisible = true
-        binding.placeholderMessage.text = message
+            placeholderImage.setImageResource(R.drawable.no_connection)
+            placeholderButton.isVisible = true
+            placeholderMessage.text = message
+        }
     }
 
     private fun showEmpty(errorMessage: String) {
-        binding.searchRecyclerView.isVisible = false
-        binding.searchHistoryView.isVisible = false
-        binding.placeholderView.isVisible = true
-        binding.progressBar.isVisible = false
+        with (binding) {
+            searchRecyclerView.isVisible = false
+            searchHistoryView.isVisible = false
+            placeholderView.isVisible = true
+            progressBar.isVisible = false
 
-        binding.placeholderImage.setImageResource(R.drawable.nothing_found)
-        binding.placeholderButton.isVisible = false
-        binding.placeholderMessage.text = errorMessage
+            placeholderImage.setImageResource(R.drawable.nothing_found)
+            placeholderButton.isVisible = false
+            placeholderMessage.text = errorMessage
+        }
     }
 
 }

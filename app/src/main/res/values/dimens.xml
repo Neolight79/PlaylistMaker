@@ -3,6 +3,7 @@
     <dimen name="button_corner_radius">16dp</dimen>
     <dimen name="main_padding">16dp</dimen>
     <dimen name="half_main_padding">8dp</dimen>
+    <dimen name="separator">4dp</dimen>
     <dimen name="zero_size">0dp</dimen>
     <dimen name="main_text_size">22sp</dimen>
     <dimen name="settings_text_size">16sp</dimen>
@@ -24,4 +25,5 @@
     <dimen name="play_buttons_diameter">84dp</dimen>
     <dimen name="progressbar_diameter">44dp</dimen>
     <dimen name="progressbar_top_margin">84dp</dimen>
+    <dimen name="bottom_nav_bar_height">56dp</dimen>
 </resources>

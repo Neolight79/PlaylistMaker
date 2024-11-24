@@ -13,7 +13,8 @@
         android:layout_height="45dp"
         android:layout_width="45dp"
         android:layout_marginStart="1dp"
-        tools:src="@drawable/b535f173143b2a1e1fc0c069482185b6"/>
+        tools:src="@drawable/artwork_album"
+        android:contentDescription="@string/search"/>
 
     <TextView
         android:id="@+id/trackName"
@@ -33,7 +34,8 @@
         android:layout_width="24dp"
         android:layout_marginTop="10dp"
         android:layout_gravity="end"
-        android:src="@drawable/right_arrow_glif"/>
+        android:src="@drawable/right_arrow_glif"
+        android:contentDescription="@string/search"/>
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -51,13 +53,15 @@
             android:layout_weight="1"
             android:ellipsize="end"
             android:maxLines="1"
-            tools:text="[The Beatles]"/>
+            tools:text="[The Beatles]"
+            tools:ignore="InefficientWeight" />
 
         <ImageView
             android:layout_height="13dp"
             android:layout_width="13dp"
             android:padding="5dp"
-            android:src="@drawable/round_glif"/>
+            android:src="@drawable/round_glif"
+            android:contentDescription="@string/search"/>
 
         <TextView
             android:id="@+id/trackTime"

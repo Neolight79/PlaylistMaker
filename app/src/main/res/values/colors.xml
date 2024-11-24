@@ -1,13 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Статические для всех тем -->
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="blue_background">#3772E7</color>
+    <color name="light_blue">#3772E7</color>
     <color name="dark">#1A1B22</color>
-    <color name="thumb">#AEAFB4</color>
-    <color name="track">#E6E8EB</color>
     <color name="gray">#818C99</color>
     <color name="light_gray">#AEAFB4</color>
     <color name="button_gray_day">#C5C6C7</color>
     <color name="button_gray_night">#535459</color>
+    <color name="separator_gray">#E6E8EB</color>
+    <!-- Динамические для разных тем -->
+    <color name="thumb">#AEAFB4</color>
+    <color name="track">#E6E8EB</color>
+    <color name="main_background">#FFFFFF</color>
+    <color name="main_foreground">#1A1B22</color>
+    <color name="glif_gray">#AEAFB4</color>
 </resources>

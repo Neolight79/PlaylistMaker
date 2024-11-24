@@ -1,9 +1,9 @@
-package com.example.playlistmaker.search.ui.activity
+package com.example.playlistmaker.search.ui.fragment
 
 import androidx.recyclerview.widget.RecyclerView
-import com.example.playlistmaker.databinding.ActivitySearchFooterBinding
+import com.example.playlistmaker.databinding.ListSearchFooterBinding
 
-class SearchFooterViewHolder(private val binding: ActivitySearchFooterBinding,
+class SearchFooterViewHolder(private val binding: ListSearchFooterBinding,
                              private val clickListener: SearchListAdapter.TrackClickListener
 ): RecyclerView.ViewHolder(binding.root) {
 

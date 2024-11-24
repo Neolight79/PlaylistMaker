@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
-class PlaylistsViewModel() : ViewModel() {
+class PlaylistsViewModel : ViewModel() {
 
     private var playlistsStateLiveData = MutableLiveData<String>()
     fun observeState(): LiveData<String> = playlistsStateLiveData

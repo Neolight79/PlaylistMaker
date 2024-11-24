@@ -5,14 +5,15 @@
     android:theme="@style/Base.Theme.PlaylistMaker"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="@color/main_background">
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
+    <TextView
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:title="@string/mediateka">
-    </androidx.appcompat.widget.Toolbar>
+        android:layout_margin="@dimen/main_padding"
+        android:layout_gravity="start"
+        android:text="@string/mediateka"/>
 
     <com.google.android.material.tabs.TabLayout
         style="@style/TablayoutText"

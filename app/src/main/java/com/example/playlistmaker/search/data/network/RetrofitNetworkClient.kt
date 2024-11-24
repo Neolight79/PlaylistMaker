@@ -18,14 +18,19 @@ class RetrofitNetworkClient(private val itunesService: ItunesApi, private val co
         if (dto !is ItunesRequest) {
             return Response().apply { resultCode = 400 }
         }
+        try {
+            val response = when (dto) {
+                is GetTracks -> itunesService.getTracks(dto.expression).execute()
+                is GetTrackData -> itunesService.getTrackData(dto.trackId).execute()
+            }
 
-        val response = when (dto) {
-            is GetTracks -> itunesService.getTracks(dto.expression).execute()
-            is GetTrackData -> itunesService.getTrackData(dto.trackId).execute()
+            val body = response.body()
+            return body?.apply { resultCode = response.code() } ?: Response().apply {
+                resultCode = response.code()
+            }
+        } catch(_: Exception) {
+            return Response().apply { resultCode = -1 }
         }
-
-        val body = response.body()
-        return body?.apply { resultCode = response.code() } ?: Response().apply { resultCode = response.code() }
     }
 
     private fun isConnected(): Boolean {

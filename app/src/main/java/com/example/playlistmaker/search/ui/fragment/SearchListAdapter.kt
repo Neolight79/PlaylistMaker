@@ -1,11 +1,11 @@
-package com.example.playlistmaker.search.ui.activity
+package com.example.playlistmaker.search.ui.fragment
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.R
-import com.example.playlistmaker.databinding.ActivitySearchFooterBinding
-import com.example.playlistmaker.databinding.ActivitySearchItemBinding
+import com.example.playlistmaker.databinding.ListSearchFooterBinding
+import com.example.playlistmaker.databinding.ListSearchItemBinding
 import com.example.playlistmaker.search.domain.models.Track
 
 class SearchListAdapter(private val showFooter: Boolean, private val clickListener: TrackClickListener) : RecyclerView.Adapter<RecyclerView.ViewHolder> () {
@@ -14,8 +14,8 @@ class SearchListAdapter(private val showFooter: Boolean, private val clickListen
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder =
         when (viewType) {
-            R.layout.activity_search_footer -> SearchFooterViewHolder(ActivitySearchFooterBinding.inflate(LayoutInflater.from(parent.context), parent, false), clickListener)
-            else -> SearchListViewHolder(ActivitySearchItemBinding.inflate(LayoutInflater.from(parent.context), parent, false), clickListener)
+            R.layout.list_search_footer -> SearchFooterViewHolder(ListSearchFooterBinding.inflate(LayoutInflater.from(parent.context), parent, false), clickListener)
+            else -> SearchListViewHolder(ListSearchItemBinding.inflate(LayoutInflater.from(parent.context), parent, false), clickListener)
         }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
@@ -32,7 +32,7 @@ class SearchListAdapter(private val showFooter: Boolean, private val clickListen
     }
 
     override fun getItemViewType(position: Int): Int {
-        return if (position == foundTracks.size) R.layout.activity_search_footer else R.layout.activity_search_item
+        return if (position == foundTracks.size) R.layout.list_search_footer else R.layout.list_search_item
     }
 
     interface TrackClickListener {
