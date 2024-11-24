@@ -12,13 +12,14 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SettingsFragment : Fragment() {
 
-    private lateinit var binding: FragmentSettingsBinding
+    private var _binding: FragmentSettingsBinding? = null
+    private val binding get() = _binding!!
 
     // Переменная для ViewModel
     private val viewModel by viewModel<SettingsViewModel>()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        binding = FragmentSettingsBinding.inflate(inflater, container, false)
+        _binding = FragmentSettingsBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -60,6 +61,11 @@ class SettingsFragment : Fragment() {
     // Отрисовываем установку флажка в соответствии с текущей темой
     private fun render(state: ThemeSettings) {
         binding.themeSwitcher.setChecked(state.isNightMode)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
 }

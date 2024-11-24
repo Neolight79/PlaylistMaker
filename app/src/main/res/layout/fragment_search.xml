@@ -30,19 +30,19 @@
             android:layout_height="36dp"
             android:hint="@string/search"
             android:drawableStart="@drawable/search_glif"
-            android:drawableTint="@color/gray"
+            android:drawableTint="@color/glif_gray"
             android:drawablePadding="@dimen/half_main_padding"
             android:imeOptions="actionDone"
             android:singleLine="true"
             android:autofillHints="Search"/>
 
         <ImageView
-            style="@style/ImageViewSearch"
             android:id="@+id/clearIcon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
             android:layout_gravity="end|center"
+            app:tint="@color/glif_gray"
             android:src="@drawable/close_glif"
             android:visibility="gone"
             android:contentDescription="@string/search"/>

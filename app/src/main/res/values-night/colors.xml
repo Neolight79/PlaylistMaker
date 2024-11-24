@@ -4,4 +4,5 @@
     <color name="track">#9FBBF3</color>
     <color name="main_background">#1A1B22</color>
     <color name="main_foreground">#FFFFFF</color>
+    <color name="glif_gray">#1A1B22</color>
 </resources>

@@ -11,7 +11,8 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class FavoriteFragment : Fragment() {
 
-    private lateinit var binding: FragmentFavoriteBinding
+    private var _binding: FragmentFavoriteBinding? = null
+    private val binding get() = _binding!!
 
     companion object {
         fun newInstance() = FavoriteFragment()
@@ -21,7 +22,7 @@ class FavoriteFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View {
-        binding = FragmentFavoriteBinding.inflate(inflater, container, false)
+        _binding = FragmentFavoriteBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -33,4 +34,10 @@ class FavoriteFragment : Fragment() {
             // TODO: Настроить подписку на изменения LiveData
         }
     }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
 }

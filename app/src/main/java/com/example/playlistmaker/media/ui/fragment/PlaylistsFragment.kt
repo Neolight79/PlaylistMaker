@@ -11,7 +11,8 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class PlaylistsFragment : Fragment() {
 
-    private lateinit var binding: FragmentPlaylistsBinding
+    private var _binding: FragmentPlaylistsBinding? = null
+    private val binding get() = _binding!!
 
     companion object {
         fun newInstance() = PlaylistsFragment()
@@ -21,7 +22,7 @@ class PlaylistsFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View {
-        binding = FragmentPlaylistsBinding.inflate(inflater, container, false)
+        _binding = FragmentPlaylistsBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -33,4 +34,10 @@ class PlaylistsFragment : Fragment() {
             // TODO: Настроить подписку на изменения LiveData
         }
     }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
 }
