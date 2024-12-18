@@ -2,8 +2,6 @@ package com.example.playlistmaker.search.ui.fragment
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
@@ -12,6 +10,7 @@ import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentSearchBinding
@@ -19,12 +18,15 @@ import com.example.playlistmaker.player.ui.activity.PlayerActivity
 import com.example.playlistmaker.search.domain.models.SearchState
 import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.search.ui.view_model.SearchViewModel
+import com.example.playlistmaker.util.debounce
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SearchFragment : Fragment() {
 
     private var _binding: FragmentSearchBinding? = null
     private val binding get() = _binding!!
+
+    private lateinit var onTrackClickDebounce: (Track) -> Unit
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentSearchBinding.inflate(inflater, container, false)
@@ -40,18 +42,12 @@ class SearchFragment : Fragment() {
     // Переменная для ViewModel
     private val viewModel by viewModel<SearchViewModel>()
 
-    // Переменная блокировки нажатия на кнопки (Debounce)
-    private var isClickAllowed = true
-
     // Объект с методами обработки нажатий на элементы списка
     private val trackClickListener =
         object : SearchListAdapter.TrackClickListener {
             // Подключаем обработчик нажатия на элемент списка RecyclerView для списка найденных треков
             override fun onTrackClick(track: Track) {
-                if (clickDebounce()) {
-                    viewModel.addTrack(track)
-                    findNavController().navigate(R.id.action_searchFragment_to_playerActivity, PlayerActivity.createArgs(track.trackId))
-                }
+                onTrackClickDebounce(track)
             }
 
             // Подключаем обработчик нажатия на кнопку очистки истории
@@ -67,15 +63,18 @@ class SearchFragment : Fragment() {
     // Инициализируем переменные для RecyclerView списка истории поиска
     private val historyListAdapter = SearchListAdapter(HISTORY_ADAPTER, trackClickListener)
 
-    // Инициализируем ручку для доступа к главному потоку
-    private var mainThreadHandler = Handler(Looper.getMainLooper())
-
     // Переменная для TextWatcher
     private lateinit var simpleTextWatcher: TextWatcher
 
     @SuppressLint("NotifyDataSetChanged")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        // Инициализируем дебаунсер
+        onTrackClickDebounce = debounce(CLICK_DEBOUNCE_DELAY, viewLifecycleOwner.lifecycleScope, false) { track ->
+            viewModel.addTrack(track)
+            findNavController().navigate(R.id.action_searchFragment_to_playerActivity, PlayerActivity.createArgs(track.trackId))
+        }
 
         // Инициализируем ViewModel и подписываемся на изменения состояний
         viewModel.observeState().observe(viewLifecycleOwner) {
@@ -138,15 +137,6 @@ class SearchFragment : Fragment() {
         super.onDestroyView()
         simpleTextWatcher.let { binding.inputEditText.removeTextChangedListener(it) }
         _binding = null
-    }
-
-    private fun clickDebounce() : Boolean {
-        val current = isClickAllowed
-        if (isClickAllowed) {
-            isClickAllowed = false
-            mainThreadHandler.postDelayed({ isClickAllowed = true }, CLICK_DEBOUNCE_DELAY)
-        }
-        return current
     }
 
     private fun render(state: SearchState) {
