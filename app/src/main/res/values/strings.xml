@@ -35,5 +35,7 @@
     <string name="media_empty_message">Your media is empty</string>
     <string name="favorite_tracks">Favorite tracks</string>
     <string name="playlists">Playlists</string>
+    <string name="server_error">Server error!</string>
+    <string name="check_connection">Check Internet connection!</string>
 
 </resources>

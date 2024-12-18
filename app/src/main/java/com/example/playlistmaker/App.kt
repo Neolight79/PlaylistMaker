@@ -2,6 +2,7 @@ package com.example.playlistmaker
 
 import android.app.Application
 import android.content.SharedPreferences
+import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import androidx.appcompat.app.AppCompatDelegate
 import com.example.playlistmaker.media.di.mediaModule
 import com.example.playlistmaker.player.di.playerModule
@@ -31,7 +32,7 @@ class App : Application() {
             modules(mediaModule, playerModule, searchModule, settingsModule, sharingModule, utilModule)
         }
         sharedPrefs = getSharedPreferences(PLAYLIST_MAKER_PREFERENCES, MODE_PRIVATE)
-        darkTheme = prefsClient.isDarkTheme()
+        darkTheme = prefsClient.isDarkTheme(resources.configuration.uiMode.and(UI_MODE_NIGHT_YES) != 0)
         switchTheme(darkTheme)
     }
 

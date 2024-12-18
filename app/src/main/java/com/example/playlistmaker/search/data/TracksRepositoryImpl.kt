@@ -1,44 +1,46 @@
 package com.example.playlistmaker.search.data
 
+import android.content.Context
+import com.example.playlistmaker.R
 import com.example.playlistmaker.search.data.dto.ItunesRequest
 import com.example.playlistmaker.search.data.dto.ItunesResponse
 import com.example.playlistmaker.search.data.dto.Response
 import com.example.playlistmaker.search.domain.api.TracksRepository
 import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.search.domain.models.Resource
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-class TracksRepositoryImpl(private val networkClient: NetworkClient) : TracksRepository {
+class TracksRepositoryImpl(private val networkClient: NetworkClient, private val context: Context) : TracksRepository {
 
-    override fun searchTracks(expression: String): Resource<List<Track>> {
+    override fun searchTracks(expression: String): Flow<Resource<List<Track>>> = flow {
         val response = networkClient.doRequest(ItunesRequest.GetTracks(expression))
-
-        return when (response.resultCode) {
+        when (response.resultCode) {
             -1 -> {
-                Resource.Error("Проверьте подключение к интернету")
+                emit(Resource.Error(context.getString(R.string.check_connection)))
             }
             200 -> {
-                mapResults(response)
+                emit(mapResults(response))
             }
             else -> {
-                Resource.Error("Ошибка сервера")
+                emit(Resource.Error(context.getString(R.string.server_error)))
             }
         }
     }
 
-    override fun loadTrackData(trackId: Int): Resource<List<Track>> {
+    override fun loadTrackData(trackId: Int): Flow<Resource<List<Track>>> = flow {
         val response = networkClient.doRequest(ItunesRequest.GetTrackData(trackId))
-
-        return when (response.resultCode) {
+        when (response.resultCode) {
             -1 -> {
-                Resource.Error("Проверьте подключение к интернету")
+                emit(Resource.Error(context.getString(R.string.check_connection)))
             }
             200 -> {
-                mapResults(response)
+                emit(mapResults(response))
             }
             else -> {
-                Resource.Error("Ошибка сервера")
+                emit(Resource.Error(context.getString(R.string.server_error)))
             }
         }
     }
