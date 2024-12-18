@@ -55,6 +55,8 @@ class SearchViewModel(private val searchInteractor: TracksInteractor,
                     processResult(pair.first, pair.second)
                 }
             }
+        } else {
+            clearSearch()
         }
     }
 

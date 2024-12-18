@@ -9,7 +9,7 @@ interface LocalPrefsClient {
     fun saveSearchHistory(tracksList: List<Track>)
 
     // Функции для сохранения и восстановления признака тёмной темы
-    fun isDarkTheme(): Boolean
+    fun isDarkTheme(default: Boolean): Boolean
     fun saveDarkTheme(isDarkTheme: Boolean)
 
 }

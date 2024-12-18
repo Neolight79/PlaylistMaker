@@ -1,5 +1,7 @@
 package com.example.playlistmaker.search.data
 
+import android.content.Context
+import com.example.playlistmaker.R
 import com.example.playlistmaker.search.data.dto.ItunesRequest
 import com.example.playlistmaker.search.data.dto.ItunesResponse
 import com.example.playlistmaker.search.data.dto.Response
@@ -11,19 +13,19 @@ import kotlinx.coroutines.flow.flow
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-class TracksRepositoryImpl(private val networkClient: NetworkClient) : TracksRepository {
+class TracksRepositoryImpl(private val networkClient: NetworkClient, private val context: Context) : TracksRepository {
 
     override fun searchTracks(expression: String): Flow<Resource<List<Track>>> = flow {
         val response = networkClient.doRequest(ItunesRequest.GetTracks(expression))
         when (response.resultCode) {
             -1 -> {
-                emit(Resource.Error("Проверьте подключение к интернету"))
+                emit(Resource.Error(context.getString(R.string.check_connection)))
             }
             200 -> {
                 emit(mapResults(response))
             }
             else -> {
-                emit(Resource.Error("Ошибка сервера"))
+                emit(Resource.Error(context.getString(R.string.server_error)))
             }
         }
     }
@@ -32,13 +34,13 @@ class TracksRepositoryImpl(private val networkClient: NetworkClient) : TracksRep
         val response = networkClient.doRequest(ItunesRequest.GetTrackData(trackId))
         when (response.resultCode) {
             -1 -> {
-                emit(Resource.Error("Проверьте подключение к интернету"))
+                emit(Resource.Error(context.getString(R.string.check_connection)))
             }
             200 -> {
                 emit(mapResults(response))
             }
             else -> {
-                emit(Resource.Error("Ошибка сервера"))
+                emit(Resource.Error(context.getString(R.string.server_error)))
             }
         }
     }

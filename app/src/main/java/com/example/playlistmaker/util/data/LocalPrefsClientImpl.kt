@@ -27,8 +27,8 @@ class LocalPrefsClientImpl(private val sharedPreferences: SharedPreferences,
             .apply()
     }
 
-    override fun isDarkTheme(): Boolean {
-        return sharedPreferences.getBoolean(NIGHT_MODE_STATE, false)
+    override fun isDarkTheme(default: Boolean): Boolean {
+        return sharedPreferences.getBoolean(NIGHT_MODE_STATE, default)
     }
 
     override fun saveDarkTheme(isDarkTheme: Boolean) {
