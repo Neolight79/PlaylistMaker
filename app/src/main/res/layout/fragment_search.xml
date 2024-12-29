@@ -116,7 +116,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            tools:listitem="@layout/list_search_item"
+            tools:listitem="@layout/list_item"
             tools:itemCount="3"/>
 
     </LinearLayout>
@@ -127,7 +127,7 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        tools:listitem="@layout/list_search_item"
+        tools:listitem="@layout/list_item"
         tools:itemCount="10"/>
 
 </LinearLayout>

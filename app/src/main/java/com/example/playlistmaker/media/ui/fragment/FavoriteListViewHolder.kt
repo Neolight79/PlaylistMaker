@@ -1,4 +1,4 @@
-package com.example.playlistmaker.search.ui.fragment
+package com.example.playlistmaker.media.ui.fragment
 
 import android.util.TypedValue
 import androidx.recyclerview.widget.RecyclerView
@@ -9,9 +9,9 @@ import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.ListItemBinding
 import com.example.playlistmaker.search.domain.models.Track
 
-class SearchListViewHolder(
+class FavoriteListViewHolder(
     private val binding: ListItemBinding,
-    private val clickListener: SearchListAdapter.TrackClickListener
+    private val clickListener: FavoriteListAdapter.TrackClickListener
 ): RecyclerView.ViewHolder(binding.root) {
 
     fun bind(item: Track) {
@@ -24,8 +24,12 @@ class SearchListViewHolder(
 
         Glide.with(itemView)
             .load(item.artworkUrl100)
-            .transform(CenterCrop(), RoundedCorners(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
-                2F, itemView.resources.displayMetrics).toInt()))
+            .transform(
+                CenterCrop(), RoundedCorners(
+                    TypedValue.applyDimension(
+                        TypedValue.COMPLEX_UNIT_DIP,
+                2F, itemView.resources.displayMetrics).toInt())
+            )
             .placeholder(R.drawable.placeholder)
             .into(binding.trackArtwork)
 

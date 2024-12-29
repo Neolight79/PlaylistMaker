@@ -67,5 +67,8 @@ dependencies {
     implementation(libs.androidx.fragment.ktx)
     // Подключаем корутины
     implementation(libs.kotlinx.coroutines.android)
-
+    // Подключаем Room
+    implementation(libs.androidx.room.runtime)
+    kapt(libs.androidx.room.compiler)
+    implementation(libs.androidx.room.ktx)
 }

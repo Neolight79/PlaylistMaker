@@ -53,6 +53,10 @@ class PlayerActivity : AppCompatActivity() {
             viewModel.loadTrackData()
         }
 
+        binding.favoritButton.setOnClickListener {
+            viewModel.onFavoriteClicked()
+        }
+
         // Подписываемся на получение состояний экрана
         viewModel.observeScreenState().observe(this) { screenState ->
             when (screenState) {
@@ -97,6 +101,10 @@ class PlayerActivity : AppCompatActivity() {
                         countryDetailsData.text =
                             checkNullForDetails(screenState.trackModel.country, countryGroup)
                     }
+                    setFavorite(screenState.trackModel.isFavorite)
+                }
+                is PlayerState.FavoriteMark -> {
+                    setFavorite(screenState.isFavorite)
                 }
             }
         }
@@ -175,6 +183,13 @@ class PlayerActivity : AppCompatActivity() {
     private fun checkNullForDetails(text: String?, groupView: View): String {
         groupView.isVisible = !text.isNullOrEmpty()
         return if (text.isNullOrEmpty()) "" else text
+    }
+
+    private fun setFavorite(isFavorite: Boolean) {
+        when (isFavorite) {
+            true -> binding.favoritButton.setImageResource(R.drawable.favoritbutton_glif_enabled)
+            false -> binding.favoritButton.setImageResource(R.drawable.favoritbutton_glif)
+        }
     }
 
 }

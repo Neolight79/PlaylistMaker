@@ -2,6 +2,7 @@ package com.example.playlistmaker.search.data
 
 import android.content.Context
 import com.example.playlistmaker.R
+import com.example.playlistmaker.media.data.db.AppDatabase
 import com.example.playlistmaker.search.data.dto.ItunesRequest
 import com.example.playlistmaker.search.data.dto.ItunesResponse
 import com.example.playlistmaker.search.data.dto.Response
@@ -13,7 +14,11 @@ import kotlinx.coroutines.flow.flow
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-class TracksRepositoryImpl(private val networkClient: NetworkClient, private val context: Context) : TracksRepository {
+class TracksRepositoryImpl(
+    private val networkClient: NetworkClient,
+    private val context: Context,
+    private val appDatabase: AppDatabase
+) : TracksRepository {
 
     override fun searchTracks(expression: String): Flow<Resource<List<Track>>> = flow {
         val response = networkClient.doRequest(ItunesRequest.GetTracks(expression))
@@ -45,7 +50,8 @@ class TracksRepositoryImpl(private val networkClient: NetworkClient, private val
         }
     }
 
-    private fun mapResults(response: Response): Resource<List<Track>> {
+    private suspend fun mapResults(response: Response): Resource<List<Track>> {
+        val favoriteTrackIds = appDatabase.trackDao().getTrackIds()
         return Resource.Success((response as ItunesResponse).results.map {
             Track(
                 it.trackId,
@@ -58,7 +64,9 @@ class TracksRepositoryImpl(private val networkClient: NetworkClient, private val
                 SimpleDateFormat("mm:ss", Locale.getDefault()).format(it.trackTimeMillis),
                 it.artworkUrl100,
                 it.artworkUrl100.replaceAfterLast('/', "512x512bb.jpg"),
-                it.previewUrl) })
+                it.previewUrl,
+                favoriteTrackIds.contains(it.trackId)
+            ) })
     }
 
 }
