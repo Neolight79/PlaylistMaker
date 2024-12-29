@@ -6,6 +6,7 @@ import com.example.playlistmaker.media.data.db.entity.TrackEntity
 import com.example.playlistmaker.media.domain.db.FavoriteTracksRepository
 import com.example.playlistmaker.search.domain.models.Track
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 
 class FavoriteTracksRepositoryImpl(
@@ -22,7 +23,7 @@ class FavoriteTracksRepositoryImpl(
     }
 
     override fun getFavoriteTracks(): Flow<List<Track>> = flow {
-        val tracks = appDatabase.trackDao().getTracks()
+        val tracks = appDatabase.trackDao().getTracks().first()
         emit(convertFromTrackEntity(tracks))
     }
 

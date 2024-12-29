@@ -5,6 +5,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.example.playlistmaker.media.data.db.entity.TrackEntity
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface TrackDao {
@@ -19,7 +20,7 @@ interface TrackDao {
 
     // Получение полного списка избранных треков со всеми полями
     @Query("SELECT * FROM track_table")
-    suspend fun getTracks(): List<TrackEntity>
+    fun getTracks(): Flow<List<TrackEntity>>
 
     // Получение полного списка идентификаторов избранных треков
     @Query("SELECT trackId FROM track_table")
