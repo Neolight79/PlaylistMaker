@@ -1,6 +1,12 @@
-package com.example.playlistmaker.search.domain.models
+package com.example.playlistmaker.media.data.db.entity
 
-data class Track(
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+
+@Entity(tableName = "track_table")
+data class TrackEntity(
+    @PrimaryKey(autoGenerate = true)
+    val id: Int = 0,            // Используем PK с инкрементом для сортировки результатов
     val trackId: Int,           // Идентификатор трека
     val trackName: String,      // Название композиции
     val artistName: String,     // Имя исполнителя
@@ -11,6 +17,5 @@ data class Track(
     val trackTimeString: String,   // Продолжительность трека в формате "mm:ss"
     val artworkUrl100: String,   // Ссылка на изображение обложки малого масштаба
     val artworkUrl512: String,   // Ссылка на изображение обложки крупного масштаба
-    val previewUrl: String,      // Ссылка на 30ти секундный фрагмент
-    var isFavorite: Boolean = false // Признак того, что трек находится в списке избранных
+    val previewUrl: String      // Ссылка на 30ти секундный фрагмент
 )

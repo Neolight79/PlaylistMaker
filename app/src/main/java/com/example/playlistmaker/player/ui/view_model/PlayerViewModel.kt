@@ -10,6 +10,7 @@ import com.example.playlistmaker.search.domain.api.TracksInteractor
 import com.example.playlistmaker.search.domain.models.Track
 import android.icu.text.SimpleDateFormat
 import androidx.lifecycle.viewModelScope
+import com.example.playlistmaker.media.domain.db.FavoriteTracksInteractor
 import com.example.playlistmaker.player.domain.models.PlayStatus
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -20,6 +21,7 @@ class PlayerViewModel(
     private val trackId: Int,
     private val tracksInteractor: TracksInteractor,
     private val mediaPlayer: MediaPlayer,
+    private val favoriteTracksInteractor: FavoriteTracksInteractor,
     application: Application): AndroidViewModel(application) {
 
     companion object {
@@ -44,6 +46,9 @@ class PlayerViewModel(
 
     // Инициализируем job для таймера
     private var timerJob: Job? = null
+
+    // Переменная для хранения объекта трека для работы с избранным
+    private lateinit var currentTrack: Track
 
     init {
         // Загружаем данные трека из сети
@@ -78,6 +83,7 @@ class PlayerViewModel(
             }
 
             else -> {
+                currentTrack = foundTracks[0]
                 preparePlayer(foundTracks[0].previewUrl)
                 renderState(
                     PlayerState.Content(
@@ -131,6 +137,24 @@ class PlayerViewModel(
             STATE_PLAYING -> pause()
             STATE_PREPARED, STATE_PAUSED -> play()
         }
+    }
+
+    fun onFavoriteClicked() {
+        // Выполняем действие
+        if (currentTrack.isFavorite)
+            viewModelScope.launch {
+                favoriteTracksInteractor.deleteTrackFromFavorite(currentTrack)
+            }
+        else
+            viewModelScope.launch {
+                favoriteTracksInteractor.saveTrackToFavorite(currentTrack)
+            }
+        // Меняем признак
+        currentTrack.apply { isFavorite = !isFavorite }
+        // Отправляем на фрагмент
+        renderState(
+            PlayerState.FavoriteMark(currentTrack.isFavorite)
+        )
     }
 
     // Функция очистки перед закрытием

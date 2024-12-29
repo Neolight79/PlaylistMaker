@@ -32,7 +32,7 @@ val searchModule = module {
     }
 
     single<TracksRepository> {
-        TracksRepositoryImpl(get(), androidContext())
+        TracksRepositoryImpl(get(), androidContext(), get())
     }
 
     factory<TracksInteractor> {
@@ -40,7 +40,7 @@ val searchModule = module {
     }
 
     single<SearchHistory> {
-        SearchHistoryImpl(get(), mutableListOf())
+        SearchHistoryImpl(get(), mutableListOf(), get())
     }
 
     viewModel {

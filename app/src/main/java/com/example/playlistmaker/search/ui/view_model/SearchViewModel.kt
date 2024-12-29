@@ -15,7 +15,8 @@ import kotlinx.coroutines.launch
 
 class SearchViewModel(private val searchInteractor: TracksInteractor,
                       private val searchHistory: SearchHistory,
-                      application: Application): AndroidViewModel(application) {
+                      application: Application
+): AndroidViewModel(application) {
 
     // Описание сущностей уровня класса
     companion object {
@@ -103,8 +104,11 @@ class SearchViewModel(private val searchInteractor: TracksInteractor,
     }
 
     private fun renderHistory() {
-        val searchHistoryTrackList = searchHistory.getHistory()
-        renderState(SearchState.TracksHistory(searchHistoryTrackList))
+        viewModelScope.launch {
+            searchHistory.getHistory().collect { searchHistoryTrackList ->
+                renderState(SearchState.TracksHistory(searchHistoryTrackList))
+            }
+        }
     }
 
     fun loadHistory() {
