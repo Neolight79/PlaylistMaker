@@ -8,7 +8,7 @@ import org.koin.dsl.module
 
 val playerModule = module {
     viewModel { params ->
-        PlayerViewModel(params.get(), get(), get(), get(), androidApplication())
+        PlayerViewModel(params.get(), get(), get(), get(), get(), androidApplication())
     }
 
     factory { MediaPlayer() }

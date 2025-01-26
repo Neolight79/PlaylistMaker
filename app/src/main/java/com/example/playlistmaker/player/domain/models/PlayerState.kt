@@ -18,8 +18,4 @@ sealed interface PlayerState {
         val errorMessage: String
     ) : PlayerState
 
-    data class FavoriteMark(
-        val isFavorite: Boolean
-    ) : PlayerState
-
 }

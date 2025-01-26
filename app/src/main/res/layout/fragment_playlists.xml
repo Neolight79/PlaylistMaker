@@ -3,18 +3,19 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/fragmentPlaylists">
 
     <Button
         style="@style/PlaceholderButton"
-        android:id="@+id/addPlaylist"
+        android:id="@+id/createPlaylist"
         android:layout_width="133dp"
         android:layout_height="36dp"
         android:layout_margin="24dp"
         android:text="@string/new_playlist"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintEnd_toEndOf="parent" />
 
 
     <ImageView
@@ -23,7 +24,7 @@
         android:layout_height="120dp"
         android:layout_margin="46dp"
         android:src="@drawable/nothing_found"
-        app:layout_constraintTop_toBottomOf="@id/addPlaylist"
+        app:layout_constraintTop_toBottomOf="@id/createPlaylist"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:contentDescription="@string/nothing_found"/>
@@ -39,5 +40,43 @@
         app:layout_constraintTop_toBottomOf="@id/placeholderImage"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
+
+    <!-- Раздел списка   -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/playlistsRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/zero_size"
+        android:layout_marginHorizontal="12dp"
+        android:orientation="vertical"
+        app:spanCount="2"
+        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+        app:layout_constraintTop_toBottomOf="@id/createPlaylist"
+        app:layout_constraintBottom_toBottomOf="parent"
+        tools:listitem="@layout/playlist_item"
+        tools:itemCount="40"/>
+
+    <!-- Раздел прогрессбара   -->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/progressBar"
+        android:visibility="gone">
+
+        <ProgressBar
+            android:layout_width="@dimen/progressbar_diameter"
+            android:layout_height="@dimen/progressbar_diameter"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/progressbar_top_margin"
+            android:indeterminateTint="@color/light_blue"/>
+
+    </FrameLayout>
+
+    <!-- Группы для управления видимостью -->
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/placeholderView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:constraint_referenced_ids="placeholderImage, placeholderMessage" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

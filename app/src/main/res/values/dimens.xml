@@ -26,4 +26,5 @@
     <dimen name="progressbar_diameter">44dp</dimen>
     <dimen name="progressbar_top_margin">84dp</dimen>
     <dimen name="bottom_nav_bar_height">56dp</dimen>
+    <dimen name="back_button_size">48dp</dimen>
 </resources>

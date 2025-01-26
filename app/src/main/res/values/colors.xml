@@ -16,4 +16,5 @@
     <color name="main_background">#FFFFFF</color>
     <color name="main_foreground">#1A1B22</color>
     <color name="glif_gray">#AEAFB4</color>
+    <color name="handle">#E6E8EB</color>
 </resources>
