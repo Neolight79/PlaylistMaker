@@ -46,6 +46,8 @@ class PlayerFragment : Fragment() {
         )
     }
 
+    private var isCreatePlaylistCalled: Boolean = false
+
     // Объект с методом обработки нажатий на элементы списка плейлистов
     private val onPlaylistClick: (Playlist) -> Unit = { playlist ->
         viewModel.onPlaylistClicked(playlist, bottomSheetBehavior.state)
@@ -102,8 +104,8 @@ class PlayerFragment : Fragment() {
 
         // Обработчик нажатия на кнопку создания плейлиста
         binding.createPlaylist.setOnClickListener {
+            isCreatePlaylistCalled = true
             viewModel.onBottomSheetChangedState(BottomSheetBehavior.STATE_HIDDEN)
-            findNavController().navigate(R.id.action_playerFragment_to_createPlaylistFragment)
         }
 
         // Подписываемся на получение состояний экрана
@@ -205,6 +207,10 @@ class PlayerFragment : Fragment() {
                 if (isObservableState) {
                     viewModel.onBottomSheetChangedState(newState)
                     changeBottomSheetVisibility(newState)
+                }
+                if (isCreatePlaylistCalled && newState == BottomSheetBehavior.STATE_HIDDEN) {
+                    isCreatePlaylistCalled = false
+                    findNavController().navigate(R.id.action_playerFragment_to_createPlaylistFragment)
                 }
             }
 
