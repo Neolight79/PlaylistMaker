@@ -13,7 +13,7 @@ class SearchListAdapter(
     private val clickListener: TrackClickListener
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder> () {
 
-    var foundTracks = mutableListOf<Track>()
+    val foundTracks = mutableListOf<Track>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder =
         when (viewType) {

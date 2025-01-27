@@ -39,23 +39,23 @@ class PlayerViewModel(
     }
 
     // Переменная для LiveData состояния элементов экрана проигрывателя
-    private var screenStateLiveData = MutableLiveData<PlayerState>(PlayerState.Loading)
+    private val screenStateLiveData = MutableLiveData<PlayerState>(PlayerState.Loading)
     fun observeScreenState(): MutableLiveData<PlayerState> = screenStateLiveData
 
     // Переменная для LiveData текущего статуса проигрывания трека
-    private var playStatusLiveData = MutableLiveData<PlayStatus>()
+    private val playStatusLiveData = MutableLiveData<PlayStatus>()
     fun observePlayStatus(): MutableLiveData<PlayStatus> = playStatusLiveData
 
     // Переменная для LiveData признака избранного трека
-    private var isFavoriteLiveData = MutableLiveData<Boolean>()
+    private val isFavoriteLiveData = MutableLiveData<Boolean>()
     fun observeIsFavorite(): MutableLiveData<Boolean> = isFavoriteLiveData
 
     // Переменная для LiveData состояния показа BottomSheet
-    private var bottomSheetStateLiveData = MutableLiveData<BottomSheetState>()
+    private val bottomSheetStateLiveData = MutableLiveData<BottomSheetState>()
     fun observeBottomSheetState(): MutableLiveData<BottomSheetState> = bottomSheetStateLiveData
 
     // Переменная для LiveData списка плейлистов
-    private var playlistsLiveData = MutableLiveData<List<Playlist>>()
+    private val playlistsLiveData = MutableLiveData<List<Playlist>>()
     fun observePlaylists(): MutableLiveData<List<Playlist>> = playlistsLiveData
 
     // Переменная хранения текущего состояния проигрывателя

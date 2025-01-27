@@ -22,7 +22,6 @@ import com.example.playlistmaker.media.domain.models.CreatePlaylistState
 import com.example.playlistmaker.media.ui.view_model.CreatePlaylistViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import java.io.File
 
 class CreatePlaylistFragment : Fragment() {
 
@@ -139,7 +138,7 @@ class CreatePlaylistFragment : Fragment() {
             binding.addImageButton.imageTintList = null
             playlistImagePath = state.playlistImagePath
             Glide.with(this)
-                .load(File(playlistImagePath))
+                .load(playlistImagePath)
                 .transform(
                     CenterCrop(), RoundedCorners(
                         TypedValue.applyDimension(

@@ -43,4 +43,6 @@
     <string name="exists_in_playlist_message">Трек уже добавлен в плейлист %1$s</string>
     <string name="tracks_quantity">%1$d треков</string>
     <string name="playlist_created_message">Плейлист %1$s создан</string>
+    <string name="tracks_quantity_1">%1$d трек</string>
+    <string name="tracks_quantity_2">%1$d трека</string>
 </resources>

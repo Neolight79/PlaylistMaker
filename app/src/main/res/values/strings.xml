@@ -48,5 +48,7 @@
     <string name="exists_in_playlist_message">The track is already in playlist %1$s</string>
     <string name="tracks_quantity">%1$d tracks</string>
     <string name="playlist_created_message">Playlist %1$s has been creaded</string>
+    <string name="tracks_quantity_1">%1$d tracks</string>
+    <string name="tracks_quantity_2">%1$d tracks</string>
 
 </resources>

@@ -41,16 +41,12 @@ class PlaylistsFragment : Fragment() {
     }
 
     // Объект с методом обработки нажатий на элементы списка
-    private val playlistClickListener =
-        object : PlaylistsAdapter.PlaylistClickListener {
-            // Подключаем обработчик нажатия на элемент списка RecyclerView для списка плейлистов
-            override fun onPlaylistClick(playlist: Playlist) {
+    private val onPlaylistClick: (Playlist) -> Unit = { playlist ->
                 onPlaylistClickDebounce(playlist)
-            }
-        }
+    }
 
     // Инициализируем адаптер для RecyclerView плейлистов
-    private val playlistsAdapter = PlaylistsAdapter(playlistClickListener)
+    private val playlistsAdapter = PlaylistsAdapter(onPlaylistClick)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

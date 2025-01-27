@@ -8,13 +8,13 @@ import com.example.playlistmaker.databinding.PlaylistItemBinding
 import com.example.playlistmaker.media.domain.models.Playlist
 
 class PlaylistsAdapter(
-    private val clickListener: PlaylistClickListener
+    private val onPlaylistClick: (Playlist) -> Unit
 ) : RecyclerView.Adapter<PlaylistsViewHolder> () {
 
-    var playlists = mutableListOf<Playlist>()
+    val playlists = mutableListOf<Playlist>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlaylistsViewHolder =
-        PlaylistsViewHolder(PlaylistItemBinding.inflate(LayoutInflater.from(parent.context), parent, false), clickListener)
+        PlaylistsViewHolder(PlaylistItemBinding.inflate(LayoutInflater.from(parent.context), parent, false), onPlaylistClick)
 
     override fun onBindViewHolder(holder: PlaylistsViewHolder, position: Int) {
         holder.bind(playlists[position])
@@ -28,7 +28,4 @@ class PlaylistsAdapter(
         return R.layout.list_item
     }
 
-    interface PlaylistClickListener {
-        fun onPlaylistClick(playlist: Playlist)
-    }
 }

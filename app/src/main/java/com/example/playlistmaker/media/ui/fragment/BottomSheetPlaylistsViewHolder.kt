@@ -8,22 +8,29 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.LinearPlaylistItemBinding
 import com.example.playlistmaker.media.domain.models.Playlist
-import java.io.File
 
 class BottomSheetPlaylistsViewHolder(
     private val binding: LinearPlaylistItemBinding,
-    private val clickListener: BottomSheetPlaylistsAdapter.PlaylistClickListener
+    private val onPlaylistClick: (Playlist) -> Unit
 ): RecyclerView.ViewHolder(binding.root) {
 
     fun bind(item: Playlist) {
 
-        itemView.setOnClickListener { clickListener.onPlaylistClick(item) }
+        itemView.setOnClickListener { onPlaylistClick(item) }
 
         with (item) {
             binding.playlistName.text = playlistName
-            binding.playlistTracksQuantity.text = itemView.context.getString(R.string.tracks_quantity, playlistTracksQuantity)
+            binding.playlistTracksQuantity.text =
+                when {
+                    playlistTracksQuantity % 10 == 1 && playlistTracksQuantity % 100 != 11 ->
+                        itemView.context.getString(R.string.tracks_quantity_1, playlistTracksQuantity)
+                    playlistTracksQuantity % 10 in 2..4 && playlistTracksQuantity % 100 !in 12..14 ->
+                        itemView.context.getString(R.string.tracks_quantity_2, playlistTracksQuantity)
+                    else ->
+                        itemView.context.getString(R.string.tracks_quantity, playlistTracksQuantity)
+                }
             Glide.with(itemView)
-                .load(File(playlistImagePath))
+                .load(playlistImagePath)
                 .transform(
                     CenterCrop(), RoundedCorners(
                         TypedValue.applyDimension(

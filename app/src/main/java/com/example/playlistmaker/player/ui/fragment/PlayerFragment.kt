@@ -47,16 +47,12 @@ class PlayerFragment : Fragment() {
     }
 
     // Объект с методом обработки нажатий на элементы списка плейлистов
-    private val playlistClickListener =
-        object : BottomSheetPlaylistsAdapter.PlaylistClickListener {
-            // Подключаем обработчик нажатия на элемент списка RecyclerView плейлистов
-            override fun onPlaylistClick(playlist: Playlist) {
-                viewModel.onPlaylistClicked(playlist, bottomSheetBehavior.state)
-            }
-        }
+    private val onPlaylistClick: (Playlist) -> Unit = { playlist ->
+        viewModel.onPlaylistClicked(playlist, bottomSheetBehavior.state)
+    }
 
     // Инициализируем адаптер для RecyclerView для списка плейлистов
-    private val playlistsAdapter = BottomSheetPlaylistsAdapter(playlistClickListener)
+    private val playlistsAdapter = BottomSheetPlaylistsAdapter(onPlaylistClick)
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -106,6 +102,7 @@ class PlayerFragment : Fragment() {
 
         // Обработчик нажатия на кнопку создания плейлиста
         binding.createPlaylist.setOnClickListener {
+            viewModel.onBottomSheetChangedState(BottomSheetBehavior.STATE_HIDDEN)
             findNavController().navigate(R.id.action_playerFragment_to_createPlaylistFragment)
         }
 

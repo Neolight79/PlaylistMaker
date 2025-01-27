@@ -13,7 +13,7 @@ class PlaylistsViewModel(
     private val playlistsInteractor: PlaylistsInteractor
 ) : ViewModel() {
 
-    private var playlistsStateLiveData = MutableLiveData<PlaylistsState>()
+    private val playlistsStateLiveData = MutableLiveData<PlaylistsState>()
     fun observeState(): LiveData<PlaylistsState> = playlistsStateLiveData
 
     init {

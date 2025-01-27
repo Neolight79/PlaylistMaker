@@ -8,13 +8,13 @@ import com.example.playlistmaker.databinding.LinearPlaylistItemBinding
 import com.example.playlistmaker.media.domain.models.Playlist
 
 class BottomSheetPlaylistsAdapter(
-    private val clickListener: PlaylistClickListener
+    private val onPlaylistClick: (Playlist) -> Unit
 ) : RecyclerView.Adapter<BottomSheetPlaylistsViewHolder> () {
 
-    var playlists = mutableListOf<Playlist>()
+    val playlists = mutableListOf<Playlist>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BottomSheetPlaylistsViewHolder =
-        BottomSheetPlaylistsViewHolder(LinearPlaylistItemBinding.inflate(LayoutInflater.from(parent.context), parent, false), clickListener)
+        BottomSheetPlaylistsViewHolder(LinearPlaylistItemBinding.inflate(LayoutInflater.from(parent.context), parent, false), onPlaylistClick)
 
     override fun onBindViewHolder(holder: BottomSheetPlaylistsViewHolder, position: Int) {
         holder.bind(playlists[position])
@@ -28,7 +28,4 @@ class BottomSheetPlaylistsAdapter(
         return R.layout.list_item
     }
 
-    interface PlaylistClickListener {
-        fun onPlaylistClick(playlist: Playlist)
-    }
 }

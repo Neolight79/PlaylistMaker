@@ -12,7 +12,7 @@ class FavoriteViewModel(
     private val favoriteTracksInteractor: FavoriteTracksInteractor
 ) : ViewModel() {
 
-    private var favoriteStateLiveData = MutableLiveData<FavoriteState>()
+    private val favoriteStateLiveData = MutableLiveData<FavoriteState>()
     fun observeState(): LiveData<FavoriteState> = favoriteStateLiveData
 
     fun fillData() {
