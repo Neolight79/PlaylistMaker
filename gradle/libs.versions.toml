@@ -1,6 +1,7 @@
 [versions]
 adapterdelegates4KotlinDslViewbinding = "4.3.2"
 agp = "8.7.3"
+coordinatorlayout = "1.2.0"
 fragmentKtx = "1.8.5"
 glide = "4.16.0"
 gson = "2.11.0"
@@ -13,15 +14,18 @@ espressoCore = "3.6.1"
 appcompat = "1.7.0"
 kotlinxCoroutinesAndroid = "1.7.3"
 material = "1.12.0"
-activity = "1.9.3"
+activity = "1.10.0"
 constraintlayout = "2.2.0"
 moxyVersion = "2.2.2"
 navigationFragmentKtx = "2.8.5"
+peko = "3.0.5"
 retrofit = "2.11.0"
 roomRuntime = "2.6.1"
+runner = "1.6.2"
 
 [libraries]
 adapterdelegates4-kotlin-dsl-viewbinding = { module = "com.hannesdorfmann:adapterdelegates4-kotlin-dsl-viewbinding", version.ref = "adapterdelegates4KotlinDslViewbinding" }
+androidx-coordinatorlayout = { module = "androidx.coordinatorlayout:coordinatorlayout", version.ref = "coordinatorlayout" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-fragment-ktx = { module = "androidx.fragment:fragment-ktx", version.ref = "fragmentKtx" }
 androidx-navigation-fragment-ktx = { module = "androidx.navigation:navigation-fragment-ktx", version.ref = "navigationFragmentKtx" }
@@ -44,7 +48,9 @@ androidx-constraintlayout = { group = "androidx.constraintlayout", name = "const
 moxy = { module = "com.github.moxy-community:moxy", version.ref = "moxyVersion" }
 moxy-android = { module = "com.github.moxy-community:moxy-android", version.ref = "moxyVersion" }
 moxy-compiler = { module = "com.github.moxy-community:moxy-compiler", version.ref = "moxyVersion" }
+peko = { module = "com.markodevcic:peko", version.ref = "peko" }
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
+androidx-runner = { group = "androidx.test", name = "runner", version.ref = "runner" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

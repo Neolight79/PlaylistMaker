@@ -37,5 +37,18 @@
     <string name="playlists">Playlists</string>
     <string name="server_error">Server error!</string>
     <string name="check_connection">Check Internet connection!</string>
+    <string name="name_hint">Name*</string>
+    <string name="description">Description</string>
+    <string name="create">Create</string>
+    <string name="cancel">Cancel</string>
+    <string name="finish">Finish</string>
+    <string name="playlist_creation_cancelling_confirmation">Do you confirm abort changes?</string>
+    <string name="filled_data_lost_warning">All the filled data will be lost!</string>
+    <string name="added_to_playlist_message">Added to playlist %1$s</string>
+    <string name="exists_in_playlist_message">The track is already in playlist %1$s</string>
+    <string name="tracks_quantity">%1$d tracks</string>
+    <string name="playlist_created_message">Playlist %1$s has been creaded</string>
+    <string name="tracks_quantity_1">%1$d tracks</string>
+    <string name="tracks_quantity_2">%1$d tracks</string>
 
 </resources>

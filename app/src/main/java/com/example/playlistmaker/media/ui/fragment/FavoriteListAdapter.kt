@@ -11,7 +11,7 @@ class FavoriteListAdapter(
     private val clickListener: TrackClickListener
 ) : RecyclerView.Adapter<FavoriteListViewHolder> () {
 
-    var favoriteTracks = mutableListOf<Track>()
+    val favoriteTracks = mutableListOf<Track>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FavoriteListViewHolder =
         FavoriteListViewHolder(ListItemBinding.inflate(LayoutInflater.from(parent.context), parent, false), clickListener)

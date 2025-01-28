@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
+<!-- Разрешения   -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET"/>
 
@@ -15,14 +17,9 @@
         android:supportsRtl="true"
         android:theme="@style/Base.Theme.PlaylistMaker">
         <activity
-            android:name=".player.ui.activity.PlayerActivity"
-            android:parentActivityName=".main.ui.activity.RootActivity"
-            android:launchMode="singleTop"
-            android:exported="false" />
-        <activity
             android:name=".main.ui.activity.RootActivity"
             android:exported="true"
-            android:windowSoftInputMode="adjustNothing" >
+            android:windowSoftInputMode="adjustPan" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

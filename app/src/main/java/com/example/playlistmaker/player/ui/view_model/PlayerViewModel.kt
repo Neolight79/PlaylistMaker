@@ -11,7 +11,11 @@ import com.example.playlistmaker.search.domain.models.Track
 import android.icu.text.SimpleDateFormat
 import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.media.domain.db.FavoriteTracksInteractor
+import com.example.playlistmaker.media.domain.db.PlaylistsInteractor
+import com.example.playlistmaker.media.domain.models.BottomSheetState
+import com.example.playlistmaker.media.domain.models.Playlist
 import com.example.playlistmaker.player.domain.models.PlayStatus
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -22,6 +26,7 @@ class PlayerViewModel(
     private val tracksInteractor: TracksInteractor,
     private val mediaPlayer: MediaPlayer,
     private val favoriteTracksInteractor: FavoriteTracksInteractor,
+    private val playlistsInteractor: PlaylistsInteractor,
     application: Application): AndroidViewModel(application) {
 
     companion object {
@@ -33,13 +38,25 @@ class PlayerViewModel(
         private const val REFRESH_TIMER_DELAY_MILLIS = 300L
     }
 
-    // Переменная для LiveData статусов экрана проигрывателя
-    private var screenStateLiveData = MutableLiveData<PlayerState>(PlayerState.Loading)
+    // Переменная для LiveData состояния элементов экрана проигрывателя
+    private val screenStateLiveData = MutableLiveData<PlayerState>(PlayerState.Loading)
     fun observeScreenState(): MutableLiveData<PlayerState> = screenStateLiveData
 
-    // Переменная для LiveData статуса проигрывания трека
-    private var playStatusLiveData = MutableLiveData<PlayStatus>()
+    // Переменная для LiveData текущего статуса проигрывания трека
+    private val playStatusLiveData = MutableLiveData<PlayStatus>()
     fun observePlayStatus(): MutableLiveData<PlayStatus> = playStatusLiveData
+
+    // Переменная для LiveData признака избранного трека
+    private val isFavoriteLiveData = MutableLiveData<Boolean>()
+    fun observeIsFavorite(): MutableLiveData<Boolean> = isFavoriteLiveData
+
+    // Переменная для LiveData состояния показа BottomSheet
+    private val bottomSheetStateLiveData = MutableLiveData<BottomSheetState>()
+    fun observeBottomSheetState(): MutableLiveData<BottomSheetState> = bottomSheetStateLiveData
+
+    // Переменная для LiveData списка плейлистов
+    private val playlistsLiveData = MutableLiveData<List<Playlist>>()
+    fun observePlaylists(): MutableLiveData<List<Playlist>> = playlistsLiveData
 
     // Переменная хранения текущего состояния проигрывателя
     private var playState = STATE_DEFAULT
@@ -51,6 +68,8 @@ class PlayerViewModel(
     private lateinit var currentTrack: Track
 
     init {
+        // Убираем BottomSheet
+        onBottomSheetChangedState(BottomSheetBehavior.STATE_HIDDEN)
         // Загружаем данные трека из сети
         loadTrackData()
     }
@@ -64,6 +83,7 @@ class PlayerViewModel(
         }
     }
 
+    // Функция отправки в фрагмент результатов получения данных трека
     private fun processResult(foundTracks: List<Track>?, errorMessage: String?) {
         when {
             errorMessage != null -> {
@@ -152,9 +172,44 @@ class PlayerViewModel(
         // Меняем признак
         currentTrack.apply { isFavorite = !isFavorite }
         // Отправляем на фрагмент
-        renderState(
-            PlayerState.FavoriteMark(currentTrack.isFavorite)
-        )
+        renderFavorite(currentTrack.isFavorite)
+    }
+
+    fun onAddToPlaylistClicked() {
+        // Показываем BottomSheet
+        onBottomSheetChangedState(BottomSheetBehavior.STATE_COLLAPSED)
+    }
+
+    fun onPlaylistClicked(playlist: Playlist, bottomSheetState: Int) {
+
+        // Проверяем наличие трека в текущем плейлисте и добавляем его, если его там еще нет
+        if (playlist.playlistTracks.contains(currentTrack.trackId)) {
+            bottomSheetStateLiveData.postValue(BottomSheetState(bottomSheetState,
+                getApplication<Application>().resources.getString(R.string.exists_in_playlist_message,
+                    playlist.playlistName)))
+        } else {
+            viewModelScope.launch {
+                playlistsInteractor.addTrackToPlaylist(currentTrack, playlist)
+            }
+            bottomSheetStateLiveData.postValue(BottomSheetState(BottomSheetBehavior.STATE_HIDDEN,
+                getApplication<Application>().resources.getString(R.string.added_to_playlist_message,
+                    playlist.playlistName)))
+            refillPlaylists()
+        }
+
+    }
+
+    fun onBottomSheetChangedState(newState: Int) {
+        bottomSheetStateLiveData.postValue(BottomSheetState(newState, null))
+    }
+
+    fun refillPlaylists() {
+        // Получить список плейлистов и отправить на BottomSheet
+        viewModelScope.launch {
+            playlistsInteractor.getPlaylists().collect { playlists ->
+                renderPlaylists(playlists)
+            }
+        }
     }
 
     // Функция очистки перед закрытием
@@ -168,8 +223,19 @@ class PlayerViewModel(
         screenStateLiveData.postValue(state)
     }
 
+    // Функция отправки значения для признака нахождения трека в избранных
+    private fun renderFavorite(isFavorite: Boolean) {
+        isFavoriteLiveData.postValue(isFavorite)
+    }
+
+    // Функция отправки списка плейлистов
+    private fun renderPlaylists(playlists: List<Playlist>) {
+        playlistsLiveData.postValue(playlists)
+    }
+
     private fun getCurrentPlayStatus(): PlayStatus {
-        return playStatusLiveData.value ?: PlayStatus(currentPosition = getApplication<Application>().resources.getString(R.string.zero_duration), isPlaying = false)
+        return playStatusLiveData.value ?: PlayStatus(currentPosition = getApplication<Application>()
+            .resources.getString(R.string.zero_duration), isPlaying = false)
     }
 
     private fun refreshPlayingState() {

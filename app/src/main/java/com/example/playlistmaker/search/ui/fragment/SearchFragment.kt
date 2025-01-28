@@ -8,13 +8,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
+import androidx.core.bundle.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentSearchBinding
-import com.example.playlistmaker.player.ui.activity.PlayerActivity
+import com.example.playlistmaker.player.ui.fragment.PlayerFragment
 import com.example.playlistmaker.search.domain.models.SearchState
 import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.search.ui.view_model.SearchViewModel
@@ -73,7 +74,8 @@ class SearchFragment : Fragment() {
         // Инициализируем дебаунсер
         onTrackClickDebounce = debounce(CLICK_DEBOUNCE_DELAY, viewLifecycleOwner.lifecycleScope, false) { track ->
             viewModel.addTrack(track)
-            findNavController().navigate(R.id.action_searchFragment_to_playerActivity, PlayerActivity.createArgs(track.trackId))
+            findNavController().navigate(R.id.action_searchFragment_to_playerFragment,
+                bundleOf(PlayerFragment.TRACK_ID to track.trackId))
         }
 
         // Инициализируем ViewModel и подписываемся на изменения состояний

@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.isVisible
 import androidx.core.view.updatePadding
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
@@ -27,6 +28,14 @@ class RootActivity : AppCompatActivity() {
 
         // Инициализируем нижнее меню
         binding.bottomNavigationView.setupWithNavController(navController)
+
+        // Настраиваем скрытие bottomNavigationView для фрагмента добавления плейлиста
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            when (destination.id) {
+                R.id.createPlaylistFragment -> binding.bottomNavigationView.isVisible = false
+                else -> binding.bottomNavigationView.isVisible = true
+            }
+        }
 
         // Настраиваем системное ограничение для элементов активити -
         // элементы не должны залезать под системные
