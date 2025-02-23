@@ -44,15 +44,19 @@ class FavoriteFragment : Fragment() {
 
     // Объект с методом обработки нажатий на элементы списка
     private val trackClickListener =
-        object : FavoriteListAdapter.TrackClickListener {
+        object : TracksListAdapter.TrackClickListener {
             // Подключаем обработчик нажатия на элемент списка RecyclerView для списка избранных треков
             override fun onTrackClick(track: Track) {
+                onTrackClickDebounce(track)
+            }
+            // Подключаем обработчик длинного нажатия на элемент списка RecyclerView для списка избранных треков
+            override fun onTrackLongClick(track: Track) {
                 onTrackClickDebounce(track)
             }
         }
 
     // Инициализируем адаптер для RecyclerView избранных треков
-    private val favoriteListAdapter = FavoriteListAdapter(trackClickListener)
+    private val favoriteListAdapter = TracksListAdapter(trackClickListener)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -114,8 +118,8 @@ class FavoriteFragment : Fragment() {
         }
 
         with (favoriteListAdapter) {
-            favoriteTracks.clear()
-            favoriteTracks.addAll(trackList)
+            tracksList.clear()
+            tracksList.addAll(trackList)
             notifyDataSetChanged()
         }
 

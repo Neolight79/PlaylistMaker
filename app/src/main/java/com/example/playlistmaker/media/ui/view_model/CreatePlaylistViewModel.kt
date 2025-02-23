@@ -19,7 +19,7 @@ import kotlinx.coroutines.launch
 import java.io.File
 import java.io.FileOutputStream
 
-class CreatePlaylistViewModel(
+open class CreatePlaylistViewModel(
     private val playlistsInteractor: PlaylistsInteractor,
     application: Application): AndroidViewModel(application) {
 
@@ -29,16 +29,16 @@ class CreatePlaylistViewModel(
     }
 
     // Переменные для хранения данных
-    private var playlistImagePath: String = ""
-    private var playlistTitle: String = ""
-    private var playlistDescription: String = ""
+    var playlistImagePath: String = ""
+    var playlistTitle: String = ""
+    var playlistDescription: String = ""
 
     // LiveData для состояний формы создания плейлиста
     private val stateLiveData = MutableLiveData<CreatePlaylistState>()
     fun observeState(): LiveData<CreatePlaylistState> = stateLiveData
 
     // LiveData для сообщения при закрытии фрагмента
-    private val finishLiveData = MutableLiveData<String>()
+    val finishLiveData = MutableLiveData<String>()
     fun observeFinish(): LiveData<String> = finishLiveData
 
     init {
@@ -101,7 +101,7 @@ class CreatePlaylistViewModel(
         }
     }
 
-    fun saveNewPlaylist() {
+    open fun saveNewPlaylist() {
         viewModelScope.launch {
             val playlist = Playlist(
                 playlistId = 0,
@@ -109,7 +109,8 @@ class CreatePlaylistViewModel(
                 playlistDescription = playlistDescription,
                 playlistImagePath = playlistImagePath,
                 playlistTracks = emptyList(),
-                playlistTracksQuantity = 0
+                playlistTracksQuantity = 0,
+                playlistTracksDuration = 0
             )
             playlistsInteractor.createPlaylist(playlist)
         }
@@ -119,7 +120,7 @@ class CreatePlaylistViewModel(
             R.string.playlist_created_message, playlistTitle))
     }
 
-    private fun renderState() {
+    fun renderState() {
         stateLiveData.postValue(
             CreatePlaylistState(
                 isSavable = playlistTitle.isNotEmpty(),

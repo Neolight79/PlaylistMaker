@@ -42,6 +42,7 @@
     <string name="create">Create</string>
     <string name="cancel">Cancel</string>
     <string name="finish">Finish</string>
+    <string name="delete">Delete</string>
     <string name="playlist_creation_cancelling_confirmation">Do you confirm abort changes?</string>
     <string name="filled_data_lost_warning">All the filled data will be lost!</string>
     <string name="added_to_playlist_message">Added to playlist %1$s</string>
@@ -50,5 +51,25 @@
     <string name="playlist_created_message">Playlist %1$s has been creaded</string>
     <string name="tracks_quantity_1">%1$d tracks</string>
     <string name="tracks_quantity_2">%1$d tracks</string>
+    <string name="minutes_quantity">%1$d minutes</string>
+    <string name="minutes_quantity_1">%1$d minutes</string>
+    <string name="minutes_quantity_2">%1$d minutes</string>
+    <string name="track_delete_dialog_title">Delete track?</string>
+    <string name="track_delete_dialog_message">Are you sure to delete track from playlist?</string>
+    <string name="empty_playlist_warning">The playlist is empty, you can\'t share it!</string>
+    <string name="playlist_text_title">Playlist: %1$s\nDescription: %2$s\n</string>
+    <string name="playlist_text_item" translatable="false">\n%1$d. %2$s - %3$s (%4$s)</string>
+    <string name="menu_share">Share playlist</string>
+    <string name="menu_edit">Edit playlist</string>
+    <string name="menu_delete">Delete playlist</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="playlist_delete_dialog_title">Delete playlist?</string>
+    <string name="playlist_delete_dialog_message">Are you sure to delete playlist?</string>
+    <string name="playlist_deleted_message">Playlist %1$s has been deleted</string>
+    <string name="edit_playlist_title">Edit playlist</string>
+    <string name="save">Save</string>
+    <string name="playlist_updated_message">Playlist %1$s has been updated</string>
+    <string name="playlist_empty_message">No tracks in playlist so far</string>
 
 </resources>

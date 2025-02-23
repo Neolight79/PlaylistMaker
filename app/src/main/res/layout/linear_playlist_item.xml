@@ -9,7 +9,7 @@
     android:paddingVertical="@dimen/half_main_padding">
 
     <ImageView
-        android:id="@+id/playlistImage"
+        android:id="@+id/playlistItemImage"
         android:layout_height="45dp"
         android:layout_width="45dp"
         android:layout_marginStart="1dp"
@@ -17,7 +17,7 @@
         android:contentDescription="@string/search"/>
 
     <TextView
-        android:id="@+id/playlistName"
+        android:id="@+id/playlistItemName"
         style="@style/SearchItems"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
@@ -28,7 +28,7 @@
         tools:text="[Best songs 2021]"/>
 
     <TextView
-        android:id="@+id/playlistTracksQuantity"
+        android:id="@+id/playlistItemTracksQuantity"
         style="@style/SearchItemsSmall"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"

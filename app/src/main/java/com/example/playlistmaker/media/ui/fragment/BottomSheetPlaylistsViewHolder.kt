@@ -19,8 +19,8 @@ class BottomSheetPlaylistsViewHolder(
         itemView.setOnClickListener { onPlaylistClick(item) }
 
         with (item) {
-            binding.playlistName.text = playlistName
-            binding.playlistTracksQuantity.text =
+            binding.playlistItemName.text = playlistName
+            binding.playlistItemTracksQuantity.text =
                 when {
                     playlistTracksQuantity % 10 == 1 && playlistTracksQuantity % 100 != 11 ->
                         itemView.context.getString(R.string.tracks_quantity_1, playlistTracksQuantity)
@@ -38,7 +38,7 @@ class BottomSheetPlaylistsViewHolder(
                             2F, itemView.resources.displayMetrics).toInt())
                 )
                 .placeholder(R.drawable.placeholder)
-                .into(binding.playlistImage)
+                .into(binding.playlistItemImage)
         }
 
     }

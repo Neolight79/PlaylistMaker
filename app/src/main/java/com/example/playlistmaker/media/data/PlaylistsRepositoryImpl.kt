@@ -26,6 +26,27 @@ class PlaylistsRepositoryImpl(
         emit(convertFromPlaylistEntity(playlists))
     }
 
+    override fun getPlaylist(playlistId: Int): Flow<Pair<Playlist, List<Track>>> = flow {
+        // Получаем и конвертируем плейлист
+        val playlist = playlistDbConvertor.map(
+            appDatabase.playlistDao().getPlaylist(playlistId).first()
+        )
+        // На базе списка треков плейлиста получаем и конвертируем список треков
+        val tracksList = appDatabase
+            .trackInPlaylistsDao()
+            .getTracksInPlaylists(playlist.playlistTracks).first().map { track ->
+            trackInPlaylistsDbConvertor.map(track)
+            }.associateBy {
+            it.trackId
+        }
+        // Получаем список треков отсортированный по списку ID треков в плейлисте
+        val sortedTracks = playlist.playlistTracks.mapNotNull {
+            tracksList[it]
+        }.reversed()
+        // Возвращаем в интерактор плейлист и его треки
+        emit(Pair(playlist, sortedTracks))
+    }
+
     private fun convertFromPlaylistEntity(playlists: List<PlaylistEntity>): List<Playlist> {
         return playlists.map { playlist -> playlistDbConvertor.map(playlist) }
     }
@@ -34,4 +55,15 @@ class PlaylistsRepositoryImpl(
         appDatabase.trackInPlaylistsDao().insertTrack(trackInPlaylistsDbConvertor.map(track))
     }
 
+    override suspend fun deleteTrackFromTracksInPlaylists(track: Track) {
+        appDatabase.trackInPlaylistsDao().deleteTrack(track.trackId)
+    }
+
+    override suspend fun deletePlaylist(playlist: Playlist) {
+        appDatabase.playlistDao().deletePlaylist(playlist.playlistId)
+    }
+
+    override suspend fun cleanUpOrphanedTracks(keepTracksIds: List<Int>) {
+        appDatabase.trackInPlaylistsDao().cleanUpOrphanedTracks(keepTracksIds)
+    }
 }

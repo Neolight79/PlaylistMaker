@@ -12,5 +12,6 @@ data class Track(
     val artworkUrl100: String,   // Ссылка на изображение обложки малого масштаба
     val artworkUrl512: String,   // Ссылка на изображение обложки крупного масштаба
     val previewUrl: String,      // Ссылка на 30ти секундный фрагмент
+    val trackTimeMillis: Int,         // Продолжительность трека в миллисекундах
     var isFavorite: Boolean = false // Признак того, что трек находится в списке избранных
 )

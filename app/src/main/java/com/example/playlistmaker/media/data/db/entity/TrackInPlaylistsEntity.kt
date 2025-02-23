@@ -16,5 +16,6 @@ data class TrackInPlaylistsEntity(
     val trackTimeString: String,   // Продолжительность трека в формате "mm:ss"
     val artworkUrl100: String,   // Ссылка на изображение обложки малого масштаба
     val artworkUrl512: String,   // Ссылка на изображение обложки крупного масштаба
-    val previewUrl: String      // Ссылка на 30ти секундный фрагмент
+    val previewUrl: String,      // Ссылка на 30ти секундный фрагмент
+    val trackTimeMillis: Int     // Продолжительность трека в миллисекундах
 )

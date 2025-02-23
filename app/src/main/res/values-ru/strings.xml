@@ -37,6 +37,7 @@
     <string name="create">Создать</string>
     <string name="cancel">Отмена</string>
     <string name="finish">Завершить</string>
+    <string name="delete">Удалить</string>
     <string name="playlist_creation_cancelling_confirmation">Завершить создание плейлиста?</string>
     <string name="filled_data_lost_warning">Все несохраненные данные будут потеряны!</string>
     <string name="added_to_playlist_message">Добавлено в плейлист %1$s</string>
@@ -45,4 +46,23 @@
     <string name="playlist_created_message">Плейлист %1$s создан</string>
     <string name="tracks_quantity_1">%1$d трек</string>
     <string name="tracks_quantity_2">%1$d трека</string>
+    <string name="minutes_quantity">%1$d минут</string>
+    <string name="minutes_quantity_1">%1$d минута</string>
+    <string name="minutes_quantity_2">%1$d минуты</string>
+    <string name="track_delete_dialog_title">Удалить трек?</string>
+    <string name="track_delete_dialog_message">Вы уверены, что хотите удалить трек из плейлиста?</string>
+    <string name="empty_playlist_warning">В этом плейлисте нет списка треков, которым можно поделиться</string>
+    <string name="playlist_text_title">Плейлист: %1$s\nОписание: %2$s\n</string>
+    <string name="menu_share">Поделиться</string>
+    <string name="menu_edit">Редактировать информацию</string>
+    <string name="menu_delete">Удалить плейлист</string>
+    <string name="yes">Да</string>
+    <string name="no">Нет</string>
+    <string name="playlist_delete_dialog_title">Удалить плейлист?</string>
+    <string name="playlist_delete_dialog_message">Хотите удалить плейлист?</string>
+    <string name="playlist_deleted_message">Плейлист %1$s удален</string>
+    <string name="edit_playlist_title">Редактировать</string>
+    <string name="save">Сохранить</string>
+    <string name="playlist_updated_message">Плейлист %1$s изменен</string>
+    <string name="playlist_empty_message">Пока здесь нет треков</string>
 </resources>

@@ -9,14 +9,21 @@ import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.ListItemBinding
 import com.example.playlistmaker.search.domain.models.Track
 
-class FavoriteListViewHolder(
+class TracksListViewHolder(
     private val binding: ListItemBinding,
-    private val clickListener: FavoriteListAdapter.TrackClickListener
+    private val clickListener: TracksListAdapter.TrackClickListener
 ): RecyclerView.ViewHolder(binding.root) {
 
     fun bind(item: Track) {
 
-        itemView.setOnClickListener { clickListener.onTrackClick(item) }
+        itemView.setOnClickListener {
+            clickListener.onTrackClick(item)
+        }
+
+        itemView.setOnLongClickListener {
+            clickListener.onTrackLongClick(item)
+            true
+        }
 
         binding.trackName.text = item.trackName
         binding.artistName.text = item.artistName
