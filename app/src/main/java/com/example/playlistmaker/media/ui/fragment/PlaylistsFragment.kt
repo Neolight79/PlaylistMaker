@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.bundle.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -53,7 +54,9 @@ class PlaylistsFragment : Fragment() {
 
         // Инициализируем функцию защиты от повторных нажатий
         onPlaylistClickDebounce = debounce(CLICK_DEBOUNCE_DELAY, viewLifecycleOwner.lifecycleScope, false) { playlist ->
-            playlistsViewModel.openPlaylist(playlist)
+            findNavController().navigate(R.id.action_mediaFragment_to_playlistFragment, bundleOf(
+                PlaylistFragment.PLAYLIST_ID to playlist.playlistId)
+            )
         }
 
         // Подписываемся на получение объекта с данными LiveData

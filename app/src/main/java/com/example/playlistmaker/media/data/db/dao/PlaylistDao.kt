@@ -14,8 +14,16 @@ interface PlaylistDao {
     @Insert(entity = PlaylistEntity::class, onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertPlaylist(playlist: PlaylistEntity)
 
-    // Получение полного списка избранных треков со всеми полями
+    // Получение полного списка плейлистов со всеми полями
     @Query("SELECT * FROM playlist_table")
     fun getPlaylists(): Flow<List<PlaylistEntity>>
+
+    // Получение данных плейлиста
+    @Query("SELECT * FROM playlist_table WHERE id = :playlistId")
+    fun getPlaylist(playlistId: Int): Flow<PlaylistEntity>
+
+    // Удаление плейлиста
+    @Query("DELETE FROM playlist_table WHERE id = :playlistId")
+    suspend fun deletePlaylist(playlistId: Int)
 
 }

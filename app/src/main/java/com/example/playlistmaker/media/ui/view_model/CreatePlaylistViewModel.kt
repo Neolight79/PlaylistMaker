@@ -7,9 +7,9 @@ import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Environment
 import android.provider.OpenableColumns
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.R
 import com.example.playlistmaker.media.domain.db.PlaylistsInteractor
@@ -19,9 +19,9 @@ import kotlinx.coroutines.launch
 import java.io.File
 import java.io.FileOutputStream
 
-class CreatePlaylistViewModel(
+open class CreatePlaylistViewModel(
     private val playlistsInteractor: PlaylistsInteractor,
-    application: Application): AndroidViewModel(application) {
+    private val application: Application): ViewModel() {
 
     companion object {
         const val IMAGES_DIRECTORY = "playlistImages"
@@ -29,16 +29,16 @@ class CreatePlaylistViewModel(
     }
 
     // Переменные для хранения данных
-    private var playlistImagePath: String = ""
-    private var playlistTitle: String = ""
-    private var playlistDescription: String = ""
+    var playlistImagePath: String = ""
+    var playlistTitle: String = ""
+    var playlistDescription: String = ""
 
     // LiveData для состояний формы создания плейлиста
     private val stateLiveData = MutableLiveData<CreatePlaylistState>()
     fun observeState(): LiveData<CreatePlaylistState> = stateLiveData
 
     // LiveData для сообщения при закрытии фрагмента
-    private val finishLiveData = MutableLiveData<String>()
+    val finishLiveData = MutableLiveData<String>()
     fun observeFinish(): LiveData<String> = finishLiveData
 
     init {
@@ -50,7 +50,7 @@ class CreatePlaylistViewModel(
     fun setImageUri(uri: Uri) {
 
         // Переменная для Context
-        val context = getApplication<Application>().applicationContext
+        val context = application.applicationContext
 
         // Создаём экземпляр класса File, который указывает на нужный каталог
         val filePath = File(
@@ -101,7 +101,7 @@ class CreatePlaylistViewModel(
         }
     }
 
-    fun saveNewPlaylist() {
+    open fun saveNewPlaylist() {
         viewModelScope.launch {
             val playlist = Playlist(
                 playlistId = 0,
@@ -109,17 +109,18 @@ class CreatePlaylistViewModel(
                 playlistDescription = playlistDescription,
                 playlistImagePath = playlistImagePath,
                 playlistTracks = emptyList(),
-                playlistTracksQuantity = 0
+                playlistTracksQuantity = 0,
+                playlistTracksDuration = 0
             )
             playlistsInteractor.createPlaylist(playlist)
         }
 
         // Передаём сообщение для вывода при закрытии формы создания плейлиста
-        finishLiveData.postValue(getApplication<Application>().resources.getString(
+        finishLiveData.postValue(application.getString(
             R.string.playlist_created_message, playlistTitle))
     }
 
-    private fun renderState() {
+    fun renderState() {
         stateLiveData.postValue(
             CreatePlaylistState(
                 isSavable = playlistTitle.isNotEmpty(),

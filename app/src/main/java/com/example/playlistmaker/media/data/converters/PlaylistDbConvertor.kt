@@ -14,7 +14,8 @@ class PlaylistDbConvertor {
             playlistDescription = playlist.playlistDescription,
             playlistImagePath = playlist.playlistImagePath,
             tracksList = Gson().toJson(playlist.playlistTracks),
-            tracksQuantity = playlist.playlistTracksQuantity)
+            tracksQuantity = playlist.playlistTracksQuantity,
+            tracksDuration = playlist.playlistTracksDuration)
     }
 
     fun map(playlist: PlaylistEntity): Playlist {
@@ -24,7 +25,8 @@ class PlaylistDbConvertor {
             playlistDescription = playlist.playlistDescription,
             playlistImagePath = playlist.playlistImagePath,
             playlistTracks = Gson().fromJson(playlist.tracksList, object : TypeToken<List<Int>>() {}.type),
-            playlistTracksQuantity = playlist.tracksQuantity)
+            playlistTracksQuantity = playlist.tracksQuantity,
+            playlistTracksDuration = playlist.tracksDuration)
     }
 
 }

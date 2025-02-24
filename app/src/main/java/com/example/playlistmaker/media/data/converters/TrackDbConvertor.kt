@@ -18,7 +18,8 @@ class TrackDbConvertor {
             track.trackTimeString,
             track.artworkUrl100,
             track.artworkUrl512,
-            track.previewUrl)
+            track.previewUrl,
+            track.trackTimeMillis)
     }
 
     fun map(track: TrackEntity): Track {
@@ -33,7 +34,8 @@ class TrackDbConvertor {
             track.trackTimeString,
             track.artworkUrl100,
             track.artworkUrl512,
-            track.previewUrl)
+            track.previewUrl,
+            track.trackTimeMillis)
     }
 
 }

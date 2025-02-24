@@ -7,21 +7,21 @@ import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.ListItemBinding
 import com.example.playlistmaker.search.domain.models.Track
 
-class FavoriteListAdapter(
+class TracksListAdapter(
     private val clickListener: TrackClickListener
-) : RecyclerView.Adapter<FavoriteListViewHolder> () {
+) : RecyclerView.Adapter<TracksListViewHolder> () {
 
-    val favoriteTracks = mutableListOf<Track>()
+    val tracksList = mutableListOf<Track>()
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FavoriteListViewHolder =
-        FavoriteListViewHolder(ListItemBinding.inflate(LayoutInflater.from(parent.context), parent, false), clickListener)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TracksListViewHolder =
+        TracksListViewHolder(ListItemBinding.inflate(LayoutInflater.from(parent.context), parent, false), clickListener)
 
-    override fun onBindViewHolder(holder: FavoriteListViewHolder, position: Int) {
-        holder.bind(favoriteTracks[position])
+    override fun onBindViewHolder(holder: TracksListViewHolder, position: Int) {
+        holder.bind(tracksList[position])
     }
 
     override fun getItemCount(): Int {
-        return favoriteTracks.size
+        return tracksList.size
     }
 
     override fun getItemViewType(position: Int): Int {
@@ -30,5 +30,6 @@ class FavoriteListAdapter(
 
     interface TrackClickListener {
         fun onTrackClick(track: Track)
+        fun onTrackLongClick(track: Track)
     }
 }

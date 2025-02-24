@@ -13,7 +13,7 @@ val sharingModule = module {
     }
 
     factory<SharingInteractor> {
-        SharingInteractorImpl(get(), get())
+        SharingInteractorImpl(get(), get(), get(), get())
     }
 
 }

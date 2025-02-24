@@ -49,6 +49,7 @@
         android:contentDescription="@string/new_playlist"/>
 
     <TextView
+        android:id="@+id/playlistTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/new_playlist"
@@ -89,7 +90,8 @@
         app:boxCornerRadiusBottomEnd="@dimen/separator"
         app:layout_constraintTop_toBottomOf="@id/centerBorder"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" >
+        app:layout_constraintEnd_toEndOf="parent"
+        app:cursorColor="@color/light_blue" >
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/playlistName"
@@ -100,7 +102,7 @@
             android:fontFamily="@font/ys_display_regular"
             android:textFontWeight="400"
             android:textSize="@dimen/settings_text_size"
-            android:singleLine="true" />
+            android:singleLine="true"/>
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
@@ -120,7 +122,8 @@
         app:boxCornerRadiusBottomEnd="@dimen/separator"
         app:layout_constraintTop_toBottomOf="@id/playlistNameTextInputLayout"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" >
+        app:layout_constraintEnd_toEndOf="parent"
+        app:cursorColor="@color/light_blue" >
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/playlistDescription"
@@ -131,7 +134,7 @@
             android:fontFamily="@font/ys_display_regular"
             android:textFontWeight="400"
             android:textSize="@dimen/settings_text_size"
-            android:singleLine="true"  />
+            android:singleLine="true" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <androidx.appcompat.widget.AppCompatButton

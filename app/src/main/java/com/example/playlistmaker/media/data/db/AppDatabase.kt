@@ -9,7 +9,7 @@ import com.example.playlistmaker.media.data.db.entity.PlaylistEntity
 import com.example.playlistmaker.media.data.db.entity.TrackEntity
 import com.example.playlistmaker.media.data.db.entity.TrackInPlaylistsEntity
 
-@Database(version = 3, entities = [
+@Database(version = 5, entities = [
     TrackEntity::class,
     PlaylistEntity::class,
     TrackInPlaylistsEntity::class])

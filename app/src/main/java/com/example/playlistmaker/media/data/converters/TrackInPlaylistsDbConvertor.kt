@@ -17,7 +17,8 @@ class TrackInPlaylistsDbConvertor {
             track.trackTimeString,
             track.artworkUrl100,
             track.artworkUrl512,
-            track.previewUrl)
+            track.previewUrl,
+            track.trackTimeMillis)
     }
 
     fun map(track: TrackInPlaylistsEntity): Track {
@@ -32,7 +33,8 @@ class TrackInPlaylistsDbConvertor {
             track.trackTimeString,
             track.artworkUrl100,
             track.artworkUrl512,
-            track.previewUrl)
+            track.previewUrl,
+            track.trackTimeMillis)
     }
 
 }

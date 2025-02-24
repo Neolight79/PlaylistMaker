@@ -65,6 +65,7 @@ class TracksRepositoryImpl(
                 it.artworkUrl100,
                 it.artworkUrl100.replaceAfterLast('/', "512x512bb.jpg"),
                 it.previewUrl,
+                it.trackTimeMillis,
                 favoriteTrackIds.contains(it.trackId)
             ) })
     }

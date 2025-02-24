@@ -14,8 +14,11 @@ import com.example.playlistmaker.media.domain.db.PlaylistsRepository
 import com.example.playlistmaker.media.domain.db.impl.FavoriteTracksInteractorImpl
 import com.example.playlistmaker.media.domain.db.impl.PlaylistsInteractorImpl
 import com.example.playlistmaker.media.ui.view_model.CreatePlaylistViewModel
+import com.example.playlistmaker.media.ui.view_model.EditPlaylistViewModel
 import com.example.playlistmaker.media.ui.view_model.FavoriteViewModel
+import com.example.playlistmaker.media.ui.view_model.PlaylistViewModel
 import com.example.playlistmaker.media.ui.view_model.PlaylistsViewModel
+import org.koin.android.ext.koin.androidApplication
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
@@ -31,6 +34,14 @@ val mediaModule = module {
 
     viewModel {
         CreatePlaylistViewModel(get(), get())
+    }
+
+    viewModel {
+        EditPlaylistViewModel(get(), get(), get())
+    }
+
+    viewModel { params ->
+        PlaylistViewModel(params.get(), get(), get(), androidApplication())
     }
 
     single {

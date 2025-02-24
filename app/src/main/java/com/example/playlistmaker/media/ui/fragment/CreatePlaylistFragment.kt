@@ -23,17 +23,17 @@ import com.example.playlistmaker.media.ui.view_model.CreatePlaylistViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class CreatePlaylistFragment : Fragment() {
+open class CreatePlaylistFragment : Fragment() {
 
     // Переменные для ViewBinding
     private var _binding: FragmentCreatePlaylistBinding? = null
-    private val binding get() = _binding!!
+    val binding get() = _binding!!
 
     // Переменная для диалога предупреждения о не сохранённых данных
     private lateinit var confirmDialog: MaterialAlertDialogBuilder
 
     // Переменная для ViewModel
-    private val viewModel by viewModel<CreatePlaylistViewModel>()
+    open val viewModel by viewModel<CreatePlaylistViewModel>()
 
     // Переменная для признака наличия не сохранённых данных
     private var isFilled = false
@@ -55,7 +55,7 @@ class CreatePlaylistFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         // Инициализация предупреждения о выходе без сохранения данных
-        confirmDialog = MaterialAlertDialogBuilder(requireContext())
+        confirmDialog = MaterialAlertDialogBuilder(requireContext(),R.style.DialogStyle)
             .setTitle(R.string.playlist_creation_cancelling_confirmation)
             .setMessage(R.string.filled_data_lost_warning)
             .setNegativeButton(R.string.cancel) { _, _ ->
@@ -159,7 +159,7 @@ class CreatePlaylistFragment : Fragment() {
         }
     }
 
-    private fun exitFragment() {
+    open fun exitFragment() {
         if (isFilled) {
             confirmDialog.show()
         } else {

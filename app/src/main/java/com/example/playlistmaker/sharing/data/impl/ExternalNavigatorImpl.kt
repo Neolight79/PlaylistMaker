@@ -8,10 +8,10 @@ import com.example.playlistmaker.sharing.domain.model.IntentData
 
 class ExternalNavigatorImpl: ExternalNavigator {
 
-    override fun shareLink(link: String): IntentData {
+    override fun shareText(text: String): IntentData {
         return IntentData(intent = Intent().apply {
             action = Intent.ACTION_SEND
-            putExtra(Intent.EXTRA_TEXT, link)
+            putExtra(Intent.EXTRA_TEXT, text)
             type = "text/plain"
         })
     }
