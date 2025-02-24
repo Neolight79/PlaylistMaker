@@ -68,7 +68,7 @@ class PlaylistFragment : Fragment() {
             }
             // Подключаем обработчик долгого нажатия на элемент списка RecyclerView для списка треков в плейлисте
             override fun onTrackLongClick(track: Track) {
-                MaterialAlertDialogBuilder(requireContext())
+                MaterialAlertDialogBuilder(requireContext(),R.style.DialogStyle)
                     .setTitle(R.string.track_delete_dialog_title)
                     .setMessage(R.string.track_delete_dialog_message)
                     .setNegativeButton(R.string.cancel) { _, _ ->
@@ -169,7 +169,7 @@ class PlaylistFragment : Fragment() {
         // Подключаем обработчик нажатия на кнопку "Удалить плейлист" в меню
         binding.playlistDeleteMenu.setOnClickListener {
             bottomSheetBehaviorMenu.state = BottomSheetBehavior.STATE_HIDDEN
-            MaterialAlertDialogBuilder(requireContext())
+            MaterialAlertDialogBuilder(requireContext(),R.style.DialogStyle)
                 .setTitle(R.string.playlist_delete_dialog_title)
                 .setMessage(R.string.playlist_delete_dialog_message)
                 .setNegativeButton(R.string.no) { _, _ ->

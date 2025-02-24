@@ -55,7 +55,7 @@ open class CreatePlaylistFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         // Инициализация предупреждения о выходе без сохранения данных
-        confirmDialog = MaterialAlertDialogBuilder(requireContext())
+        confirmDialog = MaterialAlertDialogBuilder(requireContext(),R.style.DialogStyle)
             .setTitle(R.string.playlist_creation_cancelling_confirmation)
             .setMessage(R.string.filled_data_lost_warning)
             .setNegativeButton(R.string.cancel) { _, _ ->
