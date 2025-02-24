@@ -2,13 +2,13 @@ package com.example.playlistmaker.player.ui.view_model
 
 import android.app.Application
 import android.media.MediaPlayer
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import com.example.playlistmaker.R
 import com.example.playlistmaker.player.domain.models.PlayerState
 import com.example.playlistmaker.search.domain.api.TracksInteractor
 import com.example.playlistmaker.search.domain.models.Track
 import android.icu.text.SimpleDateFormat
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.media.domain.db.FavoriteTracksInteractor
 import com.example.playlistmaker.media.domain.db.PlaylistsInteractor
@@ -27,7 +27,7 @@ class PlayerViewModel(
     private val mediaPlayer: MediaPlayer,
     private val favoriteTracksInteractor: FavoriteTracksInteractor,
     private val playlistsInteractor: PlaylistsInteractor,
-    application: Application): AndroidViewModel(application) {
+    private val application: Application): ViewModel() {
 
     companion object {
         // Статусы для проигрывателя
@@ -89,7 +89,7 @@ class PlayerViewModel(
             errorMessage != null -> {
                 renderState(
                     PlayerState.Error(
-                        message = getApplication<Application>().getString(R.string.errorCommon),
+                        message = application.getString(R.string.errorCommon),
                     )
                 )
             }
@@ -97,7 +97,7 @@ class PlayerViewModel(
             foundTracks.isNullOrEmpty() -> {
                 renderState(
                     PlayerState.Empty(
-                        errorMessage = getApplication<Application>().getString(R.string.nothing_found),
+                        errorMessage = application.getString(R.string.nothing_found),
                     )
                 )
             }
@@ -185,14 +185,14 @@ class PlayerViewModel(
         // Проверяем наличие трека в текущем плейлисте и добавляем его, если его там еще нет
         if (playlist.playlistTracks.contains(currentTrack.trackId)) {
             bottomSheetStateLiveData.postValue(BottomSheetState(bottomSheetState,
-                getApplication<Application>().resources.getString(R.string.exists_in_playlist_message,
+                application.getString(R.string.exists_in_playlist_message,
                     playlist.playlistName)))
         } else {
             viewModelScope.launch {
                 playlistsInteractor.addTrackToPlaylist(currentTrack, playlist)
             }
             bottomSheetStateLiveData.postValue(BottomSheetState(BottomSheetBehavior.STATE_HIDDEN,
-                getApplication<Application>().resources.getString(R.string.added_to_playlist_message,
+                application.getString(R.string.added_to_playlist_message,
                     playlist.playlistName)))
             refillPlaylists()
         }
@@ -234,8 +234,7 @@ class PlayerViewModel(
     }
 
     private fun getCurrentPlayStatus(): PlayStatus {
-        return playStatusLiveData.value ?: PlayStatus(currentPosition = getApplication<Application>()
-            .resources.getString(R.string.zero_duration), isPlaying = false)
+        return playStatusLiveData.value ?: PlayStatus(currentPosition = application.getString(R.string.zero_duration), isPlaying = false)
     }
 
     private fun refreshPlayingState() {
@@ -253,7 +252,7 @@ class PlayerViewModel(
             STATE_PREPARED ->
                 playStatusLiveData.value = getCurrentPlayStatus()
                     .copy(
-                        currentPosition = getApplication<Application>().resources.getString(R.string.zero_duration),
+                        currentPosition = application.getString(R.string.zero_duration),
                         isPlaying = false)
         }
     }

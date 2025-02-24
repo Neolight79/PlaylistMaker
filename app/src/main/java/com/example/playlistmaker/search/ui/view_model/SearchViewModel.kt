@@ -1,9 +1,9 @@
 package com.example.playlistmaker.search.ui.view_model
 
 import android.app.Application
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.R
 import com.example.playlistmaker.search.domain.SearchHistory
@@ -15,8 +15,8 @@ import kotlinx.coroutines.launch
 
 class SearchViewModel(private val searchInteractor: TracksInteractor,
                       private val searchHistory: SearchHistory,
-                      application: Application
-): AndroidViewModel(application) {
+                      private val application: Application
+): ViewModel() {
 
     // Описание сущностей уровня класса
     companion object {
@@ -27,7 +27,7 @@ class SearchViewModel(private val searchInteractor: TracksInteractor,
     private var latestSearchText: String? = null
 
     private val trackSearchDebounce = debounce<String>(SEARCH_DEBOUNCE_DELAY_MILLIS, viewModelScope, true) { changedText ->
-        search(changedText)
+        if (changedText == latestSearchText) search(changedText)
     }
 
     // Описание LiveData и обсервера
@@ -37,7 +37,10 @@ class SearchViewModel(private val searchInteractor: TracksInteractor,
     fun searchDebounce(changedText: String) {
         if (latestSearchText != changedText) {
             latestSearchText = changedText
-            trackSearchDebounce(changedText)
+            when (latestSearchText.isNullOrEmpty()) {
+                true -> clearSearch()
+                false -> trackSearchDebounce(changedText)
+            }
         }
     }
 
@@ -73,14 +76,14 @@ class SearchViewModel(private val searchInteractor: TracksInteractor,
             errorMessage != null -> {
                 renderState(
                     SearchState.Error(
-                        message = getApplication<Application>().getString(R.string.errorCommon),
+                        message = application.getString(R.string.errorCommon),
                     )
                 )
             }
             trackList.isEmpty() -> {
                 renderState(
                     SearchState.Empty(
-                        errorMessage = getApplication<Application>().getString(R.string.nothing_found),
+                        errorMessage = application.getString(R.string.nothing_found),
                     )
                 )
             }

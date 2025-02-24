@@ -32,11 +32,11 @@ class RootActivity : AppCompatActivity() {
         // Настраиваем скрытие bottomNavigationView для фрагмента добавления плейлиста
         navController.addOnDestinationChangedListener { _, destination, _ ->
             when (destination.id) {
-                R.id.createPlaylistFragment -> binding.bottomNavigationView.isVisible = false
-                R.id.editPlaylistFragment -> binding.bottomNavigationView.isVisible = false
-                R.id.playlistFragment -> binding.bottomNavigationView.isVisible = false
-                R.id.playerFragment -> binding.bottomNavigationView.isVisible = false
-                else -> binding.bottomNavigationView.isVisible = true
+                R.id.createPlaylistFragment -> showBottomNavigationView(false)
+                R.id.editPlaylistFragment -> showBottomNavigationView(false)
+                R.id.playlistFragment -> showBottomNavigationView(false)
+                R.id.playerFragment -> showBottomNavigationView(false)
+                else -> showBottomNavigationView(true)
             }
         }
 
@@ -47,6 +47,11 @@ class RootActivity : AppCompatActivity() {
             view.updatePadding(insets.left, insets.top, insets.right, insets.bottom)
             WindowInsetsCompat.CONSUMED
         }
+    }
+
+    private fun showBottomNavigationView(isVisible: Boolean) {
+        binding.bottomNavigationView.isVisible = isVisible
+        binding.separator.isVisible = isVisible
     }
 
 }

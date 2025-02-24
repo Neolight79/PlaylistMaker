@@ -10,7 +10,7 @@ import kotlinx.coroutines.launch
 class EditPlaylistViewModel(
     private val playlistId: Int,
     private val playlistsInteractor: PlaylistsInteractor,
-    application: Application) : CreatePlaylistViewModel(playlistsInteractor, application) {
+    private val application: Application) : CreatePlaylistViewModel(playlistsInteractor, application) {
 
     // Переменная для хранения списка треков плейлиста
     private lateinit var currentPlaylist: Playlist
@@ -44,7 +44,7 @@ class EditPlaylistViewModel(
         }
 
         // Передаём сообщение для вывода при закрытии формы создания плейлиста
-        finishLiveData.postValue(getApplication<Application>().resources.getString(
+        finishLiveData.postValue(application.getString(
             R.string.playlist_updated_message, playlistTitle))
     }
 

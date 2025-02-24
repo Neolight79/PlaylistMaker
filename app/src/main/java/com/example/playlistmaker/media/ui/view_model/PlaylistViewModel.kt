@@ -2,9 +2,9 @@ package com.example.playlistmaker.media.ui.view_model
 
 import android.app.Application
 import android.content.Intent
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.R
 import com.example.playlistmaker.media.domain.db.PlaylistsInteractor
@@ -18,8 +18,8 @@ class PlaylistViewModel(
     private val playlistId: Int,
     private val playlistsInteractor: PlaylistsInteractor,
     private val sharingInteractor: SharingInteractor,
-    application: Application
-): AndroidViewModel(application) {
+    private val application: Application
+): ViewModel() {
 
     // LiveData для передачи данных плейлиста
     private val playlistStateLiveData = MutableLiveData<Pair<Playlist, List<Track>>>()
@@ -63,7 +63,7 @@ class PlaylistViewModel(
     fun deletePlaylist() {
         viewModelScope.launch {
             playlistsInteractor.deletePlaylist(currentPlaylist).collect { _ ->
-                stateMessage.value = Pair(getApplication<Application>().resources.getString(R.string.playlist_deleted_message, currentPlaylist.playlistName), true)
+                stateMessage.value = Pair(application.getString(R.string.playlist_deleted_message, currentPlaylist.playlistName), true)
             }
         }
     }
@@ -77,7 +77,7 @@ class PlaylistViewModel(
     fun sharePlaylist() {
         if (currentPlaylist.playlistTracks.isEmpty())
             // Плейлист пустой и делиться нечем, отправляем сообщение
-            stateMessage.value = Pair(getApplication<Application>().resources.getString(R.string.empty_playlist_warning), false)
+            stateMessage.value = Pair(application.getString(R.string.empty_playlist_warning), false)
         else
             // Плейлист с данными, получаем текст и отправляем в виде интента
             viewModelScope.launch {

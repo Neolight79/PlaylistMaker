@@ -7,9 +7,9 @@ import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Environment
 import android.provider.OpenableColumns
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.R
 import com.example.playlistmaker.media.domain.db.PlaylistsInteractor
@@ -21,7 +21,7 @@ import java.io.FileOutputStream
 
 open class CreatePlaylistViewModel(
     private val playlistsInteractor: PlaylistsInteractor,
-    application: Application): AndroidViewModel(application) {
+    private val application: Application): ViewModel() {
 
     companion object {
         const val IMAGES_DIRECTORY = "playlistImages"
@@ -50,7 +50,7 @@ open class CreatePlaylistViewModel(
     fun setImageUri(uri: Uri) {
 
         // Переменная для Context
-        val context = getApplication<Application>().applicationContext
+        val context = application.applicationContext
 
         // Создаём экземпляр класса File, который указывает на нужный каталог
         val filePath = File(
@@ -116,7 +116,7 @@ open class CreatePlaylistViewModel(
         }
 
         // Передаём сообщение для вывода при закрытии формы создания плейлиста
-        finishLiveData.postValue(getApplication<Application>().resources.getString(
+        finishLiveData.postValue(application.getString(
             R.string.playlist_created_message, playlistTitle))
     }
 
