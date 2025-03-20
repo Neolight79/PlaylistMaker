@@ -133,18 +133,18 @@
             app:layout_constraintBottom_toBottomOf="@id/buttonsAxis"
             app:layout_constraintDimensionRatio="h,1:1"/>
 
-        <ImageButton
+        <com.example.playlistmaker.util.ui.PlaybackButtonView
             android:id="@+id/playButton"
             style="@style/PlayButton"
             android:layout_width="@dimen/play_buttons_diameter"
             android:layout_height="@dimen/play_buttons_diameter"
             android:contentDescription="@string/desc_playbutton"
-            android:src="@drawable/playbutton_glif"
+            app:playImageId="@drawable/playbutton_glif"
+            app:pauseImageId="@drawable/pausebutton_glif"
             app:layout_constraintStart_toStartOf="@id/leftBorder"
             app:layout_constraintTop_toTopOf="@id/buttonsAxis"
             app:layout_constraintEnd_toEndOf="@id/rightBorder"
-            app:layout_constraintBottom_toBottomOf="@id/buttonsAxis"
-            app:layout_constraintDimensionRatio="h,1:1"/>
+            app:layout_constraintBottom_toBottomOf="@id/buttonsAxis"/>
 
         <ImageButton
             android:id="@+id/favoritButton"
@@ -386,6 +386,8 @@
         android:orientation="vertical"
         app:behavior_hideable="true"
         app:behavior_peekHeight="505dp"
+        android:visibility="gone"
+
         app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
         <View

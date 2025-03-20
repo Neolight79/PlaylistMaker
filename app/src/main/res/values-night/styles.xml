@@ -16,9 +16,7 @@
         <item name="android:backgroundTint">@color/button_gray_night</item>
     </style>>
     <style name="PlayButton">
-        <item name="tint">@color/white</item>
-        <item name="android:backgroundTint">@color/dark</item>
-        <item name="android:background">@drawable/round_button</item>
+        <item name="android:backgroundTint">@color/white</item>
     </style>>
     <style name="MessageText">
         <item name="android:gravity">center</item>
