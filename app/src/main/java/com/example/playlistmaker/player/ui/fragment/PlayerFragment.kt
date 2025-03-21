@@ -225,10 +225,7 @@ class PlayerFragment : Fragment() {
     }
 
     private fun changeButtonStyle(playStatus: PlayStatus) {
-        when (playStatus.isPlaying) {
-            true -> binding.playButton.setImageResource(R.drawable.pausebutton_glif)
-            false -> binding.playButton.setImageResource(R.drawable.playbutton_glif)
-        }
+        binding.playButton.setIsPlaying(playStatus.isPlaying)
     }
 
     private fun changeBottomSheetVisibility(state: Int) {
