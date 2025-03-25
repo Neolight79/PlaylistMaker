@@ -1,6 +1,7 @@
 package com.example.playlistmaker.player.ui.fragment
 
 import android.annotation.SuppressLint
+import android.content.IntentFilter
 import android.os.Bundle
 import android.util.TypedValue
 import android.view.LayoutInflater
@@ -9,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
@@ -22,6 +24,7 @@ import com.example.playlistmaker.media.ui.fragment.BottomSheetPlaylistsAdapter
 import com.example.playlistmaker.player.domain.models.PlayStatus
 import com.example.playlistmaker.player.domain.models.PlayerState
 import com.example.playlistmaker.player.ui.view_model.PlayerViewModel
+import com.example.playlistmaker.util.LostConnectionBroadcastReceiver
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
@@ -45,6 +48,9 @@ class PlayerFragment : Fragment() {
             )
         )
     }
+
+    // Инициализируем BroadcastReceiver для контроля соединения с Интернет
+    private val lostConnectionBroadcastReceiver = LostConnectionBroadcastReceiver()
 
     private var isCreatePlaylistCalled: Boolean = false
 
@@ -286,6 +292,17 @@ class PlayerFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         viewModel.refillPlaylists()
+        // Регистрируем BroadcastReceiver для проверки подключения в случае системного изменения подключения
+        ContextCompat.registerReceiver(requireContext(),
+            lostConnectionBroadcastReceiver,
+            IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"),
+            ContextCompat.RECEIVER_NOT_EXPORTED)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        // Отменяем регистрацию BroadcastReceiver для проверки подключения в случае системного изменения подключения
+        requireContext().unregisterReceiver(lostConnectionBroadcastReceiver)
     }
 
     override fun onDestroyView() {
