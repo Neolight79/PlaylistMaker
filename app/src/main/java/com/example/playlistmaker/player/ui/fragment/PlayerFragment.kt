@@ -1,8 +1,15 @@
 package com.example.playlistmaker.player.ui.fragment
 
+import android.Manifest
 import android.annotation.SuppressLint
+import android.content.ComponentName
+import android.content.Context
+import android.content.Intent
 import android.content.IntentFilter
+import android.content.ServiceConnection
+import android.os.Build
 import android.os.Bundle
+import android.os.IBinder
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
@@ -10,9 +17,11 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
@@ -23,9 +32,11 @@ import com.example.playlistmaker.media.domain.models.Playlist
 import com.example.playlistmaker.media.ui.fragment.BottomSheetPlaylistsAdapter
 import com.example.playlistmaker.player.domain.models.PlayStatus
 import com.example.playlistmaker.player.domain.models.PlayerState
+import com.example.playlistmaker.player.service.MusicService
 import com.example.playlistmaker.player.ui.view_model.PlayerViewModel
 import com.example.playlistmaker.util.LostConnectionBroadcastReceiver
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
@@ -33,6 +44,52 @@ class PlayerFragment : Fragment() {
 
     companion object {
         const val TRACK_ID = "TRACK_ID"
+    }
+
+    private var musicService: MusicService? = null
+    private var currentUrl: String? = null
+
+    private val serviceConnection = object : ServiceConnection {
+        override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
+            val binder = service as MusicService.MusicServiceBinder
+            musicService = binder.getService()
+
+            lifecycleScope.launch {
+                musicService?.playStatus?.collect {
+                    changeButtonStyle(it)
+                    refreshPlayingTime(it)
+                }
+            }
+        }
+
+        override fun onServiceDisconnected(name: ComponentName?) {
+            musicService = null
+        }
+    }
+
+    private fun bindMusicService() {
+        if (!currentUrl.isNullOrEmpty()) {
+            val intent = Intent(requireContext(), MusicService::class.java).apply {
+                putExtra("song_url", currentUrl)
+            }
+            requireContext().bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
+        }
+    }
+
+    private fun unbindMusicService() {
+        requireContext().unbindService(serviceConnection)
+    }
+
+    private val requestPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted: Boolean ->
+        if (isGranted) {
+            // Если выдали разрешение — запускаем сервис.
+            bindMusicService()
+        } else {
+            // Иначе просто покажем ошибку
+            Toast.makeText(requireContext(), "Can't start foreground service!", Toast.LENGTH_LONG).show()
+        }
     }
 
     // Инициализируем ViewBinding
@@ -93,7 +150,8 @@ class PlayerFragment : Fragment() {
         }
 
         binding.playButton.setOnClickListener {
-            viewModel.playbackControl()
+            //viewModel.playbackControl()
+            musicService?.playbackControl()
         }
 
         binding.placeholderButton.setOnClickListener {
@@ -167,6 +225,14 @@ class PlayerFragment : Fragment() {
                             checkNullForDetails(screenState.trackModel.country, countryGroup)
                     }
                     setFavorite(screenState.trackModel.isFavorite)
+                    currentUrl = screenState.trackModel.previewUrl
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                        requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                    } else {
+                        // На версиях ниже Android 13 —
+                        // можно сразу стартовать сервис.
+                        bindMusicService()
+                    }
                 }
             }
         }
@@ -308,6 +374,7 @@ class PlayerFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+        unbindMusicService()
     }
 
 }
