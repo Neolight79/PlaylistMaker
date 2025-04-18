@@ -1,6 +1,7 @@
 package com.example.playlistmaker.search.ui.fragment
 
 import android.annotation.SuppressLint
+import android.content.IntentFilter
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -9,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import androidx.core.bundle.bundleOf
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -19,6 +21,7 @@ import com.example.playlistmaker.player.ui.fragment.PlayerFragment
 import com.example.playlistmaker.search.domain.models.SearchState
 import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.search.ui.view_model.SearchViewModel
+import com.example.playlistmaker.util.LostConnectionBroadcastReceiver
 import com.example.playlistmaker.util.debounce
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -28,6 +31,9 @@ class SearchFragment : Fragment() {
     private val binding get() = _binding!!
 
     private lateinit var onTrackClickDebounce: (Track) -> Unit
+
+    // Инициализируем BroadcastReceiver для контроля соединения с Интернет
+    private val lostConnectionBroadcastReceiver = LostConnectionBroadcastReceiver()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentSearchBinding.inflate(inflater, container, false)
@@ -218,6 +224,21 @@ class SearchFragment : Fragment() {
             placeholderButton.isVisible = false
             placeholderMessage.text = errorMessage
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        // Регистрируем BroadcastReceiver для проверки подключения в случае системного изменения подключения
+        ContextCompat.registerReceiver(requireContext(),
+            lostConnectionBroadcastReceiver,
+            IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"),
+            ContextCompat.RECEIVER_NOT_EXPORTED)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        // Отменяем регистрацию BroadcastReceiver для проверки подключения в случае системного изменения подключения
+        requireContext().unregisterReceiver(lostConnectionBroadcastReceiver)
     }
 
 }

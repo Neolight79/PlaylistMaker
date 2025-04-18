@@ -65,4 +65,5 @@
     <string name="save">Сохранить</string>
     <string name="playlist_updated_message">Плейлист %1$s изменен</string>
     <string name="playlist_empty_message">Пока здесь нет треков</string>
+    <string name="cant_start_foreground_service">Невозможно запустить foreground службу!</string>
 </resources>

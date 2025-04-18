@@ -1,13 +1,11 @@
 package com.example.playlistmaker.player.ui.view_model
 
 import android.app.Application
-import android.media.MediaPlayer
 import androidx.lifecycle.MutableLiveData
 import com.example.playlistmaker.R
 import com.example.playlistmaker.player.domain.models.PlayerState
 import com.example.playlistmaker.search.domain.api.TracksInteractor
 import com.example.playlistmaker.search.domain.models.Track
-import android.icu.text.SimpleDateFormat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.media.domain.db.FavoriteTracksInteractor
@@ -15,28 +13,16 @@ import com.example.playlistmaker.media.domain.db.PlaylistsInteractor
 import com.example.playlistmaker.media.domain.models.BottomSheetState
 import com.example.playlistmaker.media.domain.models.Playlist
 import com.example.playlistmaker.player.domain.models.PlayStatus
+import com.example.playlistmaker.player.service.AudioPlayerControl
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.util.Locale
 
 class PlayerViewModel(
     private val trackId: Int,
     private val tracksInteractor: TracksInteractor,
-    private val mediaPlayer: MediaPlayer,
     private val favoriteTracksInteractor: FavoriteTracksInteractor,
     private val playlistsInteractor: PlaylistsInteractor,
     private val application: Application): ViewModel() {
-
-    companion object {
-        // Статусы для проигрывателя
-        private const val STATE_DEFAULT = 0
-        private const val STATE_PREPARED = 1
-        private const val STATE_PLAYING = 2
-        private const val STATE_PAUSED = 3
-        private const val REFRESH_TIMER_DELAY_MILLIS = 300L
-    }
 
     // Переменная для LiveData состояния элементов экрана проигрывателя
     private val screenStateLiveData = MutableLiveData<PlayerState>(PlayerState.Loading)
@@ -45,6 +31,9 @@ class PlayerViewModel(
     // Переменная для LiveData текущего статуса проигрывания трека
     private val playStatusLiveData = MutableLiveData<PlayStatus>()
     fun observePlayStatus(): MutableLiveData<PlayStatus> = playStatusLiveData
+
+    // Переменная для хранения экземпляра интерфейса взаимодействия с сервисом проигрывателя
+    private var audioPlayerControl: AudioPlayerControl? = null
 
     // Переменная для LiveData признака избранного трека
     private val isFavoriteLiveData = MutableLiveData<Boolean>()
@@ -57,12 +46,6 @@ class PlayerViewModel(
     // Переменная для LiveData списка плейлистов
     private val playlistsLiveData = MutableLiveData<List<Playlist>>()
     fun observePlaylists(): MutableLiveData<List<Playlist>> = playlistsLiveData
-
-    // Переменная хранения текущего состояния проигрывателя
-    private var playState = STATE_DEFAULT
-
-    // Инициализируем job для таймера
-    private var timerJob: Job? = null
 
     // Переменная для хранения объекта трека для работы с избранным
     private lateinit var currentTrack: Track
@@ -104,7 +87,6 @@ class PlayerViewModel(
 
             else -> {
                 currentTrack = foundTracks[0]
-                preparePlayer(foundTracks[0].previewUrl)
                 renderState(
                     PlayerState.Content(
                         trackModel = foundTracks[0]
@@ -114,51 +96,26 @@ class PlayerViewModel(
         }
     }
 
-    // Функция подготовки проигрывателя к работе
-    private fun preparePlayer(trackPreviewUrl: String) {
-        mediaPlayer.setDataSource(trackPreviewUrl)
-        mediaPlayer.prepareAsync()
-        mediaPlayer.setOnPreparedListener {
-            playState = STATE_PREPARED
-            refreshPlayingState()
-        }
-        mediaPlayer.setOnCompletionListener {
-            playState = STATE_PREPARED
-            refreshPlayingState()
-        }
-    }
-
-    // Функция запуска проигрывателя
-    private fun play() {
-
-        mediaPlayer.start()
-        playState = STATE_PLAYING
-
-        // Отправляем на View статус начала проигрывания трека
-        refreshPlayingState()
-
-        // Запускаем механизм обновления данных счётчика проигрывателя
-        // Запускаем поток, который будет обновлять время
-        startTimer()
-
-    }
-
-    // Функция приостановки проигрывателя
-    private fun pause() {
-        timerJob?.cancel()
-        mediaPlayer.pause()
-        playState = STATE_PAUSED
-        refreshPlayingState()
-    }
-
     // Функция переключения режима проигрывателя
     fun playbackControl() {
-        when(playState) {
-            STATE_PLAYING -> pause()
-            STATE_PREPARED, STATE_PAUSED -> play()
+        if (playStatusLiveData.value?.isPlaying == true) {
+            audioPlayerControl?.pausePlayer()
+        } else {
+            audioPlayerControl?.startPlayer()
         }
     }
 
+    // Перевод сервиса проигрывателя в режим Foreground
+    fun startForegroundPlayerMode() {
+        audioPlayerControl?.startForeground()
+    }
+
+    // Отключение режима Foreground для проигрывателя
+    fun stopForegroundPlayerMode() {
+        audioPlayerControl?.stopForeground()
+    }
+
+    // Обработка нажатия на кнопку добавления/исключения трека из избранного
     fun onFavoriteClicked() {
         // Выполняем действие
         if (currentTrack.isFavorite)
@@ -175,11 +132,13 @@ class PlayerViewModel(
         renderFavorite(currentTrack.isFavorite)
     }
 
+    // Обработка нажатия на кнопку добавления трека в плейлист
     fun onAddToPlaylistClicked() {
         // Показываем BottomSheet
         onBottomSheetChangedState(BottomSheetBehavior.STATE_COLLAPSED)
     }
 
+    // Обработка нажатия на плейлист для добавления трека
     fun onPlaylistClicked(playlist: Playlist, bottomSheetState: Int) {
 
         // Проверяем наличие трека в текущем плейлисте и добавляем его, если его там еще нет
@@ -199,10 +158,12 @@ class PlayerViewModel(
 
     }
 
+    // Обработка изменения состояние BottomSheet
     fun onBottomSheetChangedState(newState: Int) {
         bottomSheetStateLiveData.postValue(BottomSheetState(newState, null))
     }
 
+    // Обновление списка плейлистов
     fun refillPlaylists() {
         // Получить список плейлистов и отправить на BottomSheet
         viewModelScope.launch {
@@ -215,7 +176,7 @@ class PlayerViewModel(
     // Функция очистки перед закрытием
     override fun onCleared() {
         super.onCleared()
-        mediaPlayer.release()
+        removeAudioPlayerControl()
     }
 
     // Функция отправки статуса экрана на View
@@ -233,37 +194,20 @@ class PlayerViewModel(
         playlistsLiveData.postValue(playlists)
     }
 
-    private fun getCurrentPlayStatus(): PlayStatus {
-        return playStatusLiveData.value ?: PlayStatus(currentPosition = application.getString(R.string.zero_duration), isPlaying = false)
-    }
+    // Привязка экземпляра интерфейса для управления проигрывателем в сервисе
+    fun setAudioPlayerControl(audioPlayerControl: AudioPlayerControl) {
+        this.audioPlayerControl = audioPlayerControl
 
-    private fun refreshPlayingState() {
-        when(playState) {
-            STATE_PLAYING ->
-                playStatusLiveData.value = getCurrentPlayStatus()
-                    .copy(
-                        currentPosition = SimpleDateFormat("mm:ss", Locale.getDefault()).format(mediaPlayer.currentPosition),
-                        isPlaying = true)
-            STATE_PAUSED ->
-                playStatusLiveData.value = getCurrentPlayStatus()
-                    .copy(
-                        currentPosition = SimpleDateFormat("mm:ss", Locale.getDefault()).format(mediaPlayer.currentPosition),
-                        isPlaying = false)
-            STATE_PREPARED ->
-                playStatusLiveData.value = getCurrentPlayStatus()
-                    .copy(
-                        currentPosition = application.getString(R.string.zero_duration),
-                        isPlaying = false)
-        }
-    }
-
-    private fun startTimer() {
-        timerJob = viewModelScope.launch {
-            while (mediaPlayer.isPlaying) {
-                delay(REFRESH_TIMER_DELAY_MILLIS)
-                refreshPlayingState()
+        viewModelScope.launch {
+            audioPlayerControl.getCurrentPlayStatus().collect {
+                playStatusLiveData.postValue(it)
             }
         }
+    }
+
+    // Функция очистки экземпляра интерфейса управления проигрывателем в сервисе
+    fun removeAudioPlayerControl() {
+        audioPlayerControl = null
     }
 
 }
