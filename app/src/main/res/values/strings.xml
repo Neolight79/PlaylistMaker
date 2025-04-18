@@ -71,5 +71,6 @@
     <string name="save">Save</string>
     <string name="playlist_updated_message">Playlist %1$s has been updated</string>
     <string name="playlist_empty_message">No tracks in playlist so far</string>
+    <string name="cant_start_foreground_service">Can\'t start foreground service!</string>
 
 </resources>
