@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="text_label">#FFFFFF</color>
     <color name="thumb">#3772E7</color>
     <color name="track">#9FBBF3</color>
     <color name="main_background">#1A1B22</color>
     <color name="main_foreground">#FFFFFF</color>
     <color name="glif_gray">#1A1B22</color>
     <color name="handle">#FFFFFF</color>
+    <color name="light_gray_text">#FFFFFF</color>
+    <color name="edittext_background">#FFFFFF</color>
 </resources>

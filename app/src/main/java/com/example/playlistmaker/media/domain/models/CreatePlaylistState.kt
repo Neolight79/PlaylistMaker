@@ -1,8 +1,9 @@
 package com.example.playlistmaker.media.domain.models
 
-data class CreatePlaylistState(
-    val isSavable: Boolean,
-    val isFilled: Boolean,
-    val playlistImagePath: String,
-    val playlistTitle: String,
-    val playlistDescription: String)
+data class ManagePlaylistState(
+    val isSavable: Boolean = false,
+    val isFilled: Boolean = false,
+    val isNewPlaylist: Boolean = true,
+    val playlistImagePath: String = "",
+    val playlistTitle: String = "",
+    val playlistDescription: String = "")

@@ -1,19 +1,21 @@
 package com.example.playlistmaker.media.ui.view_model
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.media.domain.db.PlaylistsInteractor
 import com.example.playlistmaker.media.domain.models.PlaylistsState
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class PlaylistsViewModel(
     private val playlistsInteractor: PlaylistsInteractor
 ) : ViewModel() {
 
-    private val playlistsStateLiveData = MutableLiveData<PlaylistsState>()
-    fun observeState(): LiveData<PlaylistsState> = playlistsStateLiveData
+    // StateFlow для состояния экрана плейлистов (для режима Compose)
+    private val _playlistsState = MutableStateFlow<PlaylistsState>(PlaylistsState.Loading)
+    val playlistsState: StateFlow<PlaylistsState> = _playlistsState.asStateFlow()
 
     init {
         fillData()
@@ -32,7 +34,6 @@ class PlaylistsViewModel(
     }
 
     private fun renderState(state: PlaylistsState) {
-        playlistsStateLiveData.postValue(state)
+        _playlistsState.value = state
     }
-
 }

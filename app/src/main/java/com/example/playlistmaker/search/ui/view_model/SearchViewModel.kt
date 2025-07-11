@@ -1,8 +1,6 @@
 package com.example.playlistmaker.search.ui.view_model
 
 import android.app.Application
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.R
@@ -11,6 +9,9 @@ import com.example.playlistmaker.search.domain.api.TracksInteractor
 import com.example.playlistmaker.search.domain.models.SearchState
 import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.util.debounce
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class SearchViewModel(private val searchInteractor: TracksInteractor,
@@ -30,9 +31,9 @@ class SearchViewModel(private val searchInteractor: TracksInteractor,
         if (changedText == latestSearchText) search(changedText)
     }
 
-    // Описание LiveData и обсервера
-    private val stateLiveData = MutableLiveData<SearchState>()
-    fun observeState(): LiveData<SearchState> = stateLiveData
+    // StateFlow для состояния экрана поиска треков (для режима Compose)
+    private val _searchState = MutableStateFlow<SearchState>(SearchState.Init)
+    val searchState: StateFlow<SearchState> = _searchState.asStateFlow()
 
     fun searchDebounce(changedText: String) {
         if (latestSearchText != changedText) {
@@ -98,7 +99,7 @@ class SearchViewModel(private val searchInteractor: TracksInteractor,
     }
 
     private fun renderState(state: SearchState) {
-        stateLiveData.postValue(state)
+        _searchState.value = state
     }
 
     fun clearSearch() {
@@ -109,7 +110,10 @@ class SearchViewModel(private val searchInteractor: TracksInteractor,
     private fun renderHistory() {
         viewModelScope.launch {
             searchHistory.getHistory().collect { searchHistoryTrackList ->
-                renderState(SearchState.TracksHistory(searchHistoryTrackList))
+                if (searchHistoryTrackList.isNotEmpty())
+                    renderState(SearchState.TracksHistory(searchHistoryTrackList))
+                else
+                    renderState(SearchState.Init)
             }
         }
     }

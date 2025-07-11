@@ -1,57 +1,40 @@
 package com.example.playlistmaker.main.ui.activity
 
 import android.os.Bundle
+import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.isVisible
-import androidx.core.view.updatePadding
-import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.ui.setupWithNavController
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.LibraryMusic
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.outlined.Search
 import com.example.playlistmaker.R
-import com.example.playlistmaker.databinding.ActivityRootBinding
+import com.example.playlistmaker.main.domain.model.BottomBarItem
+import com.example.playlistmaker.main.domain.model.BottomNavRoutes
+import com.example.playlistmaker.main.ui.compose.MainScreen
 
 class RootActivity : AppCompatActivity() {
-
-    private lateinit var binding: ActivityRootBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Привязываем вёрстку к экрану
-        binding = ActivityRootBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-
-        // Инициализируем хост-фрагмент и NavController
-        val navHostFragment = supportFragmentManager.findFragmentById(R.id.rootFragmentContainerView) as NavHostFragment
-        val navController = navHostFragment.navController
-
-        // Инициализируем нижнее меню
-        binding.bottomNavigationView.setupWithNavController(navController)
-
-        // Настраиваем скрытие bottomNavigationView для фрагмента добавления плейлиста
-        navController.addOnDestinationChangedListener { _, destination, _ ->
-            when (destination.id) {
-                R.id.createPlaylistFragment -> showBottomNavigationView(false)
-                R.id.editPlaylistFragment -> showBottomNavigationView(false)
-                R.id.playlistFragment -> showBottomNavigationView(false)
-                R.id.playerFragment -> showBottomNavigationView(false)
-                else -> showBottomNavigationView(true)
-            }
-        }
-
-        // Настраиваем системное ограничение для элементов активити -
-        // элементы не должны залезать под системные
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.rootActivity)) { view, windowInsets ->
-            val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemGestures())
-            view.updatePadding(insets.left, insets.top, insets.right, insets.bottom)
-            WindowInsetsCompat.CONSUMED
+        val bottomBarRoutes = listOf(
+            BottomBarItem(
+                label = getString(R.string.search),
+                icon =  Icons.Outlined.Search,
+                route = BottomNavRoutes.Search
+            ),
+            BottomBarItem(
+                label = getString(R.string.mediateka),
+                icon = Icons.Filled.LibraryMusic,
+                route = BottomNavRoutes.Media
+            ),
+            BottomBarItem(
+                label = getString(R.string.settings),
+                icon = Icons.Filled.Settings,
+                route = BottomNavRoutes.Settings
+            ))
+        setContent {
+            MainScreen(bottomBarRoutes)
         }
     }
-
-    private fun showBottomNavigationView(isVisible: Boolean) {
-        binding.bottomNavigationView.isVisible = isVisible
-        binding.separator.isVisible = isVisible
-    }
-
 }

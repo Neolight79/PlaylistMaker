@@ -2,6 +2,8 @@ package com.example.playlistmaker.search.domain.models
 
 sealed interface SearchState {
 
+    data object Init : SearchState
+
     data object Loading : SearchState
 
     data class TracksFound(

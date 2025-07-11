@@ -1,6 +1,9 @@
 package com.example.playlistmaker.media.domain.models
 
-data class BottomSheetState(
-    val newState: Int,
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.SheetValue
+
+data class BottomSheetState @OptIn(ExperimentalMaterial3Api::class) constructor(
+    val newState: SheetValue,
     val message: String?
 )

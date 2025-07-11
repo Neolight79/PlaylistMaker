@@ -1,7 +1,8 @@
 package com.example.playlistmaker.player.ui.view_model
 
 import android.app.Application
-import androidx.lifecycle.MutableLiveData
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.SheetValue
 import com.example.playlistmaker.R
 import com.example.playlistmaker.player.domain.models.PlayerState
 import com.example.playlistmaker.search.domain.api.TracksInteractor
@@ -14,7 +15,9 @@ import com.example.playlistmaker.media.domain.models.BottomSheetState
 import com.example.playlistmaker.media.domain.models.Playlist
 import com.example.playlistmaker.player.domain.models.PlayStatus
 import com.example.playlistmaker.player.service.AudioPlayerControl
-import com.google.android.material.bottomsheet.BottomSheetBehavior
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class PlayerViewModel(
@@ -24,35 +27,30 @@ class PlayerViewModel(
     private val playlistsInteractor: PlaylistsInteractor,
     private val application: Application): ViewModel() {
 
-    // Переменная для LiveData состояния элементов экрана проигрывателя
-    private val screenStateLiveData = MutableLiveData<PlayerState>(PlayerState.Loading)
-    fun observeScreenState(): MutableLiveData<PlayerState> = screenStateLiveData
+    // StateFlow для состояния элементов экрана проигрывателя (для режима Compose)
+    private val _playerState = MutableStateFlow<PlayerState>(PlayerState.Loading)
+    val playerState: StateFlow<PlayerState> = _playerState.asStateFlow()
 
-    // Переменная для LiveData текущего статуса проигрывания трека
-    private val playStatusLiveData = MutableLiveData<PlayStatus>()
-    fun observePlayStatus(): MutableLiveData<PlayStatus> = playStatusLiveData
+    // StateFlow для текущего статуса проигрывания трека (для режима Compose)
+    private val _playStatusState = MutableStateFlow<PlayStatus>(PlayStatus())
+    val playStatusState: StateFlow<PlayStatus> = _playStatusState.asStateFlow()
 
     // Переменная для хранения экземпляра интерфейса взаимодействия с сервисом проигрывателя
     private var audioPlayerControl: AudioPlayerControl? = null
 
-    // Переменная для LiveData признака избранного трека
-    private val isFavoriteLiveData = MutableLiveData<Boolean>()
-    fun observeIsFavorite(): MutableLiveData<Boolean> = isFavoriteLiveData
+    // StateFlow для текущего статуса BottomSheet (для режима Compose)
+    @OptIn(ExperimentalMaterial3Api::class)
+    private val _bottomSheetState = MutableStateFlow<BottomSheetState>(BottomSheetState(SheetValue.Hidden, null))
+    val bottomSheetState: StateFlow<BottomSheetState> = _bottomSheetState.asStateFlow()
 
-    // Переменная для LiveData состояния показа BottomSheet
-    private val bottomSheetStateLiveData = MutableLiveData<BottomSheetState>()
-    fun observeBottomSheetState(): MutableLiveData<BottomSheetState> = bottomSheetStateLiveData
-
-    // Переменная для LiveData списка плейлистов
-    private val playlistsLiveData = MutableLiveData<List<Playlist>>()
-    fun observePlaylists(): MutableLiveData<List<Playlist>> = playlistsLiveData
+    // StateFlow для текущего статуса BottomSheet (для режима Compose)
+    private val _playlistsState = MutableStateFlow<List<Playlist>>(listOf())
+    val playlistsState: StateFlow<List<Playlist>> = _playlistsState.asStateFlow()
 
     // Переменная для хранения объекта трека для работы с избранным
     private lateinit var currentTrack: Track
 
     init {
-        // Убираем BottomSheet
-        onBottomSheetChangedState(BottomSheetBehavior.STATE_HIDDEN)
         // Загружаем данные трека из сети
         loadTrackData()
     }
@@ -89,7 +87,7 @@ class PlayerViewModel(
                 currentTrack = foundTracks[0]
                 renderState(
                     PlayerState.Content(
-                        trackModel = foundTracks[0]
+                        trackModel = currentTrack
                     )
                 )
             }
@@ -98,10 +96,9 @@ class PlayerViewModel(
 
     // Функция переключения режима проигрывателя
     fun playbackControl() {
-        if (playStatusLiveData.value?.isPlaying == true) {
-            audioPlayerControl?.pausePlayer()
-        } else {
-            audioPlayerControl?.startPlayer()
+        when (playStatusState.value.isPlaying) {
+            true -> audioPlayerControl?.pausePlayer()
+            false -> audioPlayerControl?.startPlayer()
         }
     }
 
@@ -127,40 +124,45 @@ class PlayerViewModel(
                 favoriteTracksInteractor.saveTrackToFavorite(currentTrack)
             }
         // Меняем признак
-        currentTrack.apply { isFavorite = !isFavorite }
-        // Отправляем на фрагмент
-        renderFavorite(currentTrack.isFavorite)
+        currentTrack = currentTrack.copy(isFavorite = !currentTrack.isFavorite)
+        // Отправляем на экран изменения
+        renderState(
+            PlayerState.Content(trackModel = currentTrack)
+        )
     }
 
     // Обработка нажатия на кнопку добавления трека в плейлист
+    @OptIn(ExperimentalMaterial3Api::class)
     fun onAddToPlaylistClicked() {
         // Показываем BottomSheet
-        onBottomSheetChangedState(BottomSheetBehavior.STATE_COLLAPSED)
+        onBottomSheetChangedState(SheetValue.PartiallyExpanded)
     }
 
     // Обработка нажатия на плейлист для добавления трека
-    fun onPlaylistClicked(playlist: Playlist, bottomSheetState: Int) {
+    @OptIn(ExperimentalMaterial3Api::class)
+    fun onPlaylistClicked(playlist: Playlist, bottomSheetState: SheetValue) {
 
         // Проверяем наличие трека в текущем плейлисте и добавляем его, если его там еще нет
         if (playlist.playlistTracks.contains(currentTrack.trackId)) {
-            bottomSheetStateLiveData.postValue(BottomSheetState(bottomSheetState,
+            _bottomSheetState.value = BottomSheetState(bottomSheetState,
                 application.getString(R.string.exists_in_playlist_message,
-                    playlist.playlistName)))
+                    playlist.playlistName))
         } else {
             viewModelScope.launch {
                 playlistsInteractor.addTrackToPlaylist(currentTrack, playlist)
             }
-            bottomSheetStateLiveData.postValue(BottomSheetState(BottomSheetBehavior.STATE_HIDDEN,
+            _bottomSheetState.value = BottomSheetState(SheetValue.Hidden,
                 application.getString(R.string.added_to_playlist_message,
-                    playlist.playlistName)))
+                    playlist.playlistName))
             refillPlaylists()
         }
 
     }
 
     // Обработка изменения состояние BottomSheet
-    fun onBottomSheetChangedState(newState: Int) {
-        bottomSheetStateLiveData.postValue(BottomSheetState(newState, null))
+    @OptIn(ExperimentalMaterial3Api::class)
+    fun onBottomSheetChangedState(newState: SheetValue) {
+        _bottomSheetState.value = BottomSheetState(newState, null)
     }
 
     // Обновление списка плейлистов
@@ -181,17 +183,12 @@ class PlayerViewModel(
 
     // Функция отправки статуса экрана на View
     private fun renderState(state: PlayerState) {
-        screenStateLiveData.postValue(state)
-    }
-
-    // Функция отправки значения для признака нахождения трека в избранных
-    private fun renderFavorite(isFavorite: Boolean) {
-        isFavoriteLiveData.postValue(isFavorite)
+        _playerState.value = state
     }
 
     // Функция отправки списка плейлистов
     private fun renderPlaylists(playlists: List<Playlist>) {
-        playlistsLiveData.postValue(playlists)
+        _playlistsState.value = playlists
     }
 
     // Привязка экземпляра интерфейса для управления проигрывателем в сервисе
@@ -200,7 +197,7 @@ class PlayerViewModel(
 
         viewModelScope.launch {
             audioPlayerControl.getCurrentPlayStatus().collect {
-                playStatusLiveData.postValue(it)
+                _playStatusState.value = it
             }
         }
     }
@@ -209,5 +206,4 @@ class PlayerViewModel(
     fun removeAudioPlayerControl() {
         audioPlayerControl = null
     }
-
 }
