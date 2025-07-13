@@ -25,29 +25,38 @@ class SearchViewModel(private val searchInteractor: TracksInteractor,
     }
 
     // Описание переменных
-    private var latestSearchText: String? = null
+    private var latestSearchText = ""
+    private var isDirectSearchRun = false
 
     private val trackSearchDebounce = debounce<String>(SEARCH_DEBOUNCE_DELAY_MILLIS, viewModelScope, true) { changedText ->
-        if (changedText == latestSearchText) search(changedText)
+        if (!isDirectSearchRun) search(changedText)
     }
 
-    // StateFlow для состояния экрана поиска треков (для режима Compose)
+    // StateFlow для состояния экрана поиска треков
     private val _searchState = MutableStateFlow<SearchState>(SearchState.Init)
     val searchState: StateFlow<SearchState> = _searchState.asStateFlow()
+
+    // StateFlow для строки поиска
+    private val _searchTextState = MutableStateFlow(latestSearchText)
+    val searchTextState: StateFlow<String> = _searchTextState.asStateFlow()
 
     fun searchDebounce(changedText: String) {
         if (latestSearchText != changedText) {
             latestSearchText = changedText
-            when (latestSearchText.isNullOrEmpty()) {
+            _searchTextState.value = changedText
+            when (changedText.isEmpty()) {
                 true -> clearSearch()
-                false -> trackSearchDebounce(changedText)
+                false -> {
+                    trackSearchDebounce(changedText)
+                    isDirectSearchRun = false
+                }
             }
         }
     }
 
-    fun searchDirectly(changedText: String) {
-        latestSearchText = changedText
-        search(changedText)
+    fun searchDirectly() {
+        search(latestSearchText)
+        isDirectSearchRun = true
     }
 
     private fun search(newSearchText: String) {
@@ -103,6 +112,8 @@ class SearchViewModel(private val searchInteractor: TracksInteractor,
     }
 
     fun clearSearch() {
+        latestSearchText = ""
+        _searchTextState.value = ""
         renderState(SearchState.TracksFound(listOf()))
         loadHistory()
     }

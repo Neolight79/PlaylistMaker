@@ -35,6 +35,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -51,6 +52,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
@@ -66,6 +68,8 @@ import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
 import com.example.playlistmaker.R
+import com.example.playlistmaker.main.ui.compose.ROUTE_MANAGE_PLAYLIST
+import com.example.playlistmaker.main.ui.compose.ROUTE_PLAYER
 import com.example.playlistmaker.media.domain.models.DialogState
 import com.example.playlistmaker.media.domain.models.Playlist
 import com.example.playlistmaker.media.ui.view_model.PlaylistViewModel
@@ -88,6 +92,7 @@ fun PlaylistScreen(
     val isShowBottomSheetMenu = remember { mutableStateOf(false) }
     val bottomSheetTracksState = rememberBottomSheetScaffoldState()
     val bottomSheetPeekHeight = remember { mutableStateOf(240.dp) }
+    val isShareButtonTriggered = remember { mutableStateOf(false) }
 
     // Отслеживаем основное состояние плейлиста
     val playlistState = viewModel.playlistState.collectAsState().value
@@ -105,8 +110,23 @@ fun PlaylistScreen(
     }
 
     if (stateFlowMessage.first.isNotEmpty()) {
-        Toast.makeText(context, stateFlowMessage.first, Toast.LENGTH_LONG).show()
-        if (stateFlowMessage.second) navController.navigateUp()
+        when (stateFlowMessage.second) {
+            true -> {
+                dialogState = DialogState.None
+                LaunchedEffect(Unit) {
+                    scope.launch { bottomSheetMenuState.hide() }.invokeOnCompletion {
+                        if (!bottomSheetMenuState.isVisible) isShowBottomSheetMenu.value = false
+                        navController.navigateUp()
+                        Toast.makeText(context, stateFlowMessage.first, Toast.LENGTH_LONG).show()
+                    }
+                }
+            }
+            false -> {
+                LaunchedEffect(isShareButtonTriggered.value) {
+                    Toast.makeText(context, stateFlowMessage.first, Toast.LENGTH_LONG).show()
+                }
+            }
+        }
     }
 
     ShowDialog(dialogState = dialogState)
@@ -122,12 +142,16 @@ fun PlaylistScreen(
         },
         onSharePlaylist = debounceCompose(action = {
             viewModel.sharePlaylist()
+            isShareButtonTriggered.value = !isShareButtonTriggered.value
             scope.launch { bottomSheetMenuState.hide() }.invokeOnCompletion {
                 if (!bottomSheetMenuState.isVisible) isShowBottomSheetMenu.value = false
             }
         }),
         onModifyPlaylist = debounceCompose(action = {
-            navController.navigate("managePlaylist/${playlistState.first.playlistId}")
+            scope.launch { bottomSheetMenuState.hide() }.invokeOnCompletion {
+                if (!bottomSheetMenuState.isVisible) isShowBottomSheetMenu.value = false
+                navController.navigate("$ROUTE_MANAGE_PLAYLIST/${playlistState.first.playlistId}")
+            }
         }),
         onDeletePlaylist = {
             dialogState = DialogState.Dialog(
@@ -182,7 +206,7 @@ fun PlaylistScreen(
                                             }
                                         )
                                     },
-                                    onClickAction = { navController.navigate("player/${it.trackId}") }
+                                    onClickAction = { navController.navigate("$ROUTE_PLAYER/${it.trackId}") }
                                 )
                             }
                         }
@@ -200,7 +224,10 @@ fun PlaylistScreen(
             PlaylistInformation(
                 playlist = playlistState.first,
                 onClickBackButton = { navController.navigateUp() },
-                onClickShareButton = debounceCompose(action = { viewModel.sharePlaylist() }),
+                onClickShareButton = debounceCompose(action = {
+                    viewModel.sharePlaylist()
+                    isShareButtonTriggered.value = !isShareButtonTriggered.value
+                }),
                 onClickMenuButton = {
                     isShowBottomSheetMenu.value = true
                     scope.launch { bottomSheetMenuState.partialExpand() }
@@ -216,7 +243,7 @@ fun PlaylistScreen(
 @Composable
 fun ShowDialog(dialogState: DialogState) {
     when (dialogState) {
-        is DialogState.None -> {}
+        is DialogState.None -> Unit
         is DialogState.Dialog -> {
             AlertDialog(
                 title = {
@@ -257,22 +284,15 @@ fun PlaylistInformation(
 
     // Определяем значения для статистики минут и треков
     val tracksDuration = playlist.playlistTracksDuration / 60000
-    val tracksDurationString = when {
-        tracksDuration % 10 == 1 && tracksDuration % 100 != 11 ->
-            stringResource(R.string.minutes_quantity_1, tracksDuration)
-        tracksDuration % 10 in 2..4 && tracksDuration % 100 !in 12..14 ->
-            stringResource(R.string.minutes_quantity_2, tracksDuration)
-        else ->
-            stringResource(R.string.minutes_quantity, tracksDuration)
-    }
-    val tracksCountString = when {
-        playlist.playlistTracksQuantity % 10 == 1 && playlist.playlistTracksQuantity % 100 != 11 ->
-            stringResource(R.string.tracks_quantity_1, playlist.playlistTracksQuantity)
-        playlist.playlistTracksQuantity % 10 in 2..4 && playlist.playlistTracksQuantity % 100 !in 12..14 ->
-            stringResource(R.string.tracks_quantity_2, playlist.playlistTracksQuantity)
-        else ->
-            stringResource(R.string.tracks_quantity, playlist.playlistTracksQuantity)
-    }
+    val tracksDurationString = pluralStringResource(
+        R.plurals.numberOfMinutes,
+        tracksDuration,
+        tracksDuration)
+
+    val tracksCountString = pluralStringResource(
+        R.plurals.numberOfTracks,
+        playlist.playlistTracksQuantity,
+        playlist.playlistTracksQuantity)
 
     // Первым делом показываем Box, в котором будет еще один Box со стрелкой Назад
     Box(
@@ -347,7 +367,7 @@ fun PlaylistInformation(
                 ),
                 modifier = Modifier.weight(1F)
             )
-            Icon(modifier = Modifier.width(13.dp),
+            Icon(modifier = Modifier.width(12.dp),
                 painter = painterResource(id = R.drawable.round_glif),
                 tint = colorResource(R.color.dark),
                 contentDescription = null
@@ -406,14 +426,10 @@ fun BottomSheetMenu(visible: Boolean,
                     onDeletePlaylist: () -> Unit
 ) {
     if (visible) {
-        val tracksCountString = when {
-            playlist.playlistTracksQuantity % 10 == 1 && playlist.playlistTracksQuantity % 100 != 11 ->
-                stringResource(R.string.tracks_quantity_1, playlist.playlistTracksQuantity)
-            playlist.playlistTracksQuantity % 10 in 2..4 && playlist.playlistTracksQuantity % 100 !in 12..14 ->
-                stringResource(R.string.tracks_quantity_2, playlist.playlistTracksQuantity)
-            else ->
-                stringResource(R.string.tracks_quantity, playlist.playlistTracksQuantity)
-        }
+        val tracksCountString = pluralStringResource(
+            R.plurals.numberOfTracks,
+            playlist.playlistTracksQuantity,
+            playlist.playlistTracksQuantity)
 
         ModalBottomSheet(
             shape = RoundedCornerShape(16.dp),
@@ -463,7 +479,7 @@ fun PlaylistContextMenuTopBar(
             modifier = Modifier
                 .fillMaxHeight()
                 .width(66.dp)
-                .padding(start = 13.dp, top = 8.dp)
+                .padding(start = 12.dp, top = 8.dp)
         ) {
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
@@ -500,7 +516,7 @@ fun PlaylistContextMenuTopBar(
             // Количество треков
             Row(
                 modifier = Modifier
-                    .height(13.dp)
+                    .height(12.dp)
                     .width(IntrinsicSize.Max),
                 verticalAlignment = Alignment.CenterVertically
             ) {

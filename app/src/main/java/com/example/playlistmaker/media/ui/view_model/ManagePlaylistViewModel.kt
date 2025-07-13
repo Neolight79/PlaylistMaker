@@ -19,6 +19,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.io.File
 import java.io.FileOutputStream
+import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
 
 class ManagePlaylistViewModel(
     private val playlistId: Int,
@@ -46,6 +48,7 @@ class ManagePlaylistViewModel(
     }
 
     // Метод для переноса изображения во внутреннее хранилище
+    @OptIn(ExperimentalUuidApi::class)
     fun setImageUri(uri: Uri) {
 
         // Переменная для Context
@@ -63,11 +66,8 @@ class ManagePlaylistViewModel(
         // Создаём экземпляр класса File, который указывает на файл внутри каталога
         val fileName = getFileNameFromUri(uri, context)
         var file = File(filePath, "$fileName.jpg")
-        var i = 1
-        while (file.exists()) {
-            file = File(filePath, "$fileName-($i).jpg")
-            i++
-        }
+        if (file.exists())
+            file = File(filePath, "$fileName-(${Uuid.random()}).jpg")
 
         // Создаём входящий поток байтов из выбранной картинки
         val inputStream = context.contentResolver?.openInputStream(uri)
@@ -105,15 +105,7 @@ class ManagePlaylistViewModel(
         when (playlistId == 0) {
             // Если playlistId в нуле, значит мы создаём новый плейлист
             true -> {
-                currentPlaylist = Playlist(
-                    playlistId = playlistId,
-                    playlistName = "",
-                    playlistDescription = "",
-                    playlistImagePath = "",
-                    playlistTracks = listOf(),
-                    playlistTracksQuantity = 0,
-                    playlistTracksDuration = 0
-                )
+                currentPlaylist = Playlist()
                 renderState()
             }
             // Если playlistId не нулевой, значит мы загружаем из базы данных его содержимое перед редактированием
@@ -130,25 +122,30 @@ class ManagePlaylistViewModel(
 
     fun savePlaylistData() {
         viewModelScope.launch {
-            playlistsInteractor.createPlaylist(currentPlaylist)
+            playlistsInteractor.createPlaylist(
+                currentPlaylist.copy(
+                    playlistName = currentPlaylist.playlistName.trim(),
+                    playlistDescription = currentPlaylist.playlistDescription.trim()
+                )
+            )
         }
 
         // Передаём сообщение для вывода при закрытии формы создания/изменения плейлиста
         _finishManagePlaylistState.value = when (playlistId == 0) {
-            true -> application.getString(R.string.playlist_created_message, currentPlaylist.playlistName)
-            false -> application.getString(R.string.playlist_updated_message, currentPlaylist.playlistName)
+            true -> application.getString(R.string.playlist_created_message, currentPlaylist.playlistName.trim())
+            false -> application.getString(R.string.playlist_updated_message, currentPlaylist.playlistName.trim())
         }
     }
 
     fun renderState() {
-        _managePlaylistState.value =
-            ManagePlaylistState(
-                isSavable = currentPlaylist.playlistName.isNotEmpty(),
-                isFilled = currentPlaylist.playlistImagePath.isNotEmpty() || currentPlaylist.playlistName.isNotEmpty() || currentPlaylist.playlistDescription.isNotEmpty(),
-                isNewPlaylist = (playlistId == 0),
-                playlistImagePath = currentPlaylist.playlistImagePath,
-                playlistTitle = currentPlaylist.playlistName,
-                playlistDescription = currentPlaylist.playlistDescription)
+        _managePlaylistState.value = _managePlaylistState.value.copy(
+            isSavable = currentPlaylist.playlistName.trim().isNotEmpty(),
+            isFilled = currentPlaylist.playlistImagePath.isNotEmpty() || currentPlaylist.playlistName.trim().isNotEmpty() || currentPlaylist.playlistDescription.trim().isNotEmpty(),
+            isNewPlaylist = (playlistId == 0),
+            playlistImagePath = currentPlaylist.playlistImagePath,
+            playlistTitle = currentPlaylist.playlistName,
+            playlistDescription = currentPlaylist.playlistDescription
+        )
     }
 
     private fun getFileNameFromUri(uri: Uri, context: Context): String {

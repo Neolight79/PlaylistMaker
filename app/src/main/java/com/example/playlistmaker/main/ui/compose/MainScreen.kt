@@ -54,6 +54,13 @@ import kotlinx.coroutines.delay
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 
+const val ROUTE_PLAYER = "player"
+const val ROUTE_PLAYLIST = "playlist"
+const val ROUTE_MANAGE_PLAYLIST = "managePlaylist"
+
+const val TRACK_ID = "trackID"
+const val PLAYLIST_ID = "playlistID"
+
 @OptIn(ExperimentalPerfettoCaptureApi::class)
 @Composable
 fun MainScreen(bottomBarRoutes: List<BottomBarItem>) {
@@ -138,12 +145,28 @@ fun MainScreen(bottomBarRoutes: List<BottomBarItem>) {
             composable(
                 route = BottomNavRoutes.Search.name,
                 enterTransition = {
-                    slideIntoContainer(
-                        AnimatedContentTransitionScope.SlideDirection.Right, tween(300))
+                    when (initialState.destination.route) {
+                        "$ROUTE_PLAYER/{$TRACK_ID}" -> {
+                            slideIntoContainer(
+                                AnimatedContentTransitionScope.SlideDirection.Left, tween(300))
+                        }
+                        else -> {
+                            slideIntoContainer(
+                                AnimatedContentTransitionScope.SlideDirection.Right, tween(300))
+                        }
+                    }
                 },
                 exitTransition = {
-                    slideOutOfContainer(
-                        AnimatedContentTransitionScope.SlideDirection.Left, tween(300))
+                    when (targetState.destination.route) {
+                        "$ROUTE_PLAYER/{$TRACK_ID}" -> {
+                            slideOutOfContainer(
+                                AnimatedContentTransitionScope.SlideDirection.Right, tween(300))
+                        }
+                        else -> {
+                            slideOutOfContainer(
+                                AnimatedContentTransitionScope.SlideDirection.Left, tween(300))
+                        }
+                    }
                 }) { SearchScreen(navController = navController) }
 // Экран МЕДИАТЕКА
             composable(route = BottomNavRoutes.Media.name,
@@ -185,8 +208,8 @@ fun MainScreen(bottomBarRoutes: List<BottomBarItem>) {
                 }) { SettingsScreen() }
 // Экран ПЛЕЕР
             composable(
-                route = "player/{trackID}",
-                arguments = listOf(navArgument("trackID") { type = NavType.IntType }),
+                route = "$ROUTE_PLAYER/{$TRACK_ID}",
+                arguments = listOf(navArgument(TRACK_ID) { type = NavType.IntType }),
                 enterTransition = {
                     slideIntoContainer(
                         AnimatedContentTransitionScope.SlideDirection.Right, tween(300))
@@ -195,41 +218,57 @@ fun MainScreen(bottomBarRoutes: List<BottomBarItem>) {
                     slideOutOfContainer(
                         AnimatedContentTransitionScope.SlideDirection.Left, tween(300))
                 }) { backStackEntry ->
-                val trackID = backStackEntry.arguments?.getInt("trackID") ?: 0
+                val trackID = backStackEntry.arguments?.getInt(TRACK_ID) ?: 0
                 PlayerScreen(
                     navController = navController,
                     viewModel = koinViewModel<PlayerViewModel>(parameters = { parametersOf(trackID) }))
             }
 // Экран СОЗДАНИЯ/РЕДАКТИРОВАНИЯ ПЛЕЙЛИСТА
             composable(
-                route = "managePlaylist/{playlistID}",
-                arguments = listOf(navArgument("playlistID") { type = NavType.IntType }),
+                route = "$ROUTE_MANAGE_PLAYLIST/{$PLAYLIST_ID}",
+                arguments = listOf(navArgument(PLAYLIST_ID) { type = NavType.IntType }),
                 enterTransition = {
                     slideIntoContainer(
-                        AnimatedContentTransitionScope.SlideDirection.Right, tween(300))
+                        AnimatedContentTransitionScope.SlideDirection.Left, tween(300))
                 },
                 exitTransition = {
                     slideOutOfContainer(
-                        AnimatedContentTransitionScope.SlideDirection.Left, tween(300))
+                        AnimatedContentTransitionScope.SlideDirection.Right, tween(300))
                 }) { backStackEntry ->
-                val playlistID = backStackEntry.arguments?.getInt("playlistID") ?: 0
+                val playlistID = backStackEntry.arguments?.getInt(PLAYLIST_ID) ?: 0
                 ManagePlaylistScreen(
                     navController = navController,
                     viewModel = koinViewModel<ManagePlaylistViewModel>(parameters = { parametersOf(playlistID) }))
             }
 // Экран ПЛЕЙЛИСТА
             composable(
-                route = "playlist/{playlistID}",
-                arguments = listOf(navArgument("playlistID") { type = NavType.IntType }),
+                route = "$ROUTE_PLAYLIST/{$PLAYLIST_ID}",
+                arguments = listOf(navArgument(PLAYLIST_ID) { type = NavType.IntType }),
                 enterTransition = {
-                    slideIntoContainer(
-                        AnimatedContentTransitionScope.SlideDirection.Right, tween(300))
+                    when (initialState.destination.route) {
+                        "$ROUTE_PLAYER/{$TRACK_ID}" -> {
+                            slideIntoContainer(
+                                AnimatedContentTransitionScope.SlideDirection.Left, tween(300))
+                        }
+                        else -> {
+                            slideIntoContainer(
+                                AnimatedContentTransitionScope.SlideDirection.Right, tween(300))
+                        }
+                    }
                 },
                 exitTransition = {
-                    slideOutOfContainer(
-                        AnimatedContentTransitionScope.SlideDirection.Left, tween(300))
+                    when (targetState.destination.route) {
+                        "$ROUTE_PLAYER/{$TRACK_ID}" -> {
+                            slideOutOfContainer(
+                                AnimatedContentTransitionScope.SlideDirection.Right, tween(300))
+                        }
+                        else -> {
+                            slideOutOfContainer(
+                                AnimatedContentTransitionScope.SlideDirection.Left, tween(300))
+                        }
+                    }
                 }) { backStackEntry ->
-                val playlistID = backStackEntry.arguments?.getInt("playlistID") ?: 0
+                val playlistID = backStackEntry.arguments?.getInt(PLAYLIST_ID) ?: 0
                 PlaylistScreen(
                     navController = navController,
                     viewModel = koinViewModel<PlaylistViewModel>(parameters = { parametersOf(playlistID) }))

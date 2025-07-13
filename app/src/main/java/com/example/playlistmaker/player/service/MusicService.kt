@@ -24,6 +24,10 @@ import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Locale
 
+const val SONG_URL = "song_url"
+const val NOTIFICATION_TITLE = "notification_title"
+const val NOTIFICATION_TEXT = "notification_text"
+
 internal class MusicService : Service(), AudioPlayerControl {
 
     // region Переменные класса
@@ -69,11 +73,11 @@ internal class MusicService : Service(), AudioPlayerControl {
     override fun onBind(intent: Intent?): IBinder {
 
         // Получаем из интента строки для отображения в уведомлении и создаём уведомление
-        notificationTitle = intent?.getStringExtra("notification_title") ?: ""
-        notificationText = intent?.getStringExtra("notification_text") ?: ""
+        notificationTitle = intent?.getStringExtra(NOTIFICATION_TITLE) ?: ""
+        notificationText = intent?.getStringExtra(NOTIFICATION_TEXT) ?: ""
 
         // Инициализируем проигрыватель, если получили URL трека
-        val songUrl = intent?.getStringExtra("song_url") ?: ""
+        val songUrl = intent?.getStringExtra(SONG_URL) ?: ""
 
         if (songUrl.isNotEmpty()) {
             initMediaPlayer(songUrl)

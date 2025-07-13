@@ -1,7 +1,6 @@
 package com.example.playlistmaker.search.ui.compose
 
 import android.content.IntentFilter
-import android.os.SystemClock
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
@@ -29,16 +28,12 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.playlistmaker.R
 import com.example.playlistmaker.settings.ui.compose.CommonTitleBar
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableLongStateOf
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
@@ -55,7 +50,9 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.LifecycleResumeEffect
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import com.example.playlistmaker.main.ui.compose.ROUTE_PLAYER
 import com.example.playlistmaker.media.ui.compose.ListItem
 import com.example.playlistmaker.util.ui.compose.Placeholder
 import com.example.playlistmaker.util.ui.compose.PlaceholderButton
@@ -64,9 +61,6 @@ import com.example.playlistmaker.search.domain.models.SearchState
 import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.search.ui.view_model.SearchViewModel
 import com.example.playlistmaker.util.LostConnectionBroadcastReceiver
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -75,15 +69,11 @@ fun SearchScreen(
     viewModel: SearchViewModel = koinViewModel<SearchViewModel>()
 ) {
 
-    // Отслеживаем основной объект со статусом экрана избранных треков
-    val searchState = viewModel.searchState.collectAsState().value
-
-    // Триггер для выполнения принудительного поиска треков для команды от кнопки повтора попытки
-    val mTriggerDirectSearch = MutableStateFlow<Long>(0L)
-    val triggerDirectSearch: StateFlow<Long> = mTriggerDirectSearch.asStateFlow()
-
     val context = LocalContext.current
     val receiver = remember { LostConnectionBroadcastReceiver() }
+
+    // Отслеживаем основной объект со статусом экрана избранных треков
+    val searchState = viewModel.searchState.collectAsState().value
 
     DisposableEffect(Unit) {
 
@@ -95,8 +85,10 @@ fun SearchScreen(
     }
 
     LifecycleResumeEffect(Unit) {
+
         if (searchState is SearchState.TracksHistory)
             viewModel.loadHistory()
+
         onPauseOrDispose {  }
     }
 
@@ -108,11 +100,11 @@ fun SearchScreen(
         // Сверху выводим стандартный заголовок для экрана поиска
         CommonTitleBar(stringResource(R.string.search))
         // Теперь зона с полем ввода
-        SearchField(viewModel, triggerDirectSearch)
+        SearchField(viewModel)
         // Теперь обработчик стейта от ViewModel
         when (searchState) {
             // Если получаем объект Init, значит ничего показывать не надо
-            SearchState.Init -> { }
+            SearchState.Init -> Unit
             // Если получаем объект-индикатор загрузки, то выводим прогрессбар
             SearchState.Loading -> PlaceholderProgressBar()
             // Если получаем сообщение о пустом результате, то плейсхолдер для пустого результата
@@ -127,8 +119,7 @@ fun SearchScreen(
                     topMarginRes = R.dimen.search_placeholder_top_margin,
                     imageRes = R.drawable.no_connection)
                 PlaceholderButton(stringResource(R.string.refresh)) {
-                    // Отправляем в функцию поля ввода команду для повторного запуска поиска
-                    mTriggerDirectSearch.value = SystemClock.elapsedRealtime()
+                    viewModel.searchDirectly()
                 }
             }
             // Если получаем список треков, то выводим его
@@ -137,7 +128,7 @@ fun SearchScreen(
                     foundTracksList = searchState.trackList,
                     onItemClick = { track ->
                         viewModel.addTrack(track)
-                        navController.navigate("player/${track.trackId}")
+                        navController.navigate("$ROUTE_PLAYER/${track.trackId}")
                     }
                 )
 
@@ -148,7 +139,7 @@ fun SearchScreen(
                     historyTrackList = searchState.trackList,
                     onItemClick = { track ->
                         viewModel.addTrack(track)
-                        navController.navigate("player/${track.trackId}")
+                        navController.navigate("$ROUTE_PLAYER/${track.trackId}")
                                   },
                     onClearHistoryClick = {
                         viewModel.clearHistory()
@@ -221,10 +212,9 @@ fun SearchHistoryList(
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3Api::class)
 @Composable
-fun SearchField(viewModel: SearchViewModel, triggerDirectSearch: StateFlow<Long>) {
+fun SearchField(viewModel: SearchViewModel) {
 
-    // Отслеживаем прилет состояния для запуска поиска
-    val triggerDirectSearchState = triggerDirectSearch.collectAsState().value
+    val searchText = viewModel.searchTextState.collectAsStateWithLifecycle().value
 
     Box(
         modifier = Modifier
@@ -233,31 +223,20 @@ fun SearchField(viewModel: SearchViewModel, triggerDirectSearch: StateFlow<Long>
             .padding(horizontal = 16.dp, vertical = 8.dp)
 
     ) {
-        var text by remember { mutableStateOf("") }
         val interactionSource = remember { MutableInteractionSource() }
         val enabled = true
         val isError = false
         val singleLine = true
         val keyboardController = LocalSoftwareKeyboardController.current
 
-        // Если получили команду запустить поиск, то запускаем его
-        var lastDirectSearchState by remember { mutableLongStateOf(0L) }
-        if (triggerDirectSearchState != lastDirectSearchState) {
-            lastDirectSearchState = triggerDirectSearchState
-            viewModel.searchDirectly(text)
-        }
-
         BasicTextField(
-            value = text,
-            onValueChange = {
-                text = it
-                viewModel.searchDebounce(text)
-                            },
+            value = searchText,
+            onValueChange = { viewModel.searchDebounce(it) },
             modifier = Modifier
                 .fillMaxWidth()
                 .height(36.dp)
                 .onFocusChanged {
-                    if (it.isFocused && text.isEmpty()) viewModel.loadHistory()
+                    if (it.isFocused && searchText.isEmpty()) viewModel.loadHistory()
                 },
             interactionSource = interactionSource,
             enabled = enabled,
@@ -273,12 +252,12 @@ fun SearchField(viewModel: SearchViewModel, triggerDirectSearch: StateFlow<Long>
             keyboardActions = KeyboardActions(
                 onDone = {
                     keyboardController?.hide()
-                    viewModel.searchDirectly(text)
+                    viewModel.searchDirectly()
                 }
             ),
             decorationBox = { innerTextField ->
                 TextFieldDefaults.DecorationBox(
-                    value = text,
+                    value = searchText,
                     innerTextField = innerTextField,
                     visualTransformation = VisualTransformation.None,
                     singleLine = singleLine,
@@ -292,12 +271,11 @@ fun SearchField(viewModel: SearchViewModel, triggerDirectSearch: StateFlow<Long>
                             contentDescription = null)
                     },
                     trailingIcon = {
-                        if (text.isNotEmpty())
+                        if (searchText.isNotEmpty())
                             Icon(
                                 modifier = Modifier
                                     .offset(4.dp)
                                     .clickable(onClick = {
-                                        text = ""
                                         viewModel.clearSearch()
                                     }),
                                 tint = colorResource(R.color.glif_gray),

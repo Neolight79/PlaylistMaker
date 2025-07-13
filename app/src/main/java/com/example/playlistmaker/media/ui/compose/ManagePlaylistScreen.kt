@@ -93,7 +93,10 @@ fun ManagePlaylistScreen(
 
     if (isShowDialog) {
         ExitWithoutSaveDialog(
-            onExitConfirmed = { navController.navigateUp() },
+            onExitConfirmed = {
+                isShowDialog = false
+                navController.navigateUp()
+            },
             onCancelDialog = { isShowDialog = false })
     }
 
@@ -159,7 +162,7 @@ fun ManagePlaylistScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(0.15F)
-                .padding(horizontal = 17.dp, vertical = 32.dp),
+                .padding(horizontal = 16.dp, vertical = 32.dp),
             contentAlignment = Alignment.BottomCenter) {
             CommonButton(buttonTitle, managePlaylistState.isSavable) {
                 viewModel.savePlaylistData()
@@ -308,7 +311,10 @@ fun ControlledTopBar(title: String, isFilled: Boolean, onNavigateBack: () -> Uni
 
     if (isShowDialog)
         ExitWithoutSaveDialog(
-            onExitConfirmed = { onNavigateBack() },
+            onExitConfirmed = {
+                isShowDialog = false
+                onNavigateBack()
+            },
             onCancelDialog = { isShowDialog = false }
         )
 

@@ -24,6 +24,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
@@ -32,11 +33,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.navigation.NavController
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
 import com.example.playlistmaker.R
+import com.example.playlistmaker.main.ui.compose.ROUTE_MANAGE_PLAYLIST
+import com.example.playlistmaker.main.ui.compose.ROUTE_PLAYLIST
 import com.example.playlistmaker.media.domain.models.Playlist
 import com.example.playlistmaker.media.domain.models.PlaylistsState
 import com.example.playlistmaker.media.ui.view_model.PlaylistsViewModel
@@ -55,18 +59,23 @@ fun PlaylistsScreen(
     // Отслеживаем основной объект со статусом экрана плейлистов
     val playlistsState = viewModel.playlistsState.collectAsState().value
 
+    LifecycleResumeEffect(Unit) {
+        viewModel.fillData()
+        onPauseOrDispose { }
+    }
+
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         PlaceholderButton(stringResource(R.string.new_playlist)) {
-            navController.navigate("managePlaylist/0")
+            navController.navigate("$ROUTE_MANAGE_PLAYLIST/0")
         }
         when (playlistsState) {
             PlaylistsState.Loading -> PlaceholderProgressBar()
             PlaylistsState.Empty -> Placeholder(stringResource(R.string.no_playlist_message))
             is PlaylistsState.Playlists -> PlaylistsList(playlistsState.playlists) { playlist ->
-                navController.navigate("playlist/${playlist.playlistId}")
+                navController.navigate("$ROUTE_PLAYLIST/${playlist.playlistId}")
             }
         }
     }
@@ -117,16 +126,10 @@ fun PlaylistItem(playlist: Playlist, onClickAction: () -> Unit) {
             )
         )
         // Количество треков
-        val tracksQuantityString: String =
-            with(playlist) {
-                when {
-                    playlistTracksQuantity % 10 == 1 && playlistTracksQuantity % 100 != 11 ->
-                        stringResource(R.string.tracks_quantity_1, playlistTracksQuantity)
-                    playlistTracksQuantity % 10 in 2..4 && playlistTracksQuantity % 100 !in 12..14 ->
-                        stringResource(R.string.tracks_quantity_2, playlistTracksQuantity)
-                    else ->
-                        stringResource(R.string.tracks_quantity, playlistTracksQuantity)
-        }}
+        val tracksQuantityString = pluralStringResource(
+            R.plurals.numberOfTracks,
+            playlist.playlistTracksQuantity,
+            playlist.playlistTracksQuantity)
         Text(text = tracksQuantityString,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,

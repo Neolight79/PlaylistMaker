@@ -41,10 +41,12 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.navigation.NavController
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
+import com.example.playlistmaker.main.ui.compose.ROUTE_PLAYER
 import com.example.playlistmaker.util.debounceCompose
 import com.example.playlistmaker.util.ui.compose.Placeholder
 import com.example.playlistmaker.util.ui.compose.PlaceholderProgressBar
@@ -59,6 +61,11 @@ fun FavoriteScreen(
     // Отслеживаем основной объект со статусом экрана избранных треков
     val favoriteState = viewModel.favoriteState.collectAsState().value
 
+    LifecycleResumeEffect(Unit) {
+        viewModel.fillData()
+        onPauseOrDispose { }
+    }
+
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -67,7 +74,7 @@ fun FavoriteScreen(
             FavoriteState.Loading -> PlaceholderProgressBar()
             FavoriteState.Empty -> Placeholder(stringResource(R.string.media_empty_message))
             is FavoriteState.TracksFavorite -> FavoriteTracksList(favoriteState.trackList) { track ->
-                navController.navigate("player/${track.trackId}")
+                navController.navigate("$ROUTE_PLAYER/${track.trackId}")
             }
         }
     }
@@ -131,7 +138,7 @@ fun ListItem(track: Track, onLongClickAction: () -> Unit = { }, onClickAction: (
                 )
             )
             // Исполнитель и продолжительность трека
-            Row(modifier = Modifier.height(13.dp).width(IntrinsicSize.Max),
+            Row(modifier = Modifier.height(12.dp).width(IntrinsicSize.Max),
                 verticalAlignment = Alignment.CenterVertically) {
                 Text(text = track.artistName,
                     maxLines = 1,
@@ -144,7 +151,7 @@ fun ListItem(track: Track, onLongClickAction: () -> Unit = { }, onClickAction: (
                     ),
                     modifier = Modifier.weight(1F)
                 )
-                Icon(modifier = Modifier.width(13.dp),
+                Icon(modifier = Modifier.width(12.dp),
                     painter = painterResource(id = R.drawable.round_glif),
                     tint = colorResource(R.color.light_gray_text),
                     contentDescription = null

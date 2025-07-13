@@ -5,7 +5,9 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.ServiceConnection
+import android.net.Uri
 import android.os.Build
+import android.provider.Settings
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -59,6 +61,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
@@ -74,6 +77,7 @@ import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
 import com.example.playlistmaker.R
+import com.example.playlistmaker.main.ui.compose.ROUTE_MANAGE_PLAYLIST
 import com.example.playlistmaker.media.domain.models.Playlist
 import com.example.playlistmaker.media.ui.compose.ListItemPlaceholder
 import com.example.playlistmaker.util.ui.compose.Placeholder
@@ -81,6 +85,9 @@ import com.example.playlistmaker.util.ui.compose.PlaceholderButton
 import com.example.playlistmaker.util.ui.compose.PlaceholderProgressBar
 import com.example.playlistmaker.player.domain.models.PlayerState
 import com.example.playlistmaker.player.service.MusicService
+import com.example.playlistmaker.player.service.NOTIFICATION_TEXT
+import com.example.playlistmaker.player.service.NOTIFICATION_TITLE
+import com.example.playlistmaker.player.service.SONG_URL
 import com.example.playlistmaker.player.ui.view_model.PlayerViewModel
 import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.util.LostConnectionBroadcastReceiver
@@ -103,10 +110,11 @@ fun PlayerScreen(
     val currentUrl = remember { mutableStateOf("") }
     val notificationText = remember { mutableStateOf("") }
     val isPlaying = remember { mutableStateOf(false) }
+    val isServiceBound = remember { mutableStateOf(false) }
     val launcher = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
         if (isGranted) {
             // Если выдали разрешение — запускаем сервис.
-            bindMusicService(context, serviceConnection, currentUrl.value, notificationText.value)
+            isServiceBound.value = bindMusicService(context, serviceConnection, currentUrl.value, notificationText.value)
         } else {
             // Иначе просто покажем ошибку
             Toast.makeText(context, context.getString(R.string.cant_start_foreground_service), Toast.LENGTH_LONG).show()
@@ -209,13 +217,13 @@ fun PlayerScreen(
                 // На версиях ниже Android 13 —
                 // можно сразу стартовать сервис.
                 LaunchedEffect(Unit) {
-                    bindMusicService(context, serviceConnection, currentUrl.value, notificationText.value)
+                    isServiceBound.value = bindMusicService(context, serviceConnection, currentUrl.value, notificationText.value)
                 }
             }
 
             DisposableEffect(Unit) {
                 onDispose {
-                    unbindMusicService(context, serviceConnection)
+                    if (isServiceBound.value) unbindMusicService(context, serviceConnection)
                 }
             }
 
@@ -228,7 +236,7 @@ fun PlayerScreen(
                 },
                 onNewPlaylist = {
                     viewModel.onBottomSheetChangedState(SheetValue.Hidden)
-                    navController.navigate("managePlaylist/0")
+                    navController.navigate("$ROUTE_MANAGE_PLAYLIST/0")
                 },
                 onClickPlaylist = { playlist ->
                     viewModel.onPlaylistClicked(playlist, bottomSheetPlaylistsState.currentValue)
@@ -257,6 +265,18 @@ fun PlayerScreen(
                         viewModel.onAddToPlaylistClicked()
                     },
                     onPlayButtonClick = {
+                        if (!isServiceBound.value) {
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
+                                launcher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                            // Проверяем на наличие привязанной службы, если служба не привязана, то
+                            // просим дать разрешения
+                            if (!isServiceBound.value) {
+                                val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+                                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                                intent.data= Uri.fromParts("package", context.packageName, null)
+                                context.startActivity(intent)
+                            }
+                        }
                         viewModel.playbackControl()
                     },
                     onFavoriteClick = {
@@ -274,14 +294,17 @@ fun PlayerScreen(
         }
 }
 
-fun bindMusicService(context: Context, serviceConnection: ServiceConnection, currentUrl: String, notificationText: String) {
-    if (currentUrl.isNotEmpty()) {
-        val intent = Intent(context, MusicService::class.java).apply {
-            putExtra("song_url", currentUrl)
-            putExtra("notification_title", context.getString(context.applicationInfo.labelRes))
-            putExtra("notification_text", notificationText)
+fun bindMusicService(context: Context, serviceConnection: ServiceConnection, currentUrl: String, notificationText: String): Boolean {
+    return when (currentUrl.isNotEmpty()) {
+        true -> {
+            val intent = Intent(context, MusicService::class.java).apply {
+                putExtra(SONG_URL, currentUrl)
+                putExtra(NOTIFICATION_TITLE, context.getString(context.applicationInfo.labelRes))
+                putExtra(NOTIFICATION_TEXT, notificationText)
+            }
+            context.bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
         }
-        context.bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
+        false -> false
     }
 }
 
@@ -367,7 +390,7 @@ fun ButtonsBlock(
         // Кнопка добавления трека в плейлист
         Button(
             shape = CircleShape,
-            modifier = Modifier.size(51.dp),
+            modifier = Modifier.size(52.dp),
             colors = ButtonDefaults.buttonColors(
                 containerColor = colorResource(R.color.main_foreground).copy(alpha = 0.25F)),
             contentPadding = PaddingValues(0.dp),
@@ -397,7 +420,7 @@ fun ButtonsBlock(
         // Кнопка добавления трека в избранное
         Button(
             shape = CircleShape,
-            modifier = Modifier.size(51.dp),
+            modifier = Modifier.size(52.dp),
             colors = ButtonDefaults.buttonColors(
                 containerColor = colorResource(R.color.main_foreground).copy(alpha = 0.25F)),
             contentPadding = PaddingValues(0.dp),
@@ -587,16 +610,10 @@ fun PlaylistListItem(playlist: Playlist, onClickAction: () -> Unit) {
                 )
             )
             // Количество треков
-            val tracksQuantityString: String =
-                with(playlist) {
-                    when {
-                        playlistTracksQuantity % 10 == 1 && playlistTracksQuantity % 100 != 11 ->
-                            stringResource(R.string.tracks_quantity_1, playlistTracksQuantity)
-                        playlistTracksQuantity % 10 in 2..4 && playlistTracksQuantity % 100 !in 12..14 ->
-                            stringResource(R.string.tracks_quantity_2, playlistTracksQuantity)
-                        else ->
-                            stringResource(R.string.tracks_quantity, playlistTracksQuantity)
-                    }}
+            val tracksQuantityString = pluralStringResource(
+                R.plurals.numberOfTracks,
+                playlist.playlistTracksQuantity,
+                playlist.playlistTracksQuantity)
             Text(text = tracksQuantityString,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
