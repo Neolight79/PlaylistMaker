@@ -13,9 +13,8 @@ import com.example.playlistmaker.media.domain.db.PlaylistsInteractor
 import com.example.playlistmaker.media.domain.db.PlaylistsRepository
 import com.example.playlistmaker.media.domain.db.impl.FavoriteTracksInteractorImpl
 import com.example.playlistmaker.media.domain.db.impl.PlaylistsInteractorImpl
-import com.example.playlistmaker.media.ui.view_model.CreatePlaylistViewModel
-import com.example.playlistmaker.media.ui.view_model.EditPlaylistViewModel
 import com.example.playlistmaker.media.ui.view_model.FavoriteViewModel
+import com.example.playlistmaker.media.ui.view_model.ManagePlaylistViewModel
 import com.example.playlistmaker.media.ui.view_model.PlaylistViewModel
 import com.example.playlistmaker.media.ui.view_model.PlaylistsViewModel
 import org.koin.android.ext.koin.androidApplication
@@ -32,12 +31,8 @@ val mediaModule = module {
         PlaylistsViewModel(get())
     }
 
-    viewModel {
-        CreatePlaylistViewModel(get(), get())
-    }
-
-    viewModel {
-        EditPlaylistViewModel(get(), get(), get())
+    viewModel { params ->
+        ManagePlaylistViewModel(params.get(), get(), androidApplication())
     }
 
     viewModel { params ->
@@ -46,7 +41,7 @@ val mediaModule = module {
 
     single {
         Room.databaseBuilder(androidContext(), AppDatabase::class.java, "database.db")
-            .fallbackToDestructiveMigration()
+            .fallbackToDestructiveMigration(true)
             .build()
     }
 

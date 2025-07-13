@@ -42,13 +42,7 @@
     <string name="filled_data_lost_warning">Все несохраненные данные будут потеряны!</string>
     <string name="added_to_playlist_message">Добавлено в плейлист %1$s</string>
     <string name="exists_in_playlist_message">Трек уже добавлен в плейлист %1$s</string>
-    <string name="tracks_quantity">%1$d треков</string>
     <string name="playlist_created_message">Плейлист %1$s создан</string>
-    <string name="tracks_quantity_1">%1$d трек</string>
-    <string name="tracks_quantity_2">%1$d трека</string>
-    <string name="minutes_quantity">%1$d минут</string>
-    <string name="minutes_quantity_1">%1$d минута</string>
-    <string name="minutes_quantity_2">%1$d минуты</string>
     <string name="track_delete_dialog_title">Удалить трек?</string>
     <string name="track_delete_dialog_message">Вы уверены, что хотите удалить трек из плейлиста?</string>
     <string name="empty_playlist_warning">В этом плейлисте нет списка треков, которым можно поделиться</string>
@@ -65,5 +59,16 @@
     <string name="save">Сохранить</string>
     <string name="playlist_updated_message">Плейлист %1$s изменен</string>
     <string name="playlist_empty_message">Пока здесь нет треков</string>
-    <string name="cant_start_foreground_service">Невозможно запустить foreground службу!</string>
+    <string name="cant_start_foreground_service">Разрешите отправку уведомлений, пожалуйста!</string>
+    <string name="track_not_found">Трек не найден!</string>
+    <plurals name="numberOfTracks">
+        <item quantity="one">%1$d трек</item>
+        <item quantity="few">%1$d трека</item>
+        <item quantity="other">%1$d треков</item>
+    </plurals>
+    <plurals name="numberOfMinutes">
+        <item quantity="one">%1$d минута</item>
+        <item quantity="few">%1$d минуты</item>
+        <item quantity="other">%1$d минут</item>
+    </plurals>
 </resources>

@@ -59,7 +59,7 @@ class PlaylistsInteractorImpl(
     override fun deletePlaylist(playlist: Playlist): Flow<Unit> = flow {
         // Сначала удаляем сам плейлист
         playlistsRepository.deletePlaylist(playlist)
-        // Раз плейлист удален, то можно продолжить работу приложения
+        // Раз плейлист удалён, то можно продолжить работу приложения
         emit(Unit)
         // Приложение работает дальше, а мы займемся очисткой таблицы треков в плейлистах
         // Сначала получаем все идентификаторы используемых треков и набиваем их в MutableSet

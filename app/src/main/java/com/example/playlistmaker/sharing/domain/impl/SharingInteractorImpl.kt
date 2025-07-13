@@ -34,17 +34,9 @@ class SharingInteractorImpl(
         val playlistText = StringBuilder()
         playlistText
             .append(context.getString(R.string.playlist_text_title, playlistData.first.playlistName, playlistData.first.playlistDescription))
-            .append(
-                with (playlistData.first) {
-                    when {
-                        playlistTracksQuantity % 10 == 1 && playlistTracksQuantity % 100 != 11 ->
-                            context.getString(R.string.tracks_quantity_1, playlistTracksQuantity)
-                        playlistTracksQuantity % 10 in 2..4 && playlistTracksQuantity % 100 !in 12..14 ->
-                            context.getString(R.string.tracks_quantity_2, playlistTracksQuantity)
-                        else ->
-                            context.getString(R.string.tracks_quantity, playlistTracksQuantity)
-                    }
-                })
+            .append(context.resources.getQuantityString(R.plurals.numberOfTracks,
+                    playlistData.first.playlistTracksQuantity,
+                    playlistData.first.playlistTracksQuantity))
         var i = 1
         playlistData.second.forEach {
             playlistText.append(context.getString(R.string.playlist_text_item, i++, it.artistName, it.trackName, it.trackTimeString))

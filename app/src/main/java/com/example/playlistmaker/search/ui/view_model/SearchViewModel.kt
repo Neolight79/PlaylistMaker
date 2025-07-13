@@ -1,8 +1,6 @@
 package com.example.playlistmaker.search.ui.view_model
 
 import android.app.Application
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.R
@@ -11,6 +9,9 @@ import com.example.playlistmaker.search.domain.api.TracksInteractor
 import com.example.playlistmaker.search.domain.models.SearchState
 import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.util.debounce
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class SearchViewModel(private val searchInteractor: TracksInteractor,
@@ -24,29 +25,38 @@ class SearchViewModel(private val searchInteractor: TracksInteractor,
     }
 
     // Описание переменных
-    private var latestSearchText: String? = null
+    private var latestSearchText = ""
+    private var isDirectSearchRun = false
 
     private val trackSearchDebounce = debounce<String>(SEARCH_DEBOUNCE_DELAY_MILLIS, viewModelScope, true) { changedText ->
-        if (changedText == latestSearchText) search(changedText)
+        if (!isDirectSearchRun) search(changedText)
     }
 
-    // Описание LiveData и обсервера
-    private val stateLiveData = MutableLiveData<SearchState>()
-    fun observeState(): LiveData<SearchState> = stateLiveData
+    // StateFlow для состояния экрана поиска треков
+    private val _searchState = MutableStateFlow<SearchState>(SearchState.Init)
+    val searchState: StateFlow<SearchState> = _searchState.asStateFlow()
+
+    // StateFlow для строки поиска
+    private val _searchTextState = MutableStateFlow(latestSearchText)
+    val searchTextState: StateFlow<String> = _searchTextState.asStateFlow()
 
     fun searchDebounce(changedText: String) {
         if (latestSearchText != changedText) {
             latestSearchText = changedText
-            when (latestSearchText.isNullOrEmpty()) {
+            _searchTextState.value = changedText
+            when (changedText.isEmpty()) {
                 true -> clearSearch()
-                false -> trackSearchDebounce(changedText)
+                false -> {
+                    trackSearchDebounce(changedText)
+                    isDirectSearchRun = false
+                }
             }
         }
     }
 
-    fun searchDirectly(changedText: String) {
-        latestSearchText = changedText
-        search(changedText)
+    fun searchDirectly() {
+        search(latestSearchText)
+        isDirectSearchRun = true
     }
 
     private fun search(newSearchText: String) {
@@ -98,10 +108,12 @@ class SearchViewModel(private val searchInteractor: TracksInteractor,
     }
 
     private fun renderState(state: SearchState) {
-        stateLiveData.postValue(state)
+        _searchState.value = state
     }
 
     fun clearSearch() {
+        latestSearchText = ""
+        _searchTextState.value = ""
         renderState(SearchState.TracksFound(listOf()))
         loadHistory()
     }
@@ -109,7 +121,10 @@ class SearchViewModel(private val searchInteractor: TracksInteractor,
     private fun renderHistory() {
         viewModelScope.launch {
             searchHistory.getHistory().collect { searchHistoryTrackList ->
-                renderState(SearchState.TracksHistory(searchHistoryTrackList))
+                if (searchHistoryTrackList.isNotEmpty())
+                    renderState(SearchState.TracksHistory(searchHistoryTrackList))
+                else
+                    renderState(SearchState.Init)
             }
         }
     }
